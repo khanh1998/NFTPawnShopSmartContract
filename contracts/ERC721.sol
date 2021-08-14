@@ -2,7 +2,7 @@ pragma solidity ^0.8.4;
 
 import "./interfaces/IERC721.sol";
 
-contract ERC721 is IERC721 {
+abstract contract ERC721 is IERC721 {
     string private _name;
     string private _symbol;
     string private _uri;
@@ -20,8 +20,14 @@ contract ERC721 is IERC721 {
     /**
      * @dev Returns the number of tokens in ``owner``'s account.
      */
-    function balanceOf(address owner) public view override virtual returns (uint256 balance) {
-        require(owner !=  address(0), 'ERC721: Query balance of zero address');
+    function balanceOf(address owner)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
+        require(owner != address(0), "ERC721: Query balance of zero address");
         return _balances[owner];
     }
 
@@ -32,8 +38,16 @@ contract ERC721 is IERC721 {
      *
      * - `tokenId` must exist.
      */
-    function ownerOf(uint256 tokenId) public view override virtual returns (address owner) {
-
+    function ownerOf(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (address)
+    {
+        address owner = _owners[tokenId];
+        require(owner != address(0), "ERC721: Token is not existed");
+        return owner;
     }
 
     /**
@@ -54,9 +68,7 @@ contract ERC721 is IERC721 {
         address from,
         address to,
         uint256 tokenId
-    ) public override virtual {
-
-    }
+    ) public virtual override {}
 
     /**
      * @dev Transfers `tokenId` token from `from` to `to`.
@@ -76,8 +88,47 @@ contract ERC721 is IERC721 {
         address from,
         address to,
         uint256 tokenId
-    ) public override virtual {
+    ) public virtual override {
+        require(_isApprovedOrOwner(msg.sender, tokenId), "ERC751: the sender don't have permission to transfer token");
+        _transfer(from, to, tokenId);
+    }
 
+    function _exists(uint256 tokenId) internal view virtual returns (bool) {
+        return _owners[tokenId] != address(0);
+    }
+
+    function _isApprovedOrOwner(address sender, uint256 tokenId)
+        internal
+        view
+        virtual
+        returns (bool)
+    {
+        require(_exists(tokenId), "ERC256: Token id is not existed");
+        address owner = _owners[tokenId];
+        return (owner == sender || getApproved(tokenId) == sender || isApprovedForAll(owner, sender));
+    }
+
+    function _transfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual {
+        require(
+            ownerOf(tokenId) == from,
+            "ERC721: tokenid is not belong to from address"
+        );
+        require(
+            to != address(0),
+            "ERC721: the recipient address must be different with zero"
+        );
+
+        // TODO: clear the approvals from the previous owner
+
+        _owners[tokenId] = to;
+        _balances[from] -= 1;
+        _balances[to] += 1;
+
+        emit Transfer(from, to, tokenId);
     }
 
     /**
@@ -93,9 +144,7 @@ contract ERC721 is IERC721 {
      *
      * Emits an {Approval} event.
      */
-    function approve(address to, uint256 tokenId) public override virtual {
-
-    }
+    function approve(address to, uint256 tokenId) public virtual override {}
 
     /**
      * @dev Returns the account approved for `tokenId` token.
@@ -105,11 +154,15 @@ contract ERC721 is IERC721 {
      * - `tokenId` must exist.
      */
     function getApproved(uint256 tokenId)
-        public override virtual
+        public
         view
-        returns (address operator) {
-
-        }
+        virtual
+        override
+        returns (address operator)
+    {
+        require(_exists(tokenId), "ERC256: Token id is not existed");
+        return _tokenApprovals[tokenId];
+    }
 
     /**
      * @dev Approve or remove `operator` as an operator for the caller.
@@ -121,9 +174,11 @@ contract ERC721 is IERC721 {
      *
      * Emits an {ApprovalForAll} event.
      */
-    function setApprovalForAll(address operator, bool _approved) public override virtual {
-
-    }
+    function setApprovalForAll(address operator, bool _approved)
+        public
+        virtual
+        override
+    {}
 
     /**
      * @dev Returns if the `operator` is allowed to manage all of the assets of `owner`.
@@ -131,11 +186,14 @@ contract ERC721 is IERC721 {
      * See {setApprovalForAll}
      */
     function isApprovedForAll(address owner, address operator)
-        public override virtual
+        public
         view
-        returns (bool) {
-
-        }
+        virtual
+        override
+        returns (bool)
+    {
+        return _operatorApprovals[owner][operator];
+    }
 
     /**
      * @dev Safely transfers `tokenId` token from `from` to `to`.
@@ -155,7 +213,5 @@ contract ERC721 is IERC721 {
         address to,
         uint256 tokenId,
         bytes calldata data
-    ) public virtual override {
-
-    }
+    ) public virtual override {}
 }
