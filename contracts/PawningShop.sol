@@ -232,4 +232,15 @@ contract NFTPawnShop {
         Pawn storage currPawn = _pawns[pawnId];
         IERC721(currPawn.contractAddress).transferFrom(address(this), currBid.creator, currPawn.tokenId);
     }
+
+    function addToWhiteList(address smartContract) public {
+        require(msg.sender == owner, "PawningShop: Only owner can add address to white list");
+        uint256 i = 0;
+        for (i = 0; i < _whiteListNFT.length; i++) {
+            if (_whiteListNFT[i] == smartContract) {
+                return;
+            }
+        }
+        _whiteListNFT[i] = smartContract;
+    }
 }
