@@ -14,6 +14,7 @@
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.2.0",
+    "vuetify": "^2.4.0",
     "vuex": "^3.4.0",
     "web3": "^1.5.2"
   },
@@ -33,6 +34,7 @@
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-vue": "^6.2.2",
     "typescript": "~4.1.5",
+    "vue-cli-plugin-vuetify": "~2.4.2",
     "vue-template-compiler": "^2.6.11"
   }
 }
