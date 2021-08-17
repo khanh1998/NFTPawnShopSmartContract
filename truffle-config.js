@@ -18,8 +18,13 @@
  *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
-//
+const path = require("path");
+const hdwallet = require("@truffle/hdwallet-provider")
+require('dotenv').config({ path: '.env'})
+
+const mnemonic = process.env.MNEMONIC
+const accountIndex = process.env.ACCOUNT_INDEX
+const host = process.env.GANACHE_HOST
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
@@ -33,8 +38,14 @@ module.exports = {
    *
    * $ truffle test --network <network-name>
    */
-
+  contracts_build_directory: path.join(__dirname, "client/src/contracts"),
   networks: {
+    ganache: {
+      provider: () => {
+        return new hdwallet(mnemonic, host, accountIndex)
+      },
+      network_id: 5777,
+    },
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal

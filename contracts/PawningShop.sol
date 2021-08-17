@@ -243,4 +243,19 @@ contract NFTPawnShop {
         }
         _whiteListNFT[i] = smartContract;
     }
+
+    function removeFromWhiteList(address smartContract) public {
+        require(msg.sender == owner, "PawningShop: Only owner can remove address from white list");
+        uint256 i;
+        for (i = 0; i < _whiteListNFT.length; i++) {
+            if (_whiteListNFT[i] == smartContract) {
+                break;
+            }
+        }
+        delete _whiteListNFT[i];
+    }
+
+    function getWhiteList() public view returns(address[]) {
+        return _whiteListNFT;
+    }
 }
