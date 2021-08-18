@@ -218,6 +218,10 @@ contract PawningShop {
     event BidCreated(address creator, uint256 pawnId);
     event BidCancelled(address creator, uint256 pawnId);
 
+    function getPawnById(uint256 id) public view returns(Pawn memory) {
+        return _pawns[id];
+    }
+
     function createPawn(address tokenAddress, uint256 tokenId) public {
         _totalNumberOfPawn += 1;
         bool isInWhiteList = false;
