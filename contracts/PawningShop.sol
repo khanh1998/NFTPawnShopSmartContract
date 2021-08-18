@@ -381,13 +381,14 @@ contract PawningShop {
 
     function addToWhiteList(address smartContract) public {
         require(msg.sender == owner, "PawningShop: Only owner can add address to white list");
+        require(smartContract != address(0), "PawningShop: smart contract address must be different with 0");
         uint256 i = 0;
         for (i = 0; i < _whiteListNFT.length; i++) {
             if (_whiteListNFT[i] == smartContract) {
                 return;
             }
         }
-        _whiteListNFT[i] = smartContract;
+        _whiteListNFT.push(smartContract);
     }
 
     function removeFromWhiteList(address smartContract) public {

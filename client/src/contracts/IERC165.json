@@ -21,7 +21,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"supportsInterface(bytes4)\":{\"details\":\"Returns true if this contract implements the interface defined by `interfaceId`. See the corresponding https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section] to learn more about how these ids are created. This function call must use less than 30 000 gas.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/E/Documents/OneDrive/Documents/solidity/nft-pawning-shop/contracts/PawningShop.sol\":\"IERC165\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/E/Documents/OneDrive/Documents/solidity/nft-pawning-shop/contracts/PawningShop.sol\":{\"keccak256\":\"0xce059691e81c40249567666b2eb21e18f4a39d6123e770b986353ebc61da7112\",\"urls\":[\"bzz-raw://1247f4eea8c38634350d7df23a7ca348a7ae1666477688926a812ace26dac8cb\",\"dweb:/ipfs/QmRCZyrnhoKKTQcd5UNFMWaXsjqiLJVHtP9DhHBCquBNCX\"]},\"@openzeppelin/contracts/utils/math/SafeMath.sol\":{\"keccak256\":\"0x8666f020bd8fc9dc14f07e2ebc52b5f236ab4cdde7c77679b08cb2f94730043b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://163776cbf565c722232393aa2d62cbe8a2ffb5805986abf4906c00e1e07450a6\",\"dweb:/ipfs/QmPZoN9T3cb6o8bGhjBPZcz7im8T8DWhpr3tjLwhJJHx9N\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"supportsInterface(bytes4)\":{\"details\":\"Returns true if this contract implements the interface defined by `interfaceId`. See the corresponding https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section] to learn more about how these ids are created. This function call must use less than 30 000 gas.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/E/Documents/OneDrive/Documents/solidity/nft-pawning-shop/contracts/PawningShop.sol\":\"IERC165\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/E/Documents/OneDrive/Documents/solidity/nft-pawning-shop/contracts/PawningShop.sol\":{\"keccak256\":\"0xce89ee0587f4ff5eb1c63992d5da716b77caddb00ad049b6be5a4637509ae721\",\"urls\":[\"bzz-raw://5c253216de66a22c69f7a5a9345a4f8744cec024ea731c573a0ce6138d5e798f\",\"dweb:/ipfs/Qma5g9An9yyeDeGkvD6xS9WrNqytA31ALJoDWmTHzAqStx\"]},\"@openzeppelin/contracts/utils/math/SafeMath.sol\":{\"keccak256\":\"0x8666f020bd8fc9dc14f07e2ebc52b5f236ab4cdde7c77679b08cb2f94730043b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://163776cbf565c722232393aa2d62cbe8a2ffb5805986abf4906c00e1e07450a6\",\"dweb:/ipfs/QmPZoN9T3cb6o8bGhjBPZcz7im8T8DWhpr3tjLwhJJHx9N\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -29,7 +29,7 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity ^0.8.4;\r\n\r\nimport \"@openzeppelin/contracts/utils/math/SafeMath.sol\";\r\n\r\ninterface IERC165 {\r\n    /**\r\n     * @dev Returns true if this contract implements the interface defined by\r\n     * `interfaceId`. See the corresponding\r\n     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]\r\n     * to learn more about how these ids are created.\r\n     *\r\n     * This function call must use less than 30 000 gas.\r\n     */\r\n    function supportsInterface(bytes4 interfaceId) external view returns (bool);\r\n}\r\n\r\n\r\ninterface IERC721 is IERC165 {\r\n    /**\r\n     * @dev Emitted when `tokenId` token is transferred from `from` to `to`.\r\n     */\r\n    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);\r\n\r\n    /**\r\n     * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.\r\n     */\r\n    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);\r\n\r\n    /**\r\n     * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.\r\n     */\r\n    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);\r\n\r\n    /**\r\n     * @dev Returns the number of tokens in ``owner``'s account.\r\n     */\r\n    function balanceOf(address owner) external view returns (uint256 balance);\r\n\r\n    /**\r\n     * @dev Returns the owner of the `tokenId` token.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - `tokenId` must exist.\r\n     */\r\n    function ownerOf(uint256 tokenId) external view returns (address owner);\r\n\r\n    /**\r\n     * @dev Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients\r\n     * are aware of the ERC721 protocol to prevent tokens from being forever locked.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - `from` cannot be the zero address.\r\n     * - `to` cannot be the zero address.\r\n     * - `tokenId` token must exist and be owned by `from`.\r\n     * - If the caller is not `from`, it must be have been allowed to move this token by either {approve} or {setApprovalForAll}.\r\n     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.\r\n     *\r\n     * Emits a {Transfer} event.\r\n     */\r\n    function safeTransferFrom(\r\n        address from,\r\n        address to,\r\n        uint256 tokenId\r\n    ) external;\r\n\r\n    /**\r\n     * @dev Transfers `tokenId` token from `from` to `to`.\r\n     *\r\n     * WARNING: Usage of this method is discouraged, use {safeTransferFrom} whenever possible.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - `from` cannot be the zero address.\r\n     * - `to` cannot be the zero address.\r\n     * - `tokenId` token must be owned by `from`.\r\n     * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.\r\n     *\r\n     * Emits a {Transfer} event.\r\n     */\r\n    function transferFrom(\r\n        address from,\r\n        address to,\r\n        uint256 tokenId\r\n    ) external;\r\n\r\n    /**\r\n     * @dev Gives permission to `to` to transfer `tokenId` token to another account.\r\n     * The approval is cleared when the token is transferred.\r\n     *\r\n     * Only a single account can be approved at a time, so approving the zero address clears previous approvals.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - The caller must own the token or be an approved operator.\r\n     * - `tokenId` must exist.\r\n     *\r\n     * Emits an {Approval} event.\r\n     */\r\n    function approve(address to, uint256 tokenId) external;\r\n\r\n    /**\r\n     * @dev Returns the account approved for `tokenId` token.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - `tokenId` must exist.\r\n     */\r\n    function getApproved(uint256 tokenId) external view returns (address operator);\r\n\r\n    /**\r\n     * @dev Approve or remove `operator` as an operator for the caller.\r\n     * Operators can call {transferFrom} or {safeTransferFrom} for any token owned by the caller.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - The `operator` cannot be the caller.\r\n     *\r\n     * Emits an {ApprovalForAll} event.\r\n     */\r\n    function setApprovalForAll(address operator, bool _approved) external;\r\n\r\n    /**\r\n     * @dev Returns if the `operator` is allowed to manage all of the assets of `owner`.\r\n     *\r\n     * See {setApprovalForAll}\r\n     */\r\n    function isApprovedForAll(address owner, address operator) external view returns (bool);\r\n\r\n    /**\r\n     * @dev Safely transfers `tokenId` token from `from` to `to`.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - `from` cannot be the zero address.\r\n     * - `to` cannot be the zero address.\r\n     * - `tokenId` token must exist and be owned by `from`.\r\n     * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.\r\n     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.\r\n     *\r\n     * Emits a {Transfer} event.\r\n     */\r\n    function safeTransferFrom(\r\n        address from,\r\n        address to,\r\n        uint256 tokenId,\r\n        bytes calldata data\r\n    ) external;\r\n}\r\n\r\ncontract PawningShop {\r\n\r\n    using SafeMath for uint256;\r\n    using SafeMath for uint8;\r\n\r\n    enum PawnStatus {\r\n        CREATED,\r\n        CANCELLED,\r\n        DEAL,\r\n        LIQUIDATED,\r\n        REPAID\r\n    }\r\n    struct Pawn {\r\n        // who borrows money\r\n        address creator;\r\n        address contractAddress;\r\n        uint256 tokenId;\r\n        PawnStatus status;\r\n    }\r\n    struct Bid {\r\n        address creator;\r\n        uint256 loanAmount;\r\n        // the amount of wei borrower have to pay more\r\n        uint256 interest;\r\n        uint256 loanStartTime;\r\n        uint256 loanDuration;\r\n        bool isInterestProRated;\r\n    }\r\n    address public owner;\r\n    address[] public _whiteListNFT;\r\n    uint256 public _feeRate;\r\n    uint256 public _totalNumberOfPawn = 0;\r\n    uint256 public _totalNumberOfBid = 0;\r\n    // mapping nft address -> token id -> pawn\r\n    mapping(uint256 => Pawn) _pawns;\r\n    // mapping bid id => bid\r\n    mapping(uint256 => Bid) _bids;\r\n    // mapping bid id to pawn id\r\n    mapping(uint256 => uint256) public _bidToPawn;\r\n    mapping(uint256 => uint256) public _pawnToBid;\r\n\r\n    constructor() {\r\n        owner = msg.sender;\r\n        Pawn memory newPawn = Pawn({\r\n            creator: address(0),\r\n            contractAddress: address(0),\r\n            tokenId: 0,\r\n            status: PawnStatus.CANCELLED\r\n        });\r\n        _pawns[0] = newPawn;\r\n        Bid memory newBid = Bid({\r\n            creator: address(0),\r\n            loanAmount: 0,\r\n            interest: 0,\r\n            loanStartTime: 0,\r\n            loanDuration: 0,\r\n            isInterestProRated: false\r\n        });\r\n        _bids[0] = newBid;\r\n    }\r\n\r\n    event PawnCreated(address pawner, uint256 pawnId);\r\n    event PawnCancelled(address pawner, uint256 pawnId);\r\n    event PawnDeal(address pawner, address lender, uint256 id);\r\n    event PawnRepaid(address pawner, address lender, uint256 id);\r\n    event PawnLiquidated(address pawner, address lender, uint256 id);\r\n    event BidCreated(address creator, uint256 pawnId);\r\n    event BidCancelled(address creator, uint256 pawnId);\r\n\r\n    function createPawn(address tokenAddress, uint256 tokenId) public {\r\n        _totalNumberOfPawn += 1;\r\n        bool isInWhiteList = false;\r\n        for (uint256 i = 0; i < _whiteListNFT.length; i++) {\r\n            if (tokenAddress == _whiteListNFT[i]) {\r\n                isInWhiteList = true;\r\n            }\r\n        }\r\n        address sender = msg.sender;\r\n        require(\r\n            isInWhiteList == true,\r\n            \"PawningShop: smart contract is not in white list\"\r\n        );\r\n        bool isApproved = IERC721(tokenAddress).getApproved(tokenId) ==\r\n            address(this);\r\n        bool isApprovedForAll = IERC721(tokenAddress).isApprovedForAll(\r\n            sender,\r\n            address(this)\r\n        );\r\n        require(\r\n            isApproved || isApprovedForAll,\r\n            \"PawningShop: haven't got permission to transfer\"\r\n        );\r\n        Pawn memory pawn = Pawn({\r\n            creator: sender,\r\n            contractAddress: tokenAddress,\r\n            tokenId: tokenId,\r\n            status: PawnStatus.CREATED\r\n        });\r\n\r\n        _pawns[_totalNumberOfPawn] = pawn;\r\n        emit PawnCreated(sender, _totalNumberOfPawn);\r\n    }\r\n\r\n    function cancelPawn(uint256 pawnId) public {\r\n        Pawn storage pawn = _pawns[pawnId];\r\n        address creator = pawn.creator;\r\n        require(\r\n            pawn.status == PawnStatus.CREATED,\r\n            \"PawningShop: Only can cancel when it has status of CREATED\"\r\n        );\r\n        require(\r\n            msg.sender == creator,\r\n            \"PawningShop: Only owner of the pawn can cancel it\"\r\n        );\r\n        require(\r\n            _pawnToBid[pawnId] == 0,\r\n            \"PawningShop: Only can cancel when no bid is accepted\"\r\n        );\r\n        pawn.status = PawnStatus.CANCELLED;\r\n\r\n        emit PawnCancelled(owner, pawnId);\r\n    }\r\n\r\n    function bid(\r\n        uint8 rate,\r\n        uint256 duration,\r\n        bool isInterestProRated,\r\n        uint256 loanStartTime,\r\n        uint256 pawnId\r\n    ) public payable {\r\n        _totalNumberOfBid += 1;\r\n        address creator = msg.sender;\r\n        uint256 amount = msg.value;\r\n        Pawn storage pawn = _pawns[pawnId];\r\n        require(pawnId > 0, \"PawningShop: pawn id is not valid\");\r\n        require(\r\n            pawn.status == PawnStatus.CREATED,\r\n            \"PawningShop: cannot bid this pawn\"\r\n        );\r\n        require(\r\n            amount > 0,\r\n            \"PawningShop: amount of money must be bigger than 0\"\r\n        );\r\n        Bid memory newBid = Bid({\r\n            creator: creator,\r\n            loanAmount: amount,\r\n            interest: rate,\r\n            loanDuration: duration,\r\n            isInterestProRated: isInterestProRated,\r\n            loanStartTime: loanStartTime\r\n        });\r\n        _bids[_totalNumberOfBid] = newBid;\r\n        _bidToPawn[_totalNumberOfBid] = pawnId;\r\n        emit BidCreated(creator, pawnId);\r\n    }\r\n\r\n    function cancelBid(uint256 bidId) public {\r\n        Bid memory currBid = _bids[bidId];\r\n        address sender = msg.sender;\r\n        require(\r\n            sender == currBid.creator,\r\n            \"PawningShop: only creator can cancel the bid\"\r\n        );\r\n        uint256 pawnId = _bidToPawn[bidId];\r\n        require(_pawnToBid[pawnId] != bidId, \"PawningShop: your bid is accepted, cannot cancel\");\r\n        address payable lender = payable(currBid.creator);\r\n        lender.transfer(currBid.loanAmount);\r\n        delete _bids[bidId];\r\n        delete _bidToPawn[bidId];\r\n    }\r\n\r\n    function acceptBid(uint256 bidId) public {\r\n        Bid storage currBid = _bids[bidId];\r\n        uint256 pawnId = _bidToPawn[bidId];\r\n        require(pawnId > 0, \"PawningShop: The pawn is not existed\");\r\n        Pawn storage pawn = _pawns[pawnId];\r\n        require(pawn.creator == msg.sender, \"PawningShop: only creator of pawn can accept bid\");\r\n        IERC721(pawn.contractAddress).transferFrom(pawn.creator, address(this), pawn.tokenId);\r\n        address payable borrower = payable(pawn.creator);\r\n        borrower.transfer(currBid.loanAmount);\r\n        pawn.status = PawnStatus.DEAL;\r\n        _pawnToBid[pawnId] = bidId;\r\n        pawn.status = PawnStatus.DEAL;\r\n        currBid.loanStartTime = block.timestamp;\r\n    }\r\n\r\n    function repaid(uint256 pawnId) public payable {\r\n        Pawn storage currPawn = _pawns[pawnId];\r\n        require(\r\n            currPawn.creator == msg.sender,\r\n            \"PawningShop: Only creator of pawn can repay\"\r\n        );\r\n        uint256 bidId = _pawnToBid[pawnId];\r\n        require(\r\n            bidId != 0,\r\n            \"PawningShop: This pawn doen't have any accepted bid\"\r\n        );\r\n        Bid storage currBid = _bids[bidId];\r\n        require(block.timestamp <= currBid.loanStartTime + currBid.loanDuration, \"PawningShop: to late to repaid\");\r\n        uint256 value = msg.value;\r\n        uint256 elapsedDuration = block.timestamp - currBid.loanStartTime;\r\n        uint256 repaidAmount = _calculateRepaidAmount(currBid.loanAmount, currBid.interest, currBid.loanDuration, elapsedDuration, currBid.isInterestProRated);\r\n        require(value == repaidAmount, \"PawningShop: pay exactly repaid amount\");\r\n        // transfer token back to borrower\r\n        IERC721(currPawn.contractAddress).transferFrom(address(this), currPawn.creator, currPawn.tokenId);\r\n        // transfer money to lender\r\n        address payable lender = payable(currBid.creator);\r\n        lender.transfer(value);\r\n        delete _pawnToBid[pawnId];\r\n        delete _bidToPawn[bidId];\r\n    }\r\n\r\n    function _calculateRepaidAmount(uint256 original, uint256 interest, uint256 totalDuration, uint256 elapsedDuration, bool isInterestProRated) internal pure returns (uint256) {\r\n        uint256 interestDue = interest;\r\n        if (isInterestProRated) {\r\n            interestDue = (interest.div(totalDuration)).mul(elapsedDuration);\r\n        }\r\n        return original.add(interest);\r\n    }\r\n\r\n    function liquidate(uint256 bidId) public {\r\n        Bid storage currBid = _bids[bidId];\r\n        require(currBid.creator == msg.sender, \"PawningShop: only creator of bid can liquidate token\");\r\n        require(block.timestamp > currBid.loanStartTime + currBid.loanAmount, \"PawningShop: Not valid time to liquidate\");\r\n        uint256 pawnId = _bidToPawn[bidId];\r\n        require(_pawnToBid[pawnId] == bidId, \"PawningShop: this bid is not accepted by borrower\");\r\n        Pawn storage currPawn = _pawns[pawnId];\r\n        IERC721(currPawn.contractAddress).transferFrom(address(this), currBid.creator, currPawn.tokenId);\r\n    }\r\n\r\n    function addToWhiteList(address smartContract) public {\r\n        require(msg.sender == owner, \"PawningShop: Only owner can add address to white list\");\r\n        uint256 i = 0;\r\n        for (i = 0; i < _whiteListNFT.length; i++) {\r\n            if (_whiteListNFT[i] == smartContract) {\r\n                return;\r\n            }\r\n        }\r\n        _whiteListNFT[i] = smartContract;\r\n    }\r\n\r\n    function removeFromWhiteList(address smartContract) public {\r\n        require(msg.sender == owner, \"PawningShop: Only owner can remove address from white list\");\r\n        uint256 i;\r\n        for (i = 0; i < _whiteListNFT.length; i++) {\r\n            if (_whiteListNFT[i] == smartContract) {\r\n                break;\r\n            }\r\n        }\r\n        delete _whiteListNFT[i];\r\n    }\r\n\r\n    function getWhiteList() public view returns(address[] memory) {\r\n        return _whiteListNFT;\r\n    }\r\n}\r\n",
+  "source": "pragma solidity ^0.8.4;\r\n\r\nimport \"@openzeppelin/contracts/utils/math/SafeMath.sol\";\r\n\r\ninterface IERC165 {\r\n    /**\r\n     * @dev Returns true if this contract implements the interface defined by\r\n     * `interfaceId`. See the corresponding\r\n     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]\r\n     * to learn more about how these ids are created.\r\n     *\r\n     * This function call must use less than 30 000 gas.\r\n     */\r\n    function supportsInterface(bytes4 interfaceId) external view returns (bool);\r\n}\r\n\r\n\r\ninterface IERC721 is IERC165 {\r\n    /**\r\n     * @dev Emitted when `tokenId` token is transferred from `from` to `to`.\r\n     */\r\n    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);\r\n\r\n    /**\r\n     * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.\r\n     */\r\n    event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);\r\n\r\n    /**\r\n     * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.\r\n     */\r\n    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);\r\n\r\n    /**\r\n     * @dev Returns the number of tokens in ``owner``'s account.\r\n     */\r\n    function balanceOf(address owner) external view returns (uint256 balance);\r\n\r\n    /**\r\n     * @dev Returns the owner of the `tokenId` token.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - `tokenId` must exist.\r\n     */\r\n    function ownerOf(uint256 tokenId) external view returns (address owner);\r\n\r\n    /**\r\n     * @dev Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients\r\n     * are aware of the ERC721 protocol to prevent tokens from being forever locked.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - `from` cannot be the zero address.\r\n     * - `to` cannot be the zero address.\r\n     * - `tokenId` token must exist and be owned by `from`.\r\n     * - If the caller is not `from`, it must be have been allowed to move this token by either {approve} or {setApprovalForAll}.\r\n     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.\r\n     *\r\n     * Emits a {Transfer} event.\r\n     */\r\n    function safeTransferFrom(\r\n        address from,\r\n        address to,\r\n        uint256 tokenId\r\n    ) external;\r\n\r\n    /**\r\n     * @dev Transfers `tokenId` token from `from` to `to`.\r\n     *\r\n     * WARNING: Usage of this method is discouraged, use {safeTransferFrom} whenever possible.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - `from` cannot be the zero address.\r\n     * - `to` cannot be the zero address.\r\n     * - `tokenId` token must be owned by `from`.\r\n     * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.\r\n     *\r\n     * Emits a {Transfer} event.\r\n     */\r\n    function transferFrom(\r\n        address from,\r\n        address to,\r\n        uint256 tokenId\r\n    ) external;\r\n\r\n    /**\r\n     * @dev Gives permission to `to` to transfer `tokenId` token to another account.\r\n     * The approval is cleared when the token is transferred.\r\n     *\r\n     * Only a single account can be approved at a time, so approving the zero address clears previous approvals.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - The caller must own the token or be an approved operator.\r\n     * - `tokenId` must exist.\r\n     *\r\n     * Emits an {Approval} event.\r\n     */\r\n    function approve(address to, uint256 tokenId) external;\r\n\r\n    /**\r\n     * @dev Returns the account approved for `tokenId` token.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - `tokenId` must exist.\r\n     */\r\n    function getApproved(uint256 tokenId) external view returns (address operator);\r\n\r\n    /**\r\n     * @dev Approve or remove `operator` as an operator for the caller.\r\n     * Operators can call {transferFrom} or {safeTransferFrom} for any token owned by the caller.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - The `operator` cannot be the caller.\r\n     *\r\n     * Emits an {ApprovalForAll} event.\r\n     */\r\n    function setApprovalForAll(address operator, bool _approved) external;\r\n\r\n    /**\r\n     * @dev Returns if the `operator` is allowed to manage all of the assets of `owner`.\r\n     *\r\n     * See {setApprovalForAll}\r\n     */\r\n    function isApprovedForAll(address owner, address operator) external view returns (bool);\r\n\r\n    /**\r\n     * @dev Safely transfers `tokenId` token from `from` to `to`.\r\n     *\r\n     * Requirements:\r\n     *\r\n     * - `from` cannot be the zero address.\r\n     * - `to` cannot be the zero address.\r\n     * - `tokenId` token must exist and be owned by `from`.\r\n     * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.\r\n     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.\r\n     *\r\n     * Emits a {Transfer} event.\r\n     */\r\n    function safeTransferFrom(\r\n        address from,\r\n        address to,\r\n        uint256 tokenId,\r\n        bytes calldata data\r\n    ) external;\r\n}\r\n\r\ncontract PawningShop {\r\n\r\n    using SafeMath for uint256;\r\n    using SafeMath for uint8;\r\n\r\n    enum PawnStatus {\r\n        CREATED,\r\n        CANCELLED,\r\n        DEAL,\r\n        LIQUIDATED,\r\n        REPAID\r\n    }\r\n    struct Pawn {\r\n        // who borrows money\r\n        address creator;\r\n        address contractAddress;\r\n        uint256 tokenId;\r\n        PawnStatus status;\r\n    }\r\n    struct Bid {\r\n        address creator;\r\n        uint256 loanAmount;\r\n        // the amount of wei borrower have to pay more\r\n        uint256 interest;\r\n        uint256 loanStartTime;\r\n        uint256 loanDuration;\r\n        bool isInterestProRated;\r\n    }\r\n    address public owner;\r\n    address[] public _whiteListNFT;\r\n    uint256 public _feeRate;\r\n    uint256 public _totalNumberOfPawn = 0;\r\n    uint256 public _totalNumberOfBid = 0;\r\n    // mapping nft address -> token id -> pawn\r\n    mapping(uint256 => Pawn) _pawns;\r\n    // mapping bid id => bid\r\n    mapping(uint256 => Bid) _bids;\r\n    // mapping bid id to pawn id\r\n    mapping(uint256 => uint256) public _bidToPawn;\r\n    mapping(uint256 => uint256) public _pawnToBid;\r\n\r\n    constructor() {\r\n        owner = msg.sender;\r\n        Pawn memory newPawn = Pawn({\r\n            creator: address(0),\r\n            contractAddress: address(0),\r\n            tokenId: 0,\r\n            status: PawnStatus.CANCELLED\r\n        });\r\n        _pawns[0] = newPawn;\r\n        Bid memory newBid = Bid({\r\n            creator: address(0),\r\n            loanAmount: 0,\r\n            interest: 0,\r\n            loanStartTime: 0,\r\n            loanDuration: 0,\r\n            isInterestProRated: false\r\n        });\r\n        _bids[0] = newBid;\r\n    }\r\n\r\n    event PawnCreated(address pawner, uint256 pawnId);\r\n    event PawnCancelled(address pawner, uint256 pawnId);\r\n    event PawnDeal(address pawner, address lender, uint256 id);\r\n    event PawnRepaid(address pawner, address lender, uint256 id);\r\n    event PawnLiquidated(address pawner, address lender, uint256 id);\r\n    event BidCreated(address creator, uint256 pawnId);\r\n    event BidCancelled(address creator, uint256 pawnId);\r\n\r\n    function createPawn(address tokenAddress, uint256 tokenId) public {\r\n        _totalNumberOfPawn += 1;\r\n        bool isInWhiteList = false;\r\n        for (uint256 i = 0; i < _whiteListNFT.length; i++) {\r\n            if (tokenAddress == _whiteListNFT[i]) {\r\n                isInWhiteList = true;\r\n            }\r\n        }\r\n        address sender = msg.sender;\r\n        require(\r\n            isInWhiteList == true,\r\n            \"PawningShop: smart contract is not in white list\"\r\n        );\r\n        bool isApproved = IERC721(tokenAddress).getApproved(tokenId) ==\r\n            address(this);\r\n        bool isApprovedForAll = IERC721(tokenAddress).isApprovedForAll(\r\n            sender,\r\n            address(this)\r\n        );\r\n        require(\r\n            isApproved || isApprovedForAll,\r\n            \"PawningShop: haven't got permission to transfer\"\r\n        );\r\n        Pawn memory pawn = Pawn({\r\n            creator: sender,\r\n            contractAddress: tokenAddress,\r\n            tokenId: tokenId,\r\n            status: PawnStatus.CREATED\r\n        });\r\n\r\n        _pawns[_totalNumberOfPawn] = pawn;\r\n        emit PawnCreated(sender, _totalNumberOfPawn);\r\n    }\r\n\r\n    function cancelPawn(uint256 pawnId) public {\r\n        Pawn storage pawn = _pawns[pawnId];\r\n        address creator = pawn.creator;\r\n        require(\r\n            pawn.status == PawnStatus.CREATED,\r\n            \"PawningShop: Only can cancel when it has status of CREATED\"\r\n        );\r\n        require(\r\n            msg.sender == creator,\r\n            \"PawningShop: Only owner of the pawn can cancel it\"\r\n        );\r\n        require(\r\n            _pawnToBid[pawnId] == 0,\r\n            \"PawningShop: Only can cancel when no bid is accepted\"\r\n        );\r\n        pawn.status = PawnStatus.CANCELLED;\r\n\r\n        emit PawnCancelled(owner, pawnId);\r\n    }\r\n\r\n    function bid(\r\n        uint8 rate,\r\n        uint256 duration,\r\n        bool isInterestProRated,\r\n        uint256 loanStartTime,\r\n        uint256 pawnId\r\n    ) public payable {\r\n        _totalNumberOfBid += 1;\r\n        address creator = msg.sender;\r\n        uint256 amount = msg.value;\r\n        Pawn storage pawn = _pawns[pawnId];\r\n        require(pawnId > 0, \"PawningShop: pawn id is not valid\");\r\n        require(\r\n            pawn.status == PawnStatus.CREATED,\r\n            \"PawningShop: cannot bid this pawn\"\r\n        );\r\n        require(\r\n            amount > 0,\r\n            \"PawningShop: amount of money must be bigger than 0\"\r\n        );\r\n        Bid memory newBid = Bid({\r\n            creator: creator,\r\n            loanAmount: amount,\r\n            interest: rate,\r\n            loanDuration: duration,\r\n            isInterestProRated: isInterestProRated,\r\n            loanStartTime: loanStartTime\r\n        });\r\n        _bids[_totalNumberOfBid] = newBid;\r\n        _bidToPawn[_totalNumberOfBid] = pawnId;\r\n        emit BidCreated(creator, pawnId);\r\n    }\r\n\r\n    function cancelBid(uint256 bidId) public {\r\n        Bid memory currBid = _bids[bidId];\r\n        address sender = msg.sender;\r\n        require(\r\n            sender == currBid.creator,\r\n            \"PawningShop: only creator can cancel the bid\"\r\n        );\r\n        uint256 pawnId = _bidToPawn[bidId];\r\n        require(_pawnToBid[pawnId] != bidId, \"PawningShop: your bid is accepted, cannot cancel\");\r\n        address payable lender = payable(currBid.creator);\r\n        lender.transfer(currBid.loanAmount);\r\n        delete _bids[bidId];\r\n        delete _bidToPawn[bidId];\r\n    }\r\n\r\n    function acceptBid(uint256 bidId) public {\r\n        Bid storage currBid = _bids[bidId];\r\n        uint256 pawnId = _bidToPawn[bidId];\r\n        require(pawnId > 0, \"PawningShop: The pawn is not existed\");\r\n        Pawn storage pawn = _pawns[pawnId];\r\n        require(pawn.creator == msg.sender, \"PawningShop: only creator of pawn can accept bid\");\r\n        IERC721(pawn.contractAddress).transferFrom(pawn.creator, address(this), pawn.tokenId);\r\n        address payable borrower = payable(pawn.creator);\r\n        borrower.transfer(currBid.loanAmount);\r\n        pawn.status = PawnStatus.DEAL;\r\n        _pawnToBid[pawnId] = bidId;\r\n        pawn.status = PawnStatus.DEAL;\r\n        currBid.loanStartTime = block.timestamp;\r\n    }\r\n\r\n    function repaid(uint256 pawnId) public payable {\r\n        Pawn storage currPawn = _pawns[pawnId];\r\n        require(\r\n            currPawn.creator == msg.sender,\r\n            \"PawningShop: Only creator of pawn can repay\"\r\n        );\r\n        uint256 bidId = _pawnToBid[pawnId];\r\n        require(\r\n            bidId != 0,\r\n            \"PawningShop: This pawn doen't have any accepted bid\"\r\n        );\r\n        Bid storage currBid = _bids[bidId];\r\n        require(block.timestamp <= currBid.loanStartTime + currBid.loanDuration, \"PawningShop: to late to repaid\");\r\n        uint256 value = msg.value;\r\n        uint256 elapsedDuration = block.timestamp - currBid.loanStartTime;\r\n        uint256 repaidAmount = _calculateRepaidAmount(currBid.loanAmount, currBid.interest, currBid.loanDuration, elapsedDuration, currBid.isInterestProRated);\r\n        require(value == repaidAmount, \"PawningShop: pay exactly repaid amount\");\r\n        // transfer token back to borrower\r\n        IERC721(currPawn.contractAddress).transferFrom(address(this), currPawn.creator, currPawn.tokenId);\r\n        // transfer money to lender\r\n        address payable lender = payable(currBid.creator);\r\n        lender.transfer(value);\r\n        delete _pawnToBid[pawnId];\r\n        delete _bidToPawn[bidId];\r\n    }\r\n\r\n    function _calculateRepaidAmount(uint256 original, uint256 interest, uint256 totalDuration, uint256 elapsedDuration, bool isInterestProRated) internal pure returns (uint256) {\r\n        uint256 interestDue = interest;\r\n        if (isInterestProRated) {\r\n            interestDue = (interest.div(totalDuration)).mul(elapsedDuration);\r\n        }\r\n        return original.add(interest);\r\n    }\r\n\r\n    function liquidate(uint256 bidId) public {\r\n        Bid storage currBid = _bids[bidId];\r\n        require(currBid.creator == msg.sender, \"PawningShop: only creator of bid can liquidate token\");\r\n        require(block.timestamp > currBid.loanStartTime + currBid.loanAmount, \"PawningShop: Not valid time to liquidate\");\r\n        uint256 pawnId = _bidToPawn[bidId];\r\n        require(_pawnToBid[pawnId] == bidId, \"PawningShop: this bid is not accepted by borrower\");\r\n        Pawn storage currPawn = _pawns[pawnId];\r\n        IERC721(currPawn.contractAddress).transferFrom(address(this), currBid.creator, currPawn.tokenId);\r\n    }\r\n\r\n    function addToWhiteList(address smartContract) public {\r\n        require(msg.sender == owner, \"PawningShop: Only owner can add address to white list\");\r\n        uint256 i = 0;\r\n        for (i = 0; i < _whiteListNFT.length; i++) {\r\n            if (_whiteListNFT[i] == smartContract) {\r\n                return;\r\n            }\r\n        }\r\n        _whiteListNFT.push(smartContract);\r\n    }\r\n\r\n    function removeFromWhiteList(address smartContract) public {\r\n        require(msg.sender == owner, \"PawningShop: Only owner can remove address from white list\");\r\n        uint256 i;\r\n        for (i = 0; i < _whiteListNFT.length; i++) {\r\n            if (_whiteListNFT[i] == smartContract) {\r\n                break;\r\n            }\r\n        }\r\n        delete _whiteListNFT[i];\r\n    }\r\n\r\n    function getWhiteList() public view returns(address[] memory) {\r\n        return _whiteListNFT;\r\n    }\r\n}\r\n",
   "sourcePath": "E:/Documents/OneDrive/Documents/solidity/nft-pawning-shop/contracts/PawningShop.sol",
   "ast": {
     "absolutePath": "/E/Documents/OneDrive/Documents/solidity/nft-pawning-shop/contracts/PawningShop.sol",
@@ -12242,7 +12242,7 @@
             "body": {
               "id": 987,
               "nodeType": "Block",
-              "src": "13855:330:0",
+              "src": "13855:331:0",
               "statements": [
                 {
                   "expression": {
@@ -12651,13 +12651,28 @@
                 },
                 {
                   "expression": {
-                    "id": 985,
-                    "isConstant": false,
-                    "isLValue": false,
-                    "isPure": false,
-                    "lValueRequested": false,
-                    "leftHandSide": {
-                      "baseExpression": {
+                    "arguments": [
+                      {
+                        "id": 984,
+                        "name": "smartContract",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 945,
+                        "src": "14164:13:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      ],
+                      "expression": {
                         "id": 981,
                         "name": "_whiteListNFT",
                         "nodeType": "Identifier",
@@ -12670,52 +12685,36 @@
                         }
                       },
                       "id": 983,
-                      "indexExpression": {
-                        "id": 982,
-                        "name": "i",
-                        "nodeType": "Identifier",
-                        "overloadedDeclarations": [],
-                        "referencedDeclaration": 957,
-                        "src": "14159:1:0",
-                        "typeDescriptions": {
-                          "typeIdentifier": "t_uint256",
-                          "typeString": "uint256"
-                        }
-                      },
                       "isConstant": false,
-                      "isLValue": true,
+                      "isLValue": false,
                       "isPure": false,
-                      "lValueRequested": true,
-                      "nodeType": "IndexAccess",
-                      "src": "14145:16:0",
+                      "lValueRequested": false,
+                      "memberName": "push",
+                      "nodeType": "MemberAccess",
+                      "src": "14145:18:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_address",
-                        "typeString": "address"
+                        "typeIdentifier": "t_function_arraypush_nonpayable$_t_array$_t_address_$dyn_storage_ptr_$_t_address_$returns$__$bound_to$_t_array$_t_address_$dyn_storage_ptr_$",
+                        "typeString": "function (address[] storage pointer,address)"
                       }
                     },
-                    "nodeType": "Assignment",
-                    "operator": "=",
-                    "rightHandSide": {
-                      "id": 984,
-                      "name": "smartContract",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": [],
-                      "referencedDeclaration": 945,
-                      "src": "14164:13:0",
-                      "typeDescriptions": {
-                        "typeIdentifier": "t_address",
-                        "typeString": "address"
-                      }
-                    },
-                    "src": "14145:32:0",
+                    "id": 985,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "14145:33:0",
+                    "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_address",
-                      "typeString": "address"
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
                     }
                   },
                   "id": 986,
                   "nodeType": "ExpressionStatement",
-                  "src": "14145:32:0"
+                  "src": "14145:33:0"
                 }
               ]
             },
@@ -12769,7 +12768,7 @@
               "src": "13855:0:0"
             },
             "scope": 1041,
-            "src": "13801:384:0",
+            "src": "13801:385:0",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
@@ -12778,7 +12777,7 @@
             "body": {
               "id": 1030,
               "nodeType": "Block",
-              "src": "14252:321:0",
+              "src": "14253:321:0",
               "statements": [
                 {
                   "expression": {
@@ -12800,7 +12799,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 4294967281,
-                            "src": "14271:3:0",
+                            "src": "14272:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
                               "typeString": "msg"
@@ -12813,7 +12812,7 @@
                           "lValueRequested": false,
                           "memberName": "sender",
                           "nodeType": "MemberAccess",
-                          "src": "14271:10:0",
+                          "src": "14272:10:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
                             "typeString": "address"
@@ -12827,13 +12826,13 @@
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 160,
-                          "src": "14285:5:0",
+                          "src": "14286:5:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
                             "typeString": "address"
                           }
                         },
-                        "src": "14271:19:0",
+                        "src": "14272:19:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
@@ -12848,7 +12847,7 @@
                         "kind": "string",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "14292:60:0",
+                        "src": "14293:60:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_stringliteral_e7e2919cb8b1da790ee240ca1770edce4a4b0e3826ed82c59b847580548be7b7",
                           "typeString": "literal_string \"PawningShop: Only owner can remove address from white list\""
@@ -12875,7 +12874,7 @@
                         4294967278
                       ],
                       "referencedDeclaration": 4294967278,
-                      "src": "14263:7:0",
+                      "src": "14264:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
                         "typeString": "function (bool,string memory) pure"
@@ -12889,7 +12888,7 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "14263:90:0",
+                    "src": "14264:90:0",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
@@ -12898,7 +12897,7 @@
                   },
                   "id": 1000,
                   "nodeType": "ExpressionStatement",
-                  "src": "14263:90:0"
+                  "src": "14264:90:0"
                 },
                 {
                   "assignments": [
@@ -12910,10 +12909,10 @@
                       "id": 1002,
                       "mutability": "mutable",
                       "name": "i",
-                      "nameLocation": "14372:1:0",
+                      "nameLocation": "14373:1:0",
                       "nodeType": "VariableDeclaration",
                       "scope": 1030,
-                      "src": "14364:9:0",
+                      "src": "14365:9:0",
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
@@ -12924,7 +12923,7 @@
                         "id": 1001,
                         "name": "uint256",
                         "nodeType": "ElementaryTypeName",
-                        "src": "14364:7:0",
+                        "src": "14365:7:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -12935,13 +12934,13 @@
                   ],
                   "id": 1003,
                   "nodeType": "VariableDeclarationStatement",
-                  "src": "14364:9:0"
+                  "src": "14365:9:0"
                 },
                 {
                   "body": {
                     "id": 1023,
                     "nodeType": "Block",
-                    "src": "14427:105:0",
+                    "src": "14428:105:0",
                     "statements": [
                       {
                         "condition": {
@@ -12961,7 +12960,7 @@
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
                               "referencedDeclaration": 163,
-                              "src": "14446:13:0",
+                              "src": "14447:13:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_array$_t_address_$dyn_storage",
                                 "typeString": "address[] storage ref"
@@ -12974,7 +12973,7 @@
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
                               "referencedDeclaration": 1002,
-                              "src": "14460:1:0",
+                              "src": "14461:1:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
@@ -12985,7 +12984,7 @@
                             "isPure": false,
                             "lValueRequested": false,
                             "nodeType": "IndexAccess",
-                            "src": "14446:16:0",
+                            "src": "14447:16:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_address",
                               "typeString": "address"
@@ -12999,13 +12998,13 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 990,
-                            "src": "14466:13:0",
+                            "src": "14467:13:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_address",
                               "typeString": "address"
                             }
                           },
-                          "src": "14446:33:0",
+                          "src": "14447:33:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bool",
                             "typeString": "bool"
@@ -13013,16 +13012,16 @@
                         },
                         "id": 1022,
                         "nodeType": "IfStatement",
-                        "src": "14442:79:0",
+                        "src": "14443:79:0",
                         "trueBody": {
                           "id": 1021,
                           "nodeType": "Block",
-                          "src": "14481:40:0",
+                          "src": "14482:40:0",
                           "statements": [
                             {
                               "id": 1020,
                               "nodeType": "Break",
-                              "src": "14500:5:0"
+                              "src": "14501:5:0"
                             }
                           ]
                         }
@@ -13045,7 +13044,7 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 1002,
-                      "src": "14396:1:0",
+                      "src": "14397:1:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -13060,7 +13059,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 163,
-                        "src": "14400:13:0",
+                        "src": "14401:13:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_address_$dyn_storage",
                           "typeString": "address[] storage ref"
@@ -13073,13 +13072,13 @@
                       "lValueRequested": false,
                       "memberName": "length",
                       "nodeType": "MemberAccess",
-                      "src": "14400:20:0",
+                      "src": "14401:20:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "src": "14396:24:0",
+                    "src": "14397:24:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -13099,7 +13098,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 1002,
-                        "src": "14389:1:0",
+                        "src": "14390:1:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -13116,14 +13115,14 @@
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "14393:1:0",
+                        "src": "14394:1:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_rational_0_by_1",
                           "typeString": "int_const 0"
                         },
                         "value": "0"
                       },
-                      "src": "14389:5:0",
+                      "src": "14390:5:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -13131,7 +13130,7 @@
                     },
                     "id": 1007,
                     "nodeType": "ExpressionStatement",
-                    "src": "14389:5:0"
+                    "src": "14390:5:0"
                   },
                   "loopExpression": {
                     "expression": {
@@ -13143,14 +13142,14 @@
                       "nodeType": "UnaryOperation",
                       "operator": "++",
                       "prefix": false,
-                      "src": "14422:3:0",
+                      "src": "14423:3:0",
                       "subExpression": {
                         "id": 1012,
                         "name": "i",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 1002,
-                        "src": "14422:1:0",
+                        "src": "14423:1:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -13163,10 +13162,10 @@
                     },
                     "id": 1014,
                     "nodeType": "ExpressionStatement",
-                    "src": "14422:3:0"
+                    "src": "14423:3:0"
                   },
                   "nodeType": "ForStatement",
-                  "src": "14384:148:0"
+                  "src": "14385:148:0"
                 },
                 {
                   "expression": {
@@ -13178,7 +13177,7 @@
                     "nodeType": "UnaryOperation",
                     "operator": "delete",
                     "prefix": true,
-                    "src": "14542:23:0",
+                    "src": "14543:23:0",
                     "subExpression": {
                       "baseExpression": {
                         "id": 1025,
@@ -13186,7 +13185,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 163,
-                        "src": "14549:13:0",
+                        "src": "14550:13:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_address_$dyn_storage",
                           "typeString": "address[] storage ref"
@@ -13199,7 +13198,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 1002,
-                        "src": "14563:1:0",
+                        "src": "14564:1:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -13210,7 +13209,7 @@
                       "isPure": false,
                       "lValueRequested": true,
                       "nodeType": "IndexAccess",
-                      "src": "14549:16:0",
+                      "src": "14550:16:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
@@ -13223,7 +13222,7 @@
                   },
                   "id": 1029,
                   "nodeType": "ExpressionStatement",
-                  "src": "14542:23:0"
+                  "src": "14543:23:0"
                 }
               ]
             },
@@ -13233,7 +13232,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "removeFromWhiteList",
-            "nameLocation": "14202:19:0",
+            "nameLocation": "14203:19:0",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 991,
@@ -13244,10 +13243,10 @@
                   "id": 990,
                   "mutability": "mutable",
                   "name": "smartContract",
-                  "nameLocation": "14230:13:0",
+                  "nameLocation": "14231:13:0",
                   "nodeType": "VariableDeclaration",
                   "scope": 1031,
-                  "src": "14222:21:0",
+                  "src": "14223:21:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -13258,7 +13257,7 @@
                     "id": 989,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "14222:7:0",
+                    "src": "14223:7:0",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -13268,16 +13267,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "14221:23:0"
+              "src": "14222:23:0"
             },
             "returnParameters": {
               "id": 992,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "14252:0:0"
+              "src": "14253:0:0"
             },
             "scope": 1041,
-            "src": "14193:380:0",
+            "src": "14194:380:0",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
@@ -13286,7 +13285,7 @@
             "body": {
               "id": 1039,
               "nodeType": "Block",
-              "src": "14643:39:0",
+              "src": "14644:39:0",
               "statements": [
                 {
                   "expression": {
@@ -13295,7 +13294,7 @@
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
                     "referencedDeclaration": 163,
-                    "src": "14661:13:0",
+                    "src": "14662:13:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage",
                       "typeString": "address[] storage ref"
@@ -13304,7 +13303,7 @@
                   "functionReturnParameters": 1036,
                   "id": 1038,
                   "nodeType": "Return",
-                  "src": "14654:20:0"
+                  "src": "14655:20:0"
                 }
               ]
             },
@@ -13314,13 +13313,13 @@
             "kind": "function",
             "modifiers": [],
             "name": "getWhiteList",
-            "nameLocation": "14590:12:0",
+            "nameLocation": "14591:12:0",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 1032,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "14602:2:0"
+              "src": "14603:2:0"
             },
             "returnParameters": {
               "id": 1036,
@@ -13334,7 +13333,7 @@
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
                   "scope": 1040,
-                  "src": "14625:16:0",
+                  "src": "14626:16:0",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -13346,7 +13345,7 @@
                       "id": 1033,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "14625:7:0",
+                      "src": "14626:7:0",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -13355,7 +13354,7 @@
                     },
                     "id": 1034,
                     "nodeType": "ArrayTypeName",
-                    "src": "14625:9:0",
+                    "src": "14626:9:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
                       "typeString": "address[]"
@@ -13364,21 +13363,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "14624:18:0"
+              "src": "14625:18:0"
             },
             "scope": 1041,
-            "src": "14581:101:0",
+            "src": "14582:101:0",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "public"
           }
         ],
         "scope": 1042,
-        "src": "5187:9498:0",
+        "src": "5187:9499:0",
         "usedErrors": []
       }
     ],
-    "src": "0:14687:0"
+    "src": "0:14688:0"
   },
   "legacyAST": {
     "absolutePath": "/E/Documents/OneDrive/Documents/solidity/nft-pawning-shop/contracts/PawningShop.sol",
@@ -25591,7 +25590,7 @@
             "body": {
               "id": 987,
               "nodeType": "Block",
-              "src": "13855:330:0",
+              "src": "13855:331:0",
               "statements": [
                 {
                   "expression": {
@@ -26000,13 +25999,28 @@
                 },
                 {
                   "expression": {
-                    "id": 985,
-                    "isConstant": false,
-                    "isLValue": false,
-                    "isPure": false,
-                    "lValueRequested": false,
-                    "leftHandSide": {
-                      "baseExpression": {
+                    "arguments": [
+                      {
+                        "id": 984,
+                        "name": "smartContract",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 945,
+                        "src": "14164:13:0",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      ],
+                      "expression": {
                         "id": 981,
                         "name": "_whiteListNFT",
                         "nodeType": "Identifier",
@@ -26019,52 +26033,36 @@
                         }
                       },
                       "id": 983,
-                      "indexExpression": {
-                        "id": 982,
-                        "name": "i",
-                        "nodeType": "Identifier",
-                        "overloadedDeclarations": [],
-                        "referencedDeclaration": 957,
-                        "src": "14159:1:0",
-                        "typeDescriptions": {
-                          "typeIdentifier": "t_uint256",
-                          "typeString": "uint256"
-                        }
-                      },
                       "isConstant": false,
-                      "isLValue": true,
+                      "isLValue": false,
                       "isPure": false,
-                      "lValueRequested": true,
-                      "nodeType": "IndexAccess",
-                      "src": "14145:16:0",
+                      "lValueRequested": false,
+                      "memberName": "push",
+                      "nodeType": "MemberAccess",
+                      "src": "14145:18:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_address",
-                        "typeString": "address"
+                        "typeIdentifier": "t_function_arraypush_nonpayable$_t_array$_t_address_$dyn_storage_ptr_$_t_address_$returns$__$bound_to$_t_array$_t_address_$dyn_storage_ptr_$",
+                        "typeString": "function (address[] storage pointer,address)"
                       }
                     },
-                    "nodeType": "Assignment",
-                    "operator": "=",
-                    "rightHandSide": {
-                      "id": 984,
-                      "name": "smartContract",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": [],
-                      "referencedDeclaration": 945,
-                      "src": "14164:13:0",
-                      "typeDescriptions": {
-                        "typeIdentifier": "t_address",
-                        "typeString": "address"
-                      }
-                    },
-                    "src": "14145:32:0",
+                    "id": 985,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "14145:33:0",
+                    "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_address",
-                      "typeString": "address"
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
                     }
                   },
                   "id": 986,
                   "nodeType": "ExpressionStatement",
-                  "src": "14145:32:0"
+                  "src": "14145:33:0"
                 }
               ]
             },
@@ -26118,7 +26116,7 @@
               "src": "13855:0:0"
             },
             "scope": 1041,
-            "src": "13801:384:0",
+            "src": "13801:385:0",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
@@ -26127,7 +26125,7 @@
             "body": {
               "id": 1030,
               "nodeType": "Block",
-              "src": "14252:321:0",
+              "src": "14253:321:0",
               "statements": [
                 {
                   "expression": {
@@ -26149,7 +26147,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 4294967281,
-                            "src": "14271:3:0",
+                            "src": "14272:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
                               "typeString": "msg"
@@ -26162,7 +26160,7 @@
                           "lValueRequested": false,
                           "memberName": "sender",
                           "nodeType": "MemberAccess",
-                          "src": "14271:10:0",
+                          "src": "14272:10:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
                             "typeString": "address"
@@ -26176,13 +26174,13 @@
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 160,
-                          "src": "14285:5:0",
+                          "src": "14286:5:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
                             "typeString": "address"
                           }
                         },
-                        "src": "14271:19:0",
+                        "src": "14272:19:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
@@ -26197,7 +26195,7 @@
                         "kind": "string",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "14292:60:0",
+                        "src": "14293:60:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_stringliteral_e7e2919cb8b1da790ee240ca1770edce4a4b0e3826ed82c59b847580548be7b7",
                           "typeString": "literal_string \"PawningShop: Only owner can remove address from white list\""
@@ -26224,7 +26222,7 @@
                         4294967278
                       ],
                       "referencedDeclaration": 4294967278,
-                      "src": "14263:7:0",
+                      "src": "14264:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
                         "typeString": "function (bool,string memory) pure"
@@ -26238,7 +26236,7 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "14263:90:0",
+                    "src": "14264:90:0",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
@@ -26247,7 +26245,7 @@
                   },
                   "id": 1000,
                   "nodeType": "ExpressionStatement",
-                  "src": "14263:90:0"
+                  "src": "14264:90:0"
                 },
                 {
                   "assignments": [
@@ -26259,10 +26257,10 @@
                       "id": 1002,
                       "mutability": "mutable",
                       "name": "i",
-                      "nameLocation": "14372:1:0",
+                      "nameLocation": "14373:1:0",
                       "nodeType": "VariableDeclaration",
                       "scope": 1030,
-                      "src": "14364:9:0",
+                      "src": "14365:9:0",
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
@@ -26273,7 +26271,7 @@
                         "id": 1001,
                         "name": "uint256",
                         "nodeType": "ElementaryTypeName",
-                        "src": "14364:7:0",
+                        "src": "14365:7:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -26284,13 +26282,13 @@
                   ],
                   "id": 1003,
                   "nodeType": "VariableDeclarationStatement",
-                  "src": "14364:9:0"
+                  "src": "14365:9:0"
                 },
                 {
                   "body": {
                     "id": 1023,
                     "nodeType": "Block",
-                    "src": "14427:105:0",
+                    "src": "14428:105:0",
                     "statements": [
                       {
                         "condition": {
@@ -26310,7 +26308,7 @@
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
                               "referencedDeclaration": 163,
-                              "src": "14446:13:0",
+                              "src": "14447:13:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_array$_t_address_$dyn_storage",
                                 "typeString": "address[] storage ref"
@@ -26323,7 +26321,7 @@
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
                               "referencedDeclaration": 1002,
-                              "src": "14460:1:0",
+                              "src": "14461:1:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
@@ -26334,7 +26332,7 @@
                             "isPure": false,
                             "lValueRequested": false,
                             "nodeType": "IndexAccess",
-                            "src": "14446:16:0",
+                            "src": "14447:16:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_address",
                               "typeString": "address"
@@ -26348,13 +26346,13 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 990,
-                            "src": "14466:13:0",
+                            "src": "14467:13:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_address",
                               "typeString": "address"
                             }
                           },
-                          "src": "14446:33:0",
+                          "src": "14447:33:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bool",
                             "typeString": "bool"
@@ -26362,16 +26360,16 @@
                         },
                         "id": 1022,
                         "nodeType": "IfStatement",
-                        "src": "14442:79:0",
+                        "src": "14443:79:0",
                         "trueBody": {
                           "id": 1021,
                           "nodeType": "Block",
-                          "src": "14481:40:0",
+                          "src": "14482:40:0",
                           "statements": [
                             {
                               "id": 1020,
                               "nodeType": "Break",
-                              "src": "14500:5:0"
+                              "src": "14501:5:0"
                             }
                           ]
                         }
@@ -26394,7 +26392,7 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 1002,
-                      "src": "14396:1:0",
+                      "src": "14397:1:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -26409,7 +26407,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 163,
-                        "src": "14400:13:0",
+                        "src": "14401:13:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_address_$dyn_storage",
                           "typeString": "address[] storage ref"
@@ -26422,13 +26420,13 @@
                       "lValueRequested": false,
                       "memberName": "length",
                       "nodeType": "MemberAccess",
-                      "src": "14400:20:0",
+                      "src": "14401:20:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "src": "14396:24:0",
+                    "src": "14397:24:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -26448,7 +26446,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 1002,
-                        "src": "14389:1:0",
+                        "src": "14390:1:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -26465,14 +26463,14 @@
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "14393:1:0",
+                        "src": "14394:1:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_rational_0_by_1",
                           "typeString": "int_const 0"
                         },
                         "value": "0"
                       },
-                      "src": "14389:5:0",
+                      "src": "14390:5:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -26480,7 +26478,7 @@
                     },
                     "id": 1007,
                     "nodeType": "ExpressionStatement",
-                    "src": "14389:5:0"
+                    "src": "14390:5:0"
                   },
                   "loopExpression": {
                     "expression": {
@@ -26492,14 +26490,14 @@
                       "nodeType": "UnaryOperation",
                       "operator": "++",
                       "prefix": false,
-                      "src": "14422:3:0",
+                      "src": "14423:3:0",
                       "subExpression": {
                         "id": 1012,
                         "name": "i",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 1002,
-                        "src": "14422:1:0",
+                        "src": "14423:1:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -26512,10 +26510,10 @@
                     },
                     "id": 1014,
                     "nodeType": "ExpressionStatement",
-                    "src": "14422:3:0"
+                    "src": "14423:3:0"
                   },
                   "nodeType": "ForStatement",
-                  "src": "14384:148:0"
+                  "src": "14385:148:0"
                 },
                 {
                   "expression": {
@@ -26527,7 +26525,7 @@
                     "nodeType": "UnaryOperation",
                     "operator": "delete",
                     "prefix": true,
-                    "src": "14542:23:0",
+                    "src": "14543:23:0",
                     "subExpression": {
                       "baseExpression": {
                         "id": 1025,
@@ -26535,7 +26533,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 163,
-                        "src": "14549:13:0",
+                        "src": "14550:13:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_address_$dyn_storage",
                           "typeString": "address[] storage ref"
@@ -26548,7 +26546,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 1002,
-                        "src": "14563:1:0",
+                        "src": "14564:1:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -26559,7 +26557,7 @@
                       "isPure": false,
                       "lValueRequested": true,
                       "nodeType": "IndexAccess",
-                      "src": "14549:16:0",
+                      "src": "14550:16:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
@@ -26572,7 +26570,7 @@
                   },
                   "id": 1029,
                   "nodeType": "ExpressionStatement",
-                  "src": "14542:23:0"
+                  "src": "14543:23:0"
                 }
               ]
             },
@@ -26582,7 +26580,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "removeFromWhiteList",
-            "nameLocation": "14202:19:0",
+            "nameLocation": "14203:19:0",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 991,
@@ -26593,10 +26591,10 @@
                   "id": 990,
                   "mutability": "mutable",
                   "name": "smartContract",
-                  "nameLocation": "14230:13:0",
+                  "nameLocation": "14231:13:0",
                   "nodeType": "VariableDeclaration",
                   "scope": 1031,
-                  "src": "14222:21:0",
+                  "src": "14223:21:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -26607,7 +26605,7 @@
                     "id": 989,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "14222:7:0",
+                    "src": "14223:7:0",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -26617,16 +26615,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "14221:23:0"
+              "src": "14222:23:0"
             },
             "returnParameters": {
               "id": 992,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "14252:0:0"
+              "src": "14253:0:0"
             },
             "scope": 1041,
-            "src": "14193:380:0",
+            "src": "14194:380:0",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
@@ -26635,7 +26633,7 @@
             "body": {
               "id": 1039,
               "nodeType": "Block",
-              "src": "14643:39:0",
+              "src": "14644:39:0",
               "statements": [
                 {
                   "expression": {
@@ -26644,7 +26642,7 @@
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
                     "referencedDeclaration": 163,
-                    "src": "14661:13:0",
+                    "src": "14662:13:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage",
                       "typeString": "address[] storage ref"
@@ -26653,7 +26651,7 @@
                   "functionReturnParameters": 1036,
                   "id": 1038,
                   "nodeType": "Return",
-                  "src": "14654:20:0"
+                  "src": "14655:20:0"
                 }
               ]
             },
@@ -26663,13 +26661,13 @@
             "kind": "function",
             "modifiers": [],
             "name": "getWhiteList",
-            "nameLocation": "14590:12:0",
+            "nameLocation": "14591:12:0",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 1032,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "14602:2:0"
+              "src": "14603:2:0"
             },
             "returnParameters": {
               "id": 1036,
@@ -26683,7 +26681,7 @@
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
                   "scope": 1040,
-                  "src": "14625:16:0",
+                  "src": "14626:16:0",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -26695,7 +26693,7 @@
                       "id": 1033,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "14625:7:0",
+                      "src": "14626:7:0",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -26704,7 +26702,7 @@
                     },
                     "id": 1034,
                     "nodeType": "ArrayTypeName",
-                    "src": "14625:9:0",
+                    "src": "14626:9:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
                       "typeString": "address[]"
@@ -26713,21 +26711,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "14624:18:0"
+              "src": "14625:18:0"
             },
             "scope": 1041,
-            "src": "14581:101:0",
+            "src": "14582:101:0",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "public"
           }
         ],
         "scope": 1042,
-        "src": "5187:9498:0",
+        "src": "5187:9499:0",
         "usedErrors": []
       }
     ],
-    "src": "0:14687:0"
+    "src": "0:14688:0"
   },
   "compiler": {
     "name": "solc",
@@ -26735,7 +26733,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-08-18T01:55:20.876Z",
+  "updatedAt": "2021-08-18T07:31:28.236Z",
   "devdoc": {
     "kind": "dev",
     "methods": {

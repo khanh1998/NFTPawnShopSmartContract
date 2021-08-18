@@ -5,14 +5,30 @@
       <div>
         Current account<p v-for="acc in accounts" :key="acc">{{ acc }}</p>
       </div>
-      <div>
+      <div class="d-flex flex-row">
         <v-card>
+          <v-list>
+            <v-list-item v-for="add in whiteList" :key="add">
+              <v-list-item-title>{{ add }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-card>
+        <v-card>
+          <v-card-title>Add address to white list</v-card-title>
           <v-text-field v-model="newAddress"/>
-          <v-btn @click="addNewAddress">Submit</v-btn>
+          <v-card-actions>
+            <v-btn @click="addNewAddress">Submit</v-btn>
+          </v-card-actions>
+        </v-card>
+        <v-card>
+          <v-card-title>Remove address from white list</v-card-title>
+          <v-text-field v-model="newAddress"/>
+          <v-card-actions>
+            <v-btn @click="removeAddress">Submit</v-btn>
+          </v-card-actions>
         </v-card>
       </div>
       <div>
-        <v-btn @click="owner"></v-btn>
       </div>
     </div>
   </div>
@@ -36,6 +52,8 @@ export default class extends Vue {
 
   newAddress = ''
 
+  owner = ''
+
   getContractInstance(contractJson: any, networkId: number): Contract {
     const deployedNetwork = contractJson.networks[networkId];
     const instance: Contract = new this.$web3.eth.Contract(contractJson.abi,
@@ -50,23 +68,33 @@ export default class extends Vue {
       .send({ from: this.accounts[0] });
     console.log(res);
     this.loading = false;
+    this.newAddress = '';
   }
 
   async getWhiteList(): Promise<string[]> {
     this.loading = true;
     const pawningShop = this.getContractInstance(PawningShop, this.networkId);
-    console.log(pawningShop);
     const res: string[] = await pawningShop.methods.getWhiteList().call();
     console.log(res);
     this.loading = false;
     return res;
   }
 
-  async owner(): Promise<string[]> {
+  async removeAddress(): Promise<void> {
+    this.loading = true;
+    const pawningShop = this.getContractInstance(PawningShop, this.networkId);
+    const res = await pawningShop.methods.removeFromWhiteList(this.newAddress)
+      .send({ from: this.accounts[0] });
+    console.log(res);
+    this.loading = false;
+    this.newAddress = '';
+  }
+
+  async getOwner(): Promise<string> {
     this.loading = true;
     const pawningShop = this.getContractInstance(PawningShop, this.networkId);
     console.log(pawningShop);
-    const res: string[] = await pawningShop.methods.owner().call();
+    const res: string = await pawningShop.methods.owner().call();
     console.log(res);
     this.loading = false;
     return res;
@@ -84,6 +112,8 @@ export default class extends Vue {
     this.loading = true;
     this.accounts = await this.getAccounts();
     this.networkId = await this.getNetworkId();
+    this.owner = await this.getOwner();
+    this.whiteList = await this.getWhiteList();
     this.loading = false;
   }
 }
