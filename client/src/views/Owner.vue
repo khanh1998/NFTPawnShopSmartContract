@@ -1,25 +1,90 @@
 <template>
   <div>
-    
-  </div> 
+    <p v-if="loading">app loading...</p>
+    <div v-if="!loading">
+      <div>
+        Current account<p v-for="acc in accounts" :key="acc">{{ acc }}</p>
+      </div>
+      <div>
+        <v-card>
+          <v-text-field v-model="newAddress"/>
+          <v-btn @click="addNewAddress">Submit</v-btn>
+        </v-card>
+      </div>
+      <div>
+        <v-btn @click="owner"></v-btn>
+      </div>
+    </div>
+  </div>
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import { Contract } from 'web3-eth-contract';
+import PawningShop from '../contracts/PawningShop.json';
 
 @Component({
-  name: "Owner",
+  name: 'Owner',
 })
 export default class extends Vue {
-  loading: boolean = false
-  async getWhiteList() {
-    this.loading = true
-    const accounts = await this.$web3.eth.getAccounts()
-    console.log(accounts)
-    this.loading = false
+  loading = false
+
+  accounts: string[] = []
+
+  whiteList: string[] = []
+
+  networkId = 0
+
+  newAddress = ''
+
+  getContractInstance(contractJson: any, networkId: number): Contract {
+    const deployedNetwork = contractJson.networks[networkId];
+    const instance: Contract = new this.$web3.eth.Contract(contractJson.abi,
+      deployedNetwork && deployedNetwork.address);
+    return instance;
   }
 
-  created() {
-    this.getWhiteList()
+  async addNewAddress(): Promise<void> {
+    this.loading = true;
+    const pawningShop = this.getContractInstance(PawningShop, this.networkId);
+    const res = await pawningShop.methods.addToWhiteList(this.newAddress)
+      .send({ from: this.accounts[0] });
+    console.log(res);
+    this.loading = false;
+  }
+
+  async getWhiteList(): Promise<string[]> {
+    this.loading = true;
+    const pawningShop = this.getContractInstance(PawningShop, this.networkId);
+    console.log(pawningShop);
+    const res: string[] = await pawningShop.methods.getWhiteList().call();
+    console.log(res);
+    this.loading = false;
+    return res;
+  }
+
+  async owner(): Promise<string[]> {
+    this.loading = true;
+    const pawningShop = this.getContractInstance(PawningShop, this.networkId);
+    console.log(pawningShop);
+    const res: string[] = await pawningShop.methods.owner().call();
+    console.log(res);
+    this.loading = false;
+    return res;
+  }
+
+  async getNetworkId(): Promise<number> {
+    return this.$web3.eth.net.getId();
+  }
+
+  async getAccounts(): Promise<string[]> {
+    return this.$web3.eth.getAccounts();
+  }
+
+  async created() {
+    this.loading = true;
+    this.accounts = await this.getAccounts();
+    this.networkId = await this.getNetworkId();
+    this.loading = false;
   }
 }
 

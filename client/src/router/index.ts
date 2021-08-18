@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import Home from '../views/Home.vue';
-import Owner from '../view/Owner.vue';
+import Owner from '../views/Owner.vue';
 
 Vue.use(VueRouter);
 

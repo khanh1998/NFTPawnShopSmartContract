@@ -23,8 +23,9 @@ const hdwallet = require("@truffle/hdwallet-provider")
 require('dotenv').config({ path: '.env'})
 
 const mnemonic = process.env.MNEMONIC
-const accountIndex = process.env.ACCOUNT_INDEX
+const accountIndex = Number(process.env.ACCOUNT_INDEX)
 const host = process.env.GANACHE_HOST
+console.log({ mnemonic, accountIndex, host });
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
@@ -40,6 +41,11 @@ module.exports = {
    */
   contracts_build_directory: path.join(__dirname, "client/src/contracts"),
   networks: {
+    development: {
+      port: 7545,
+      network_id: 5777,
+      host: "127.0.0.1",
+    },
     ganache: {
       provider: () => {
         return new hdwallet(mnemonic, host, accountIndex)
@@ -101,7 +107,7 @@ module.exports = {
       //  },
       //  evmVersion: "byzantium"
       // }
-      version: "^0.8.0",
+      version: "0.8.4",
     }
   },
 
