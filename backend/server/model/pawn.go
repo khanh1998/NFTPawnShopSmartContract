@@ -1,3 +1,5 @@
+package model
+
 type PawnStatus int
 
 const (

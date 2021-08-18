@@ -8,11 +8,13 @@ import (
 )
 
 type Env struct {
-	MongoDBUri    string        `mapstructure:"MongoDB_URI"`
-	Host          string        `mapstructure:"HOST"`
-	DatabaseName  string        `mapstructure:"DATABASE_NAME"`
-	SymmetricKey  string        `mapstructure:"SYMMETRIC_KEY"`
-	TokenDuration time.Duration `mapstructure:"TOKEN_DURATION"`
+	MongoDBUri           string        `mapstructure:"MongoDB_URI"`
+	Host                 string        `mapstructure:"HOST"`
+	DatabaseName         string        `mapstructure:"DATABASE_NAME"`
+	SymmetricKey         string        `mapstructure:"SYMMETRIC_KEY"`
+	TokenDuration        time.Duration `mapstructure:"TOKEN_DURATION"`
+	NetworkHost          string        `mapstructure:"NETWORK_HOST"`
+	SmartContractAddress string        `mapstructure:"SMART_CONTRACT_ADDRESS"`
 }
 
 func LoadEnv(path string) (Env, error) {
