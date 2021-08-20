@@ -192,22 +192,6 @@ contract PawningShop {
 
     constructor() {
         owner = msg.sender;
-        Pawn memory newPawn = Pawn({
-            creator: address(0),
-            contractAddress: address(0),
-            tokenId: 0,
-            status: PawnStatus.CANCELLED
-        });
-        _pawns[0] = newPawn;
-        Bid memory newBid = Bid({
-            creator: address(0),
-            loanAmount: 0,
-            interest: 0,
-            loanStartTime: 0,
-            loanDuration: 0,
-            isInterestProRated: false
-        });
-        _bids[0] = newBid;
     }
 
     event PawnCreated(address pawner, uint256 pawnId);
@@ -217,6 +201,8 @@ contract PawningShop {
     event PawnLiquidated(address pawner, address lender, uint256 id);
     event BidCreated(address creator, uint256 pawnId);
     event BidCancelled(address creator, uint256 pawnId);
+    event WhiteListAdded(address smartContract);
+    event WhiteListRemoved(address smartContract);
 
     function getPawnById(uint256 id) public view returns(Pawn memory) {
         return _pawns[id];
@@ -393,6 +379,7 @@ contract PawningShop {
             }
         }
         _whiteListNFT.push(smartContract);
+        emit WhiteListAdded(smartContract);
     }
 
     function removeFromWhiteList(address smartContract) public {
@@ -404,6 +391,7 @@ contract PawningShop {
             }
         }
         delete _whiteListNFT[i];
+        emit WhiteListRemoved(smartContract);
     }
 
     function getWhiteList() public view returns(address[] memory) {

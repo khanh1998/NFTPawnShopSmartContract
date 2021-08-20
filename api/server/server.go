@@ -39,7 +39,7 @@ func (s *Server) setupRouter() {
 	router := gin.Default()
 	authRouter := router.Group("/").Use(authMiddleware)
 
-	userModel := model.NewUsers("users", s.database)
+	userModel := model.NewUsers(s.database)
 	userController := controller.NewUserController(*userModel)
 	authRouter.GET("/users/:id", userController.FindOne)
 	router.POST("/users", userController.InsertOne)

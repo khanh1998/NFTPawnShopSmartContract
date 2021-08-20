@@ -13,19 +13,24 @@ import (
 )
 
 type User struct {
-	ID       primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
-	Username string             `json:"username" bson:"username,omitempty"`
-	Name     string             `json:"name" bson:"name,omitempty"`
-	Email    string             `json:"email" bson:"email,omitempty"`
-	Password string             `json:"password" bson:"password,omitempty"`
+	ID            primitive.ObjectID `json:"_id" bson:"_id,omitempty"`
+	Username      string             `json:"username" bson:"username,omitempty" validate:"required,unique,alphanum"`
+	Name          string             `json:"name" bson:"name,omitempty"`
+	Email         string             `json:"email" bson:"email,omitempty" validate:"email,unique"`
+	Password      string             `json:"password" bson:"password,omitempty"`
+	WalletAddress string             `json:"wallet_address" bson:"wallet_address,omitempty" validate:"eth_addr"`
 }
 
 type Users struct {
 	collection *mongo.Collection
 }
 
-func NewUsers(collectionName string, database *mongo.Database) *Users {
-	collection := database.Collection(collectionName)
+const (
+	UserCollectionName = "users"
+)
+
+func NewUsers(database *mongo.Database) *Users {
+	collection := database.Collection(UserCollectionName)
 	return &Users{
 		collection: collection,
 	}

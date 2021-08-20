@@ -74,7 +74,7 @@ export default class extends Vue {
   async getWhiteList(): Promise<string[]> {
     this.loading = true;
     const pawningShop = this.getContractInstance(PawningShop, this.networkId);
-    const res: string[] = await pawningShop.methods.getWhiteList().call();
+    const res: string[] = await pawningShop.methods.getWhiteList().call(); // eslint-disable-line
     console.log(res);
     this.loading = false;
     return res;

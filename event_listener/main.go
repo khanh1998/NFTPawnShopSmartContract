@@ -1,4 +1,4 @@
-package ethclient
+package main
 
 import (
 	"context"
@@ -11,13 +11,13 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-func NewClient(host string, contractAdd string) error {
-	client, err := ethclient.Dial(host)
+func main() {
+	client, err := ethclient.Dial("ws://127.0.0.1:7545")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	contractAddress := common.HexToAddress(contractAdd)
+	contractAddress := common.HexToAddress("0x4A3f07Cb18ed442EbF2Db20419f8196e52885f10")
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddress},
 	}
