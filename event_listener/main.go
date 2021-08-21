@@ -4,8 +4,12 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
+
+	pawningShop "khanh/contracts"
 
 	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -28,12 +32,23 @@ func main() {
 		log.Fatal(err)
 	}
 
+	contractAbi, err := abi.JSON(strings.NewReader(string(pawningShop.ContractsABI)))
+	if err != nil {
+		log.Panic(err)
+	}
+
 	for {
 		select {
 		case err := <-sub.Err():
 			log.Fatal(err)
 		case vLog := <-logs:
 			fmt.Println(vLog) // pointer to event log
+			event, err := contractAbi.Unpack("WhiteListAdded", vLog.Data)
+			if err != nil {
+				log.Panic(err)
+			}
+			fmt.Println(event)
 		}
 	}
+
 }

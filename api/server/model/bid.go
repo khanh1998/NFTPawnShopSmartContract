@@ -47,7 +47,7 @@ func (b *Bids) InsertOne(data Bid) (string, error) {
 	if ok {
 		return objectId.Hex(), nil
 	}
-	return "", errors.New("Cannot parse mongodb insertedid to objectid")
+	return "", errors.New("cannot parse mongodb insertedid to objectid")
 }
 
 // find bid by id in smart contract
