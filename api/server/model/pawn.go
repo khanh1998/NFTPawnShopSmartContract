@@ -33,7 +33,7 @@ type PawnRead struct {
 	ID           string             `json:"id" bson:"id,omitempty"`                       // id of pawn
 	Creator      User               `json:"creator" bson:"creator,omitempty"`             // wallet address of pawn's creator in hex format
 	TokenAddress string             `json:"token_address" bson:"token_address,omitempty"` // address to smart contract that manages token of creator
-	TokenId      int                `json:"token_id" bson:"token_id,omitempty"`           // token id of creator on smart contract
+	TokenId      string             `json:"token_id" bson:"token_id,omitempty"`           // token id of creator on smart contract
 	Status       PawnStatus         `json:"status" bson:"status,omitempty"`               // status of pawn
 	BidID        []Bid              `json:"bids" bson:"bids,omitempty"`                   // data of bid that re
 }
@@ -75,7 +75,35 @@ func (p *Pawns) InsertOne(data PawnWrite) (string, error) {
 }
 
 func (p *Pawns) UpdateOne(pawnId string, data PawnUpdate) (bool, error) {
-	return true, nil
+	objectId, err := primitive.ObjectIDFromHex(pawnId)
+	if err != nil {
+		return false, err
+	}
+	pawn := bson.D{
+		primitive.E{
+			Key: "$set",
+			Value: bson.D{
+				primitive.E{
+					Key:   "status",
+					Value: data.Status,
+				},
+				primitive.E{
+					Key:   "bids",
+					Value: data.Bids,
+				},
+			},
+		},
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	response, err := p.collection.UpdateByID(ctx, objectId, pawn)
+	if err != nil {
+		return false, err
+	}
+	if response.ModifiedCount == 1 {
+		return true, nil
+	}
+	return true, errors.New("didn't update anything")
 }
 
 func (p *Pawns) FindAll() ([]PawnRead, error) {
@@ -123,6 +151,23 @@ func (p *Pawns) FindOne(id string) (*PawnRead, error) {
 				},
 				// Use bids as the field name to match struct field.
 				"as": "bids",
+			},
+		},
+		{
+			"$lookup": bson.M{
+				// Define the tags collection for the join.
+				"from": UserCollectionName,
+				// Specify the variable to use in the pipeline stage.
+				"localField":   "creator",
+				"foreignField": "wallet_address",
+				// Use bids as the field name to match struct field.
+				"as": "creator",
+			},
+		},
+		{
+			"$unwind": bson.M{
+				"path":                       "$creator",
+				"preserveNullAndEmptyArrays": true,
 			},
 		},
 	}

@@ -11,7 +11,7 @@ import (
 )
 
 type Bid struct {
-	UUID               primitive.ObjectID `bson:"_id"`
+	UUID               primitive.ObjectID `bson:"_id,omitempty"`
 	ID                 string             `json:"id" bson:"id,omitempty"`
 	Creator            string             `json:"creator" bson:"creator,omitempty"`
 	LoanAmount         string             `json:"loan_amount" bson:"loan_amount,omitempty"`
