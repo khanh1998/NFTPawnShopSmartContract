@@ -44,6 +44,16 @@ func (s *Server) setupRouter() {
 	authRouter.GET("/users/:id", userController.FindOne)
 	router.POST("/users", userController.InsertOne)
 
+	pawnModel := model.NewPawns(s.database)
+	pawnController := controller.NewPawnController(pawnModel)
+	router.POST("/pawns", pawnController.InsertOne)
+	router.GET("/pawns/:id", pawnController.FindOne)
+
+	bidModel := model.NewBids(*s.database)
+	bidController := controller.NewBidController(bidModel)
+	router.POST("/bids", bidController.InsertOne)
+	router.GET("/bids/:id", bidController.FindOne)
+
 	router.POST("/auth", userController.CreateLogin(s.tokenMaker))
 	s.router = router
 }

@@ -24,7 +24,7 @@ type PawnWrite struct {
 	ID           string     `json:"id" bson:"id,omitempty" validate:"number"`                         // id of pawn
 	Creator      string     `json:"creator" bson:"creator,omitempty" validate:"eth_addr"`             // wallet address of pawn's creator in hex format
 	TokenAddress string     `json:"token_address" bson:"token_address,omitempty" validate:"eth_addr"` // address to smart contract that manages token of creator
-	TokenId      int        `json:"token_id" bson:"token_id,omitempty"`                               // token id of creator on smart contract
+	TokenId      string     `json:"token_id" bson:"token_id,omitempty"`                               // token id of creator on smart contract
 	Status       PawnStatus `json:"status" bson:"status,omitempty"`                                   // status of pawn
 }
 
@@ -83,13 +83,14 @@ func (p *Pawns) FindAll() ([]PawnRead, error) {
 	return p.Find(filter)
 }
 
+// find pawn by id in smart contract
 func (p *Pawns) FindOne(id string) (*PawnRead, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	query := []bson.M{
 		{
 			"$match": bson.M{
-				"_id": id,
+				"id": id,
 			},
 		},
 		{
