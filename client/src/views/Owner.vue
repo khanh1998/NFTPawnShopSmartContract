@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <p v-if="loading">app loading...</p>
+  <v-container>
+    <v-row>
+      <p v-if="loading">app loading...</p>
     <div v-if="!loading">
       <div>
         Current account<p v-for="acc in accounts" :key="acc">{{ acc }}</p>
@@ -31,7 +32,8 @@
       <div>
       </div>
     </div>
-  </div>
+    </v-row>
+  </v-container>
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';

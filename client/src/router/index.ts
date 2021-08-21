@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import Home from '../views/Home.vue';
 import Owner from '../views/Owner.vue';
+import Borrower from '../views/Borrower.vue';
 
 Vue.use(VueRouter);
 
@@ -23,6 +24,11 @@ const routes: Array<RouteConfig> = [
     path: '/owner',
     name: 'Owner',
     component: Owner,
+  },
+  {
+    path: '/borrower',
+    name: 'Borrower',
+    component: Borrower,
   },
 ];
 

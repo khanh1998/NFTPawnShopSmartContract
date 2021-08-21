@@ -1,35 +1,48 @@
 <template>
-  <v-app>
-    <v-main>
-      <div id="nav">
-        <router-link to="/">Home</router-link> |
-        <router-link to="/about">About</router-link>
-        <router-link to="/owner">Owner</router-link>
-      </div>
+  <v-app id="inspire">
+    <v-app-bar
+      app
+      color="white"
+      flat
+    >
+      <v-avatar
+        :color="$vuetify.breakpoint.smAndDown ? 'grey darken-1' : 'transparent'"
+        size="32"
+      ></v-avatar>
+
+      <v-tabs
+        centered
+        class="ml-n9"
+        color="grey darken-1"
+      >
+        <v-tab
+          v-for="link in links"
+          :key="link"
+        >
+          <router-link :to="link[0]">{{link[1]}}</router-link>
+        </v-tab>
+      </v-tabs>
+
+      <v-avatar
+        class="hidden-sm-and-down"
+        color="grey darken-1 shrink"
+        size="32"
+      ></v-avatar>
+    </v-app-bar>
+
+    <v-main class="grey lighten-3">
       <router-view/>
     </v-main>
   </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator';
 
-#nav {
-  padding: 30px;
+@Component({
+  name: 'Borrower',
+})
+export default class extends Vue {
+  links = [['/', 'Home'], ['/owner', 'Owner'], ['/borrower', 'Borrower'], ['/lender', 'Lender']]
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+</script>
