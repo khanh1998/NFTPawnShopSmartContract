@@ -444,6 +444,9 @@ contract PawningShop {
             isApproved || isApprovedForAll,
             "PawningShop: haven't got permission to transfer"
         );
+
+        IERC721(tokenAddress).transferFrom(msg.sender, address(this), tokenId);
+
         Pawn memory pawn = Pawn({
             creator: sender,
             contractAddress: tokenAddress,

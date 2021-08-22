@@ -21,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	contractAddress := common.HexToAddress("0x4A3f07Cb18ed442EbF2Db20419f8196e52885f10")
+	contractAddress := common.HexToAddress("0x919f82F351667BB4f22c0953eD6cA7280FeF30c8")
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddress},
 	}
@@ -43,7 +43,7 @@ func main() {
 			log.Fatal(err)
 		case vLog := <-logs:
 			fmt.Println(vLog) // pointer to event log
-			event, err := contractAbi.Unpack("WhiteListAdded", vLog.Data)
+			event, err := contractAbi.Unpack("PawnCreated", vLog.Data)
 			if err != nil {
 				log.Panic(err)
 			}
