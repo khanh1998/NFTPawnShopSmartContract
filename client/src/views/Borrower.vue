@@ -5,8 +5,8 @@
         <p>Hello borrower!!! {{ accounts[0] }}</p>
       </v-col>
     </v-row>
-    <v-row>
-      <pawn-creator @create-pawn="createPawn"/>
+    <v-row v-if="!loading">
+      <pawn-creator @create-pawn="createPawn" :white-list="whiteList"/>
     </v-row>
   </v-container>
 </template>

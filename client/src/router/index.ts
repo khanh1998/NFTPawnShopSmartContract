@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router';
 import Home from '../views/Home.vue';
 import Owner from '../views/Owner.vue';
 import Borrower from '../views/Borrower.vue';
+import TestToken from '../views/TestToken.vue';
 
 Vue.use(VueRouter);
 
@@ -29,6 +30,11 @@ const routes: Array<RouteConfig> = [
     path: '/borrower',
     name: 'Borrower',
     component: Borrower,
+  },
+  {
+    path: '/test-token',
+    name: 'TestToken',
+    component: TestToken,
   },
 ];
 

@@ -396,9 +396,9 @@ contract PawningShop {
     uint256 public _totalNumberOfPawn = 0;
     uint256 public _totalNumberOfBid = 0;
     // mapping nft address -> token id -> pawn
-    mapping(uint256 => Pawn) _pawns;
+    mapping(uint256 => Pawn) public _pawns;
     // mapping bid id => bid
-    mapping(uint256 => Bid) _bids;
+    mapping(uint256 => Bid) public _bids;
     // mapping bid id to pawn id
     mapping(uint256 => uint256) public _bidToPawn;
     mapping(uint256 => uint256) public _pawnToBid;
@@ -447,14 +447,10 @@ contract PawningShop {
 
         IERC721(tokenAddress).transferFrom(msg.sender, address(this), tokenId);
 
-        Pawn memory pawn = Pawn({
-            creator: sender,
-            contractAddress: tokenAddress,
-            tokenId: tokenId,
-            status: PawnStatus.CREATED
-        });
-
-        _pawns[_totalNumberOfPawn] = pawn;
+        _pawns[_totalNumberOfPawn].creator = sender;
+        _pawns[_totalNumberOfPawn].contractAddress = tokenAddress;
+        _pawns[_totalNumberOfPawn].tokenId = tokenId;
+        _pawns[_totalNumberOfPawn].status = PawnStatus.CREATED;
         emit PawnCreated(sender, _totalNumberOfPawn);
     }
 
@@ -498,15 +494,14 @@ contract PawningShop {
             amount > 0,
             "PawningShop: amount of money must be bigger than 0"
         );
-        Bid memory newBid = Bid({
-            creator: creator,
-            loanAmount: amount,
-            interest: rate,
-            loanDuration: duration,
-            isInterestProRated: isInterestProRated,
-            loanStartTime: loanStartTime
-        });
-        _bids[_totalNumberOfBid] = newBid;
+
+        _bids[_totalNumberOfBid].creator = creator;
+        _bids[_totalNumberOfBid].loanAmount = amount;
+        _bids[_totalNumberOfBid].interest = rate;
+        _bids[_totalNumberOfBid].loanDuration = duration;
+        _bids[_totalNumberOfBid].isInterestProRated = isInterestProRated;
+        _bids[_totalNumberOfBid].loanStartTime = loanStartTime;
+
         _bidToPawn[_totalNumberOfBid] = pawnId;
         emit BidCreated(creator, pawnId);
     }
