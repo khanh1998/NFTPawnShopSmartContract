@@ -23,11 +23,13 @@ func (p *PawnController) InsertOne(c *gin.Context) {
 	if err := c.BindJSON(&pawnWrite); err != nil {
 		log.Panic(err)
 	}
-	id, err := p.model.InsertOne(pawnWrite)
+	pawnWrite.Bids = []string{}
+	log.Println(pawnWrite)
+	_, err := p.model.InsertOne(pawnWrite)
 	if err != nil {
 		log.Panic(err)
 	}
-	pawnRead, err := p.model.FindOne(id)
+	pawnRead, err := p.model.FindOne(pawnWrite.ID)
 	if err != nil {
 		log.Panic(err)
 	}

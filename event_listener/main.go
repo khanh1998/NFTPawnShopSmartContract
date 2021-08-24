@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"strings"
 
+	"khanh/client"
 	pawningShop "khanh/contracts"
 
 	"github.com/ethereum/go-ethereum"
@@ -111,6 +112,15 @@ func PawnCreatedHandler(vlog types.Log, abi abi.ABI, instance *pawningShop.Contr
 			log.Panic(err)
 		}
 		fmt.Println(pawn)
+		client := client.NewClient("http://localhost:4000")
+		success := client.Pawn.Post(
+			newPawnIdStr,
+			pawn.Creator.String(),
+			pawn.ContractAddress.String(),
+			pawn.TokenId.String(),
+			int(pawn.Status),
+		)
+		log.Println(PawnCreated, success)
 	}
 }
 func WhiteListAddedHandler(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts) {

@@ -26,6 +26,7 @@ type PawnWrite struct {
 	TokenAddress string     `json:"token_address" bson:"token_address,omitempty" validate:"eth_addr"` // address to smart contract that manages token of creator
 	TokenId      string     `json:"token_id" bson:"token_id,omitempty"`                               // token id of creator on smart contract
 	Status       PawnStatus `json:"status" bson:"status,omitempty"`                                   // status of pawn
+	Bids         []string   `json:"bids" bson:"bids"`
 }
 
 type PawnRead struct {
@@ -59,7 +60,7 @@ func NewPawns(database *mongo.Database) *Pawns {
 }
 
 // insert a new Pawn.
-// return ID of new pawn or error if it has
+// return UUID of new pawn or error if it has
 func (p *Pawns) InsertOne(data PawnWrite) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -111,7 +112,7 @@ func (p *Pawns) FindAll() ([]PawnRead, error) {
 	return p.Find(filter)
 }
 
-// find pawn by id in smart contract
+// find pawn by id in smart contract, not UUID in database
 func (p *Pawns) FindOne(id string) (*PawnRead, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
