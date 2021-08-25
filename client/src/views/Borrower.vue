@@ -10,7 +10,7 @@
         <pawn-creator @create-pawn="createPawn" :white-list="whiteList"/>
       </v-col>
       <v-col>
-        <p>My pawns</p>
+        <pawn-list :pawns="pawn.data"/>
       </v-col>
     </v-row>
   </v-container>
@@ -19,13 +19,14 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { Contract } from 'web3-eth-contract';
 import PawnCreator from '@/components/PawnCreator.vue';
+import PawnList from '@/components/PawnList.vue';
 import PawningShop from '../contracts/PawningShop.json';
 import { IPawnState } from '@/store/IPawnState';
 
 import { pawn, PawnState } from '@/store/pawn.vuex';
 
 @Component({
-  components: { PawnCreator },
+  components: { PawnCreator, PawnList },
   name: 'Borrower',
   data: () => ({
     pawn,
@@ -37,10 +38,6 @@ export default class extends Vue {
   networkId = 0;
 
   whiteList: string[] = [];
-
-  data!: IPawnState[];
-
-  error!: Error;
 
   localLoading = false;
 
@@ -78,16 +75,20 @@ export default class extends Vue {
   }
 
   async getWhiteList(): Promise<string[]> {
+    this.localLoading = true;
     const pawningShop = this.getContractInstance(PawningShop, this.networkId);
     const res: string[] = await pawningShop.methods.getWhiteList().call(); // eslint-disable-line
-    console.log(res);
+    this.localLoading = false;
     return res;
   }
 
   async created() {
     this.accounts = await this.getAccounts();
     this.networkId = await this.getNetworkId();
-    // this.whiteList = await this.getWhiteList();
+    if (this.networkId !== 5777) {
+      console.log('you are in wrong network babe :D');
+    }
+    this.whiteList = await this.getWhiteList();
     this.pawn.findAllByCreatorAddress(this.accounts[0]);
   }
 }
