@@ -18,23 +18,18 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { Contract } from 'web3-eth-contract';
-import { mapState, mapActions } from 'vuex';
-import { namespace } from 'vuex-class';
 import PawnCreator from '@/components/PawnCreator.vue';
 import PawningShop from '../contracts/PawningShop.json';
 import { IPawnState } from '@/store/IPawnState';
 
-const pawn = namespace('../store/pawn');
+import { pawn, PawnState } from '@/store/pawn.vuex';
 
 @Component({
   components: { PawnCreator },
   name: 'Borrower',
-  computed: {
-    ...mapState('pawn', ['loading', 'data', 'error']),
-  },
-  // methods: {
-  //   ...mapActions('pawn', ['findAllByCreatorAddress']),
-  // },
+  data: () => ({
+    pawn,
+  }),
 })
 export default class extends Vue {
   accounts: string[] = [];
@@ -43,16 +38,16 @@ export default class extends Vue {
 
   whiteList: string[] = [];
 
-  loading = false;
-
   data!: IPawnState[];
 
   error!: Error;
 
-  @pawn.Action('findAllByCreatorAddress') findAllByCreatorAddress!: () => any;
+  localLoading = false;
 
-  get apiLoading(): boolean {
-    return this.$store.state.pawn.loading;
+  pawn!: PawnState;
+
+  get loading(): boolean {
+    return this.pawn.loading || this.localLoading;
   }
 
   getContractInstance(contractJson: any, networkId: number): Contract {
@@ -65,13 +60,13 @@ export default class extends Vue {
   }
 
   async createPawn(data: any): Promise<void> {
-    this.loading = true;
+    this.localLoading = true;
     console.log(data);
     const pawningShop = this.getContractInstance(PawningShop, this.networkId);
     const res = await pawningShop.methods.createPawn(data.tokenAddress, data.tokenId)
       .send({ from: this.accounts[0] });
     console.log(res);
-    this.loading = false;
+    this.localLoading = false;
   }
 
   async getNetworkId(): Promise<number> {
@@ -83,21 +78,17 @@ export default class extends Vue {
   }
 
   async getWhiteList(): Promise<string[]> {
-    this.loading = true;
     const pawningShop = this.getContractInstance(PawningShop, this.networkId);
     const res: string[] = await pawningShop.methods.getWhiteList().call(); // eslint-disable-line
     console.log(res);
-    this.loading = false;
     return res;
   }
 
   async created() {
-    this.findAllByCreatorAddress();
-    this.loading = true;
     this.accounts = await this.getAccounts();
     this.networkId = await this.getNetworkId();
-    this.whiteList = await this.getWhiteList();
-    this.loading = false;
+    // this.whiteList = await this.getWhiteList();
+    this.pawn.findAllByCreatorAddress(this.accounts[0]);
   }
 }
 </script>

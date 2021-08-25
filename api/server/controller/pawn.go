@@ -45,3 +45,12 @@ func (p *PawnController) FindOne(c *gin.Context) {
 	}
 	c.IndentedJSON(http.StatusOK, pawn)
 }
+
+func (p *PawnController) FindAllByCreatorAddress(c *gin.Context) {
+	address := c.Param("address")
+	pawns, err := p.model.FindAllByCreatorAddress(address)
+	if err != nil {
+		log.Panic(err)
+	}
+	c.IndentedJSON(http.StatusOK, pawns)
+}

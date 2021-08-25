@@ -107,9 +107,74 @@ func (p *Pawns) UpdateOne(pawnId string, data PawnUpdate) (bool, error) {
 	return true, errors.New("didn't update anything")
 }
 
-func (p *Pawns) FindAll() ([]PawnRead, error) {
-	filter := bson.M{}
-	return p.Find(filter)
+func (p *Pawns) FindAllByCreatorAddress(address string) ([]PawnRead, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	query := []bson.M{
+		{
+			"$match": bson.M{
+				"creator": address,
+			},
+		},
+		{
+			"$lookup": bson.M{
+				// Define the tags collection for the join.
+				"from": BidCollectionName,
+				// Specify the variable to use in the pipeline stage.
+				"let": bson.M{
+					"bids": "$bids",
+				},
+				"pipeline": []bson.M{
+					// Select only the relevant bids from the bids collection.
+					// Otherwise all the bids are selected.
+					{
+						"$match": bson.M{
+							"$expr": bson.M{
+								"$in": []interface{}{
+									"$id",
+									"$$bids",
+								},
+							},
+						},
+					},
+					// Sort bids by their id field in asc. -1 = desc
+					{
+						"$sort": bson.M{
+							"id": 1,
+						},
+					},
+				},
+				// Use bids as the field name to match struct field.
+				"as": "bids",
+			},
+		},
+		{
+			"$lookup": bson.M{
+				// Define the tags collection for the join.
+				"from": UserCollectionName,
+				// Specify the variable to use in the pipeline stage.
+				"localField":   "creator",
+				"foreignField": "wallet_address",
+				// Use bids as the field name to match struct field.
+				"as": "creator",
+			},
+		},
+		{
+			"$unwind": bson.M{
+				"path":                       "$creator",
+				"preserveNullAndEmptyArrays": true,
+			},
+		},
+	}
+	curr, err := p.collection.Aggregate(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	var pawn []PawnRead
+	if err = curr.All(context.Background(), &pawn); err != nil {
+		return nil, err
+	}
+	return pawn, nil
 }
 
 // find pawn by id in smart contract, not UUID in database

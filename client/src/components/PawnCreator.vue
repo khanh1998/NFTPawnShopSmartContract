@@ -14,7 +14,7 @@ import {
   name: 'PawnCreator',
 })
 export default class extends Vue {
-  @Prop({ type: Array, required: true }) whiteList = [];
+  @Prop({ type: Array, required: true }) whiteList!: Array<string>;
 
   tokenAddress = ''
 

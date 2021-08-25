@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/auth"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/config"
@@ -37,15 +38,17 @@ func NewServer(con *config.Connection, env *config.Env) (*Server, error) {
 func (s *Server) setupRouter() {
 	authMiddleware := middleware.NewAuthMiddleware(s.tokenMaker)
 	router := gin.Default()
+	router.Use(cors.Default())
 	authRouter := router.Group("/").Use(authMiddleware)
 
 	userModel := model.NewUsers(s.database)
 	userController := controller.NewUserController(*userModel)
-	authRouter.GET("/users/:id", userController.FindOne)
+	authRouter.GET("/users/:address", userController.FindOne)
 	router.POST("/users", userController.InsertOne)
 
 	pawnModel := model.NewPawns(s.database)
 	pawnController := controller.NewPawnController(pawnModel)
+	router.GET("/users/:address/pawns", pawnController.FindAllByCreatorAddress)
 	router.POST("/pawns", pawnController.InsertOne)
 	router.GET("/pawns/:id", pawnController.FindOne)
 
