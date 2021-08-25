@@ -6,19 +6,35 @@
       </v-col>
     </v-row>
     <v-row v-if="!loading">
-      <pawn-creator @create-pawn="createPawn" :white-list="whiteList"/>
+      <v-col>
+        <pawn-creator @create-pawn="createPawn" :white-list="whiteList"/>
+      </v-col>
+      <v-col>
+        <p>My pawns</p>
+      </v-col>
     </v-row>
   </v-container>
 </template>
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { Contract } from 'web3-eth-contract';
+import { mapState, mapActions } from 'vuex';
+import { namespace } from 'vuex-class';
 import PawnCreator from '@/components/PawnCreator.vue';
 import PawningShop from '../contracts/PawningShop.json';
+import { IPawnState } from '@/store/IPawnState';
+
+const pawn = namespace('../store/pawn');
 
 @Component({
   components: { PawnCreator },
   name: 'Borrower',
+  computed: {
+    ...mapState('pawn', ['loading', 'data', 'error']),
+  },
+  // methods: {
+  //   ...mapActions('pawn', ['findAllByCreatorAddress']),
+  // },
 })
 export default class extends Vue {
   accounts: string[] = [];
@@ -28,6 +44,16 @@ export default class extends Vue {
   whiteList: string[] = [];
 
   loading = false;
+
+  data!: IPawnState[];
+
+  error!: Error;
+
+  @pawn.Action('findAllByCreatorAddress') findAllByCreatorAddress!: () => any;
+
+  get apiLoading(): boolean {
+    return this.$store.state.pawn.loading;
+  }
 
   getContractInstance(contractJson: any, networkId: number): Contract {
     const deployedNetwork = contractJson.networks[networkId];
@@ -66,6 +92,7 @@ export default class extends Vue {
   }
 
   async created() {
+    this.findAllByCreatorAddress();
     this.loading = true;
     this.accounts = await this.getAccounts();
     this.networkId = await this.getNetworkId();

@@ -1,14 +1,15 @@
-import web3 from 'web3';
 import Vue from 'vue';
 import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
 import store from './store';
-import myPlugin from './plugins/web3';
+import web3 from './plugins/web3';
 import vuetify from './plugins/vuetify';
+import axios from './plugins/axios';
 
 Vue.config.productionTip = false;
-Vue.use(myPlugin);
+Vue.use(web3);
+Vue.use(axios);
 
 new Vue({
   router,
