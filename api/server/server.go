@@ -50,6 +50,7 @@ func (s *Server) setupRouter() {
 	pawnController := controller.NewPawnController(pawnModel)
 	router.GET("/users/:address/pawns", pawnController.FindAllByCreatorAddress)
 	router.POST("/pawns", pawnController.InsertOne)
+	router.PATCH("/pawns/:id", pawnController.UpdateById)
 	router.GET("/pawns/:id", pawnController.FindOne)
 
 	bidModel := model.NewBids(*s.database)

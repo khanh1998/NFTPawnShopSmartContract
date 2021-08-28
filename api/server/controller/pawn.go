@@ -54,3 +54,21 @@ func (p *PawnController) FindAllByCreatorAddress(c *gin.Context) {
 	}
 	c.IndentedJSON(http.StatusOK, pawns)
 }
+
+// update by pawn id in smart contract, not UUID in database
+func (p *PawnController) UpdateById(c *gin.Context) {
+	var data model.PawnUpdate
+	if err := c.BindJSON(&data); err != nil {
+		log.Panic(err)
+	}
+	id := c.Param("id")
+	err := p.model.UpdateOneBy("id", id, data)
+	if err != nil {
+		log.Panic(err)
+	}
+	pawn, err := p.model.FindOne(id)
+	if err != nil {
+		log.Panic(err)
+	}
+	c.IndentedJSON(http.StatusOK, pawn)
+}

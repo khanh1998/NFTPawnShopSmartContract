@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -40,7 +41,7 @@ type PawnRead struct {
 }
 
 type PawnUpdate struct {
-	Bids   []string   `json:"bids" bson:"bids,omitempty"`
+	Bid    string     `json:"bid" bson:"bid,omitempty"`
 	Status PawnStatus `json:"status" bson:"status,omitempty"` // status of pawn
 }
 
@@ -75,36 +76,30 @@ func (p *Pawns) InsertOne(data PawnWrite) (string, error) {
 	return "", errors.New("cannot convert insertedid to primitive object id")
 }
 
-func (p *Pawns) UpdateOne(pawnId string, data PawnUpdate) (bool, error) {
-	objectId, err := primitive.ObjectIDFromHex(pawnId)
-	if err != nil {
-		return false, err
-	}
-	pawn := bson.D{
-		primitive.E{
-			Key: "$set",
-			Value: bson.D{
-				primitive.E{
-					Key:   "status",
-					Value: data.Status,
-				},
-				primitive.E{
-					Key:   "bids",
-					Value: data.Bids,
-				},
-			},
+// you only can update status of the pawn and,
+// add bid to pawn.
+// the key should be unique.
+func (p *Pawns) UpdateOneBy(key string, value string, data PawnUpdate) error {
+	filter := bson.M{key: value}
+	pawn := bson.M{
+		"$set": bson.M{
+			"status": data.Status,
+		},
+		"$push": bson.M{
+			"bids": data.Bid,
 		},
 	}
+	log.Println(pawn)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	response, err := p.collection.UpdateByID(ctx, objectId, pawn)
+	response, err := p.collection.UpdateOne(ctx, filter, pawn)
 	if err != nil {
-		return false, err
+		return err
 	}
 	if response.ModifiedCount == 1 {
-		return true, nil
+		return nil
 	}
-	return true, errors.New("didn't update anything")
+	return errors.New("didn't update anything")
 }
 
 func (p *Pawns) FindAllByCreatorAddress(address string) ([]PawnRead, error) {
