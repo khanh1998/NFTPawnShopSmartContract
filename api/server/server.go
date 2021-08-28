@@ -6,7 +6,6 @@ import (
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/auth"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/config"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/controller"
-	"github.com/uss-kelvin/NFTPawningShopBackend/server/middleware"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/model"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -36,14 +35,15 @@ func NewServer(con *config.Connection, env *config.Env) (*Server, error) {
 }
 
 func (s *Server) setupRouter() {
-	authMiddleware := middleware.NewAuthMiddleware(s.tokenMaker)
+	// authMiddleware := middleware.NewAuthMiddleware(s.tokenMaker)
 	router := gin.Default()
 	router.Use(cors.Default())
-	authRouter := router.Group("/").Use(authMiddleware)
+	// authRouter := router.Group("/").Use(authMiddleware)
 
 	userModel := model.NewUsers(s.database)
 	userController := controller.NewUserController(*userModel)
-	authRouter.GET("/users/:address", userController.FindOne)
+	// authRouter.GET("/users/:address", userController.FindOne)
+	router.GET("/users/:address", userController.FindOneByAddress)
 	router.POST("/users", userController.InsertOne)
 
 	pawnModel := model.NewPawns(s.database)

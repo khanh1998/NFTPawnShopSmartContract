@@ -39,6 +39,7 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { Contract } from 'web3-eth-contract';
 import PawningShop from '../contracts/PawningShop.json';
+import { getContractInstance } from '@/utils/contract';
 
 @Component({
   name: 'Owner',
@@ -56,17 +57,11 @@ export default class extends Vue {
 
   owner = ''
 
-  getContractInstance(contractJson: any, networkId: number): Contract {
-    const deployedNetwork = contractJson.networks[networkId];
-    const instance: Contract = new this.$web3.eth.Contract(contractJson.abi,
-      deployedNetwork && deployedNetwork.address);
-    return instance;
-  }
+  pawningShopContract!: Contract;
 
   async addNewAddress(): Promise<void> {
     this.loading = true;
-    const pawningShop = this.getContractInstance(PawningShop, this.networkId);
-    const res = await pawningShop.methods.addToWhiteList(this.newAddress)
+    const res = await this.pawningShopContract.methods.addToWhiteList(this.newAddress)
       .send({ from: this.accounts[0] });
     console.log(res);
     this.loading = false;
@@ -75,8 +70,7 @@ export default class extends Vue {
 
   async getWhiteList(): Promise<string[]> {
     this.loading = true;
-    const pawningShop = this.getContractInstance(PawningShop, this.networkId);
-    const res: string[] = await pawningShop.methods.getWhiteList().call(); // eslint-disable-line
+    const res: string[] = await this.pawningShopContract.methods.getWhiteList().call(); // eslint-disable-line
     console.log(res);
     this.loading = false;
     return res;
@@ -84,8 +78,7 @@ export default class extends Vue {
 
   async removeAddress(): Promise<void> {
     this.loading = true;
-    const pawningShop = this.getContractInstance(PawningShop, this.networkId);
-    const res = await pawningShop.methods.removeFromWhiteList(this.newAddress)
+    const res = await this.pawningShopContract.methods.removeFromWhiteList(this.newAddress)
       .send({ from: this.accounts[0] });
     console.log(res);
     this.loading = false;
@@ -94,9 +87,7 @@ export default class extends Vue {
 
   async getOwner(): Promise<string> {
     this.loading = true;
-    const pawningShop = this.getContractInstance(PawningShop, this.networkId);
-    console.log(pawningShop);
-    const res: string = await pawningShop.methods.owner().call();
+    const res: string = await this.pawningShopContract.methods.owner().call();
     console.log(res);
     this.loading = false;
     return res;
@@ -114,8 +105,9 @@ export default class extends Vue {
     this.loading = true;
     this.accounts = await this.getAccounts();
     this.networkId = await this.getNetworkId();
+    this.pawningShopContract = getContractInstance(PawningShop, this.networkId, this.$web3);
     this.owner = await this.getOwner();
-    this.whiteList = await this.getWhiteList();
+    this.whiteList = (await this.getWhiteList()).filter((item) => item !== '0x0000000000000000000000000000000000000000');
     this.loading = false;
   }
 }

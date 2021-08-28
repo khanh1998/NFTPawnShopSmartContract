@@ -2,9 +2,13 @@
   <v-app id="inspire">
     <v-app-bar app color="white" flat>
       <v-avatar
-        :color="$vuetify.breakpoint.smAndDown ? 'grey darken-1' : 'transparent'"
+        class="hidden-sm-and-up"
+        :color="getRandomColor()"
         size="32"
-      ></v-avatar>
+        :title="fullName"
+      >
+      {{ firstChar }}
+      </v-avatar>
 
       <v-tabs
         centered
@@ -19,7 +23,9 @@
         </v-tab>
       </v-tabs>
 
-      <v-avatar class="hidden-sm-and-down" color="grey darken-1 shrink" size="32"></v-avatar>
+      <v-avatar class="hidden-sm-and-down" :title="fullName" :color="getRandomColor()" size="32">
+        {{ firstChar }}
+      </v-avatar>
     </v-app-bar>
 
     <v-main class="grey lighten-3">
@@ -30,11 +36,21 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import { user, UserState } from '@/store/UserState.module';
+import { getRandomColor } from '@/utils/color';
 
 @Component({
-  name: 'Borrower',
+  name: 'App',
+  data: () => ({
+    user,
+  }),
+  methods: {
+    getRandomColor,
+  },
 })
 export default class extends Vue {
+  user!: UserState;
+
   links = [
     ['/', 'Home'],
     ['/owner', 'Owner'],
@@ -42,5 +58,24 @@ export default class extends Vue {
     ['/lender', 'Lender'],
     ['/test-token', 'Test Token'],
   ];
+
+  get isLoading() {
+    return this.user.loading;
+  }
+
+  get fullName(): string | undefined {
+    return this.user.data?.name;
+  }
+
+  get firstChar(): string | undefined {
+    return this.fullName?.charAt(0).toUpperCase();
+  }
+
+  async mounted() {
+    console.log('here');
+    const accounts = await this.$web3.eth.getAccounts();
+    console.log(accounts[0]);
+    this.user.findUserByAddress(accounts[0]);
+  }
 }
 </script>

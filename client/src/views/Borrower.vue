@@ -21,9 +21,9 @@ import { Contract } from 'web3-eth-contract';
 import PawnCreator from '@/components/PawnCreator.vue';
 import PawnList from '@/components/PawnList.vue';
 import PawningShop from '../contracts/PawningShop.json';
-import { IPawnState } from '@/store/IPawnState';
+import { getContractInstance } from '@/utils/contract';
 
-import { pawn, PawnState } from '@/store/pawn.vuex';
+import { pawn, PawnState } from '@/store/PawnState.module';
 
 @Component({
   components: { PawnCreator, PawnList },
@@ -43,26 +43,20 @@ export default class extends Vue {
 
   pawn!: PawnState;
 
+  pawningShopContract!: Contract;
+
   get loading(): boolean {
     return this.pawn.loading || this.localLoading;
-  }
-
-  getContractInstance(contractJson: any, networkId: number): Contract {
-    const deployedNetwork = contractJson.networks[networkId];
-    const instance: Contract = new this.$web3.eth.Contract(
-      contractJson.abi,
-      deployedNetwork && deployedNetwork.address,
-    );
-    return instance;
   }
 
   async createPawn(data: any): Promise<void> {
     this.localLoading = true;
     console.log(data);
-    const pawningShop = this.getContractInstance(PawningShop, this.networkId);
-    const res = await pawningShop.methods.createPawn(data.tokenAddress, data.tokenId)
+    const pawningShop = getContractInstance(PawningShop, this.networkId, this.$web3);
+    const res = await this.pawningShopContract.methods.createPawn(data.tokenAddress, data.tokenId)
       .send({ from: this.accounts[0] });
     console.log(res);
+    setTimeout(() => this.pawn.findAllByCreatorAddress(this.accounts[0]), 2000);
     this.localLoading = false;
   }
 
@@ -76,8 +70,7 @@ export default class extends Vue {
 
   async getWhiteList(): Promise<string[]> {
     this.localLoading = true;
-    const pawningShop = this.getContractInstance(PawningShop, this.networkId);
-    const res: string[] = await pawningShop.methods.getWhiteList().call(); // eslint-disable-line
+    const res: string[] = await this.pawningShopContract.methods.getWhiteList().call(); // eslint-disable-line
     this.localLoading = false;
     return res;
   }
@@ -88,6 +81,7 @@ export default class extends Vue {
     if (this.networkId !== 5777) {
       console.log('you are in wrong network babe :D');
     }
+    this.pawningShopContract = getContractInstance(PawningShop, this.networkId, this.$web3);
     this.whiteList = await this.getWhiteList();
     this.pawn.findAllByCreatorAddress(this.accounts[0]);
   }

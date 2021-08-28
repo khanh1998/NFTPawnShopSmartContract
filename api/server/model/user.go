@@ -62,6 +62,16 @@ func (u *Users) FindByUsername(username string) (*User, error) {
 	return &users[0], nil
 }
 
+// key is document property
+func (u *Users) FindBy(key string, value string) (*User, error) {
+	filter := bson.M{key: value}
+	users, err := u.Find(filter)
+	if err != nil {
+		return nil, err
+	}
+	return &users[0], nil
+}
+
 func (u *Users) Find(filter interface{}) ([]User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

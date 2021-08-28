@@ -39,9 +39,9 @@ func (u *UserController) InsertOne(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, data)
 }
 
-func (u *UserController) FindOne(c *gin.Context) {
-	id := c.Param("id")
-	user, err := u.model.FindOne(id)
+func (u *UserController) FindOneByAddress(c *gin.Context) {
+	address := c.Param("address")
+	user, err := u.model.FindBy("wallet_address", address)
 	if err != nil {
 		log.Panic(err)
 	}

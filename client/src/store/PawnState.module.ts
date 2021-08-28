@@ -20,6 +20,7 @@ export class PawnState extends VuexModule implements IPawnState {
 
   @Mutation
   FIND_ALL_PAWNS_BY_CREATOR_ADDRESS_REQUEST() {
+    this.error = null;
     this.loading = true;
   }
 

@@ -14,6 +14,11 @@
           Pawn status: {{ pawn.status }}
         </v-list-item-subtitle>
       </v-list-item-content>
+      <v-list-item-action>
+        <v-btn>
+          Cancel
+        </v-btn>
+      </v-list-item-action>
     </v-list-item>
   </v-list>
 </template>
