@@ -470,7 +470,7 @@ contract PawningShop {
             "PawningShop: Only can cancel when no bid is accepted"
         );
         pawn.status = PawnStatus.CANCELLED;
-
+        IERC721(pawn.contractAddress).transferFrom(address(this), creator, pawn.tokenId);
         emit PawnCancelled(owner, pawnId);
     }
 

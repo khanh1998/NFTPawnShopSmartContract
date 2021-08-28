@@ -41,8 +41,8 @@ type PawnRead struct {
 }
 
 type PawnUpdate struct {
-	Bid    string     `json:"bid" bson:"bid,omitempty"`
-	Status PawnStatus `json:"status" bson:"status,omitempty"` // status of pawn
+	Bid    string     `json:"bid,omitempty" bson:"bid,omitempty"`
+	Status PawnStatus `json:"status,omitempty" bson:"status,omitempty"` // status of pawn
 }
 
 type Pawns struct {

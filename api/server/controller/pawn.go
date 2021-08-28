@@ -61,6 +61,7 @@ func (p *PawnController) UpdateById(c *gin.Context) {
 	if err := c.BindJSON(&data); err != nil {
 		log.Panic(err)
 	}
+	log.Println(data)
 	id := c.Param("id")
 	err := p.model.UpdateOneBy("id", id, data)
 	if err != nil {

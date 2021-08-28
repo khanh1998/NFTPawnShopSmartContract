@@ -10,7 +10,11 @@
         <pawn-creator @create-pawn="createPawn" :white-list="whiteList"/>
       </v-col>
       <v-col>
-        <pawn-list :pawns="pawn.data"/>
+        <pawn-list
+          :pawns="pawn.data"
+          :accounts="accounts"
+          :pawning-shop-contract="pawningShopContract"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -52,7 +56,6 @@ export default class extends Vue {
   async createPawn(data: any): Promise<void> {
     this.localLoading = true;
     console.log(data);
-    const pawningShop = getContractInstance(PawningShop, this.networkId, this.$web3);
     const res = await this.pawningShopContract.methods.createPawn(data.tokenAddress, data.tokenId)
       .send({ from: this.accounts[0] });
     console.log(res);
@@ -76,6 +79,7 @@ export default class extends Vue {
   }
 
   async created() {
+    this.localLoading = true;
     this.accounts = await this.getAccounts();
     this.networkId = await this.getNetworkId();
     if (this.networkId !== 5777) {
@@ -84,6 +88,7 @@ export default class extends Vue {
     this.pawningShopContract = getContractInstance(PawningShop, this.networkId, this.$web3);
     this.whiteList = await this.getWhiteList();
     this.pawn.findAllByCreatorAddress(this.accounts[0]);
+    this.localLoading = false;
   }
 }
 </script>
