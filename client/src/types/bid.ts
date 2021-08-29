@@ -1,7 +1,3 @@
-export class Bid {
-  creator!: string;
-}
-
 export class BidCreate {
   loanAmount!: number
 	interest!: number

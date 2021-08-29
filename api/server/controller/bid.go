@@ -45,7 +45,10 @@ func (b *BidController) FindOne(c *gin.Context) {
 
 func (b *BidController) FindAllBy(c *gin.Context) {
 	query := c.Request.URL.Query()
-	filter := BuildFilterFromGinQuery(query, model.GetBidQueriableParams())
+	filter, err := BuildFilterFromGinQuery(query, model.GetBidQueriableParams())
+	if err != nil {
+		log.Panic(err)
+	}
 	bids, err := b.model.Find(filter)
 	if err != nil {
 		log.Panic(err)

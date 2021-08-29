@@ -24,9 +24,11 @@ type BidWrite struct {
 
 type BidRead BidWrite
 
-func GetBidQueriableParams() []string {
-	return []string{
-		"id", "creator", "pawn",
+func GetBidQueriableParams() map[string]string {
+	return map[string]string{
+		"id":      "string",
+		"creator": "string",
+		"pawn":    "string",
 	}
 }
 

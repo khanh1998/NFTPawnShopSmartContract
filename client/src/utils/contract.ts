@@ -9,3 +9,16 @@ export function getContractInstance(contractJson: any, networkId: number, web3: 
   );
   return instance;
 }
+
+export function getStatusName(code: number) {
+  switch (code) {
+    case 0:
+      return 'Created';
+    case 1:
+      return 'Cancelled';
+    case 2:
+      return '';
+    default:
+      return 'Unknown';
+  }
+}

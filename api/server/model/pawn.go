@@ -26,7 +26,7 @@ type PawnWrite struct {
 	Creator      string     `json:"creator" bson:"creator,omitempty" validate:"eth_addr"`             // wallet address of pawn's creator in hex format
 	TokenAddress string     `json:"token_address" bson:"token_address,omitempty" validate:"eth_addr"` // address to smart contract that manages token of creator
 	TokenId      string     `json:"token_id" bson:"token_id,omitempty"`                               // token id of creator on smart contract
-	Status       PawnStatus `json:"status" bson:"status,omitempty"`                                   // status of pawn
+	Status       PawnStatus `json:"status" bson:"status"`                                             // status of pawn
 	Bids         []string   `json:"bids" bson:"bids"`
 }
 
@@ -49,8 +49,14 @@ type Pawns struct {
 	collection *mongo.Collection
 }
 
-func GetPawnQueriableParams() []string {
-	return []string{"id", "creator", "token_address", "token_id", "status"}
+func GetPawnQueriableParams() map[string]string {
+	return map[string]string{
+		"id":            "string",
+		"creator":       "string",
+		"token_address": "string",
+		"token_id":      "string",
+		"status":        "int",
+	}
 }
 
 const (

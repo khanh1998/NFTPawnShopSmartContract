@@ -57,7 +57,10 @@ func (p *PawnController) FindAllByCreatorAddress(c *gin.Context) {
 
 func (p *PawnController) FindAllBy(c *gin.Context) {
 	query := c.Request.URL.Query()
-	filter := BuildFilterFromGinQuery(query, model.GetPawnQueriableParams())
+	filter, err := BuildFilterFromGinQuery(query, model.GetPawnQueriableParams())
+	if err != nil {
+		log.Panic(err)
+	}
 	pawns, err := p.model.Find(filter)
 	if err != nil {
 		log.Panic(err)

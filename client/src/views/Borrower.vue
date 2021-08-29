@@ -24,7 +24,7 @@ import { Vue, Component } from 'vue-property-decorator';
 import { Contract } from 'web3-eth-contract';
 import PawnCreator from '@/components/PawnCreator.vue';
 import PawnList from '@/components/PawnList.vue';
-import PawningShop from '../contracts/PawningShop.json';
+import PawningShop from '@/contracts/PawningShop.json';
 import { getContractInstance } from '@/utils/contract';
 
 import { pawn, PawnState } from '@/store/PawnState.module';

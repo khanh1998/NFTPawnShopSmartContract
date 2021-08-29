@@ -1,0 +1,61 @@
+package handler
+
+import (
+	"fmt"
+	"khanh/client"
+	"khanh/config"
+	pawningShop "khanh/contracts"
+	"log"
+	"math/big"
+
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/core/types"
+)
+
+type PawnStatus int
+
+const (
+	CREATED PawnStatus = iota
+	CANCELLED
+	DEAL
+	LIQUIDATED
+	REPAID
+)
+
+func PawnCreated(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, env *config.Env) {
+	fmt.Println(PawnCreatedName)
+	data := UpackEvent(abi, PawnCreatedName, vlog.Data)
+	fmt.Println(data)
+	newPawnIdStr := data[1]
+	newPawnIdInt := new(big.Int)
+	newPawnIdInt, ok := newPawnIdInt.SetString(newPawnIdStr, 10)
+	if !ok {
+		log.Panic("cannot convert string to bigint")
+	} else {
+		pawn, err := instance.Pawns(nil, newPawnIdInt)
+		if err != nil {
+			log.Panic(err)
+		}
+		fmt.Println(pawn)
+		client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH)
+		success := client.Pawn.Post(
+			newPawnIdStr,
+			pawn.Creator.String(),
+			pawn.ContractAddress.String(),
+			pawn.TokenId.String(),
+			pawn.Status,
+		)
+		log.Println(PawnCreatedName, success)
+	}
+}
+
+func PawnCancelled(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, env *config.Env) {
+	fmt.Println(PawnCancelledName)
+	data := UpackEvent(abi, PawnCancelledName, vlog.Data)
+	fmt.Println(data)
+	newPawnIdStr := data[1]
+	client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH)
+	const CANCELLED = 1
+	success := client.Pawn.Patch(newPawnIdStr, CANCELLED, "")
+	log.Println(PawnCancelledName, success)
+}

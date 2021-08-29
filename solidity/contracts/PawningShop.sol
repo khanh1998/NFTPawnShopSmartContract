@@ -409,11 +409,11 @@ contract PawningShop {
 
     event PawnCreated(address pawner, uint256 pawnId);
     event PawnCancelled(address pawner, uint256 pawnId);
-    event PawnDeal(address pawner, address lender, uint256 id);
-    event PawnRepaid(address pawner, address lender, uint256 id);
-    event PawnLiquidated(address pawner, address lender, uint256 id);
-    event BidCreated(address creator, uint256 pawnId);
-    event BidCancelled(address creator, uint256 pawnId);
+    event PawnDeal(address pawner, address lender, uint256 pawnId);
+    event PawnRepaid(address pawner, address lender, uint256 pawnId);
+    event PawnLiquidated(address pawner, address lender, uint256 pawnId);
+    event BidCreated(address creator, uint256 pawnId, uint256 bidId);
+    event BidCancelled(address creator, uint256 pawnId, uint256 bidId);
     event WhiteListAdded(address smartContract);
     event WhiteListRemoved(address smartContract);
 
@@ -474,7 +474,7 @@ contract PawningShop {
         emit PawnCancelled(owner, pawnId);
     }
 
-    function bid(
+    function createBid(
         uint8 rate,
         uint256 duration,
         bool isInterestProRated,
@@ -503,7 +503,7 @@ contract PawningShop {
         _bids[_totalNumberOfBid].loanStartTime = loanStartTime;
 
         _bidToPawn[_totalNumberOfBid] = pawnId;
-        emit BidCreated(creator, pawnId);
+        emit BidCreated(creator, pawnId, _totalNumberOfBid);
     }
 
     function cancelBid(uint256 bidId) public {
@@ -519,6 +519,7 @@ contract PawningShop {
         lender.transfer(currBid.loanAmount);
         delete _bids[bidId];
         delete _bidToPawn[bidId];
+        emit BidCancelled(sender, pawnId, bidId);
     }
 
     function acceptBid(uint256 bidId) public {
