@@ -23,7 +23,7 @@ func (b *BidController) InsertOne(c *gin.Context) {
 	if err := c.BindJSON(&bidWrite); err != nil {
 		log.Panic(err)
 	}
-	_, err := b.model.InsertOne(bidWrite)
+	_, err := b.model.InsertOne(nil, bidWrite)
 	if err != nil {
 		log.Panic(err)
 	}

@@ -44,10 +44,16 @@ func NewBids(dabase mongo.Database) *Bids {
 	}
 }
 
-func (b *Bids) InsertOne(data BidWrite) (string, error) {
+func (b *Bids) InsertOne(sc mongo.SessionContext, data BidWrite) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	result, err := b.collection.InsertOne(ctx, data)
+	var result *mongo.InsertOneResult
+	var err error
+	if sc != nil {
+		result, err = b.collection.InsertOne(sc, data)
+	} else {
+		result, err = b.collection.InsertOne(ctx, data)
+	}
 	if err != nil {
 		return "", err
 	}

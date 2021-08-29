@@ -56,9 +56,13 @@ func (s *Server) setupRouter() {
 
 	bidModel := model.NewBids(*s.database)
 	bidController := controller.NewBidController(bidModel)
-	router.POST("/bids", bidController.InsertOne)
+	// router.POST("/bids", bidController.InsertOne)
 	router.GET("/bids/:id", bidController.FindOne)
 	router.GET("/bids", bidController.FindAllBy)
+
+	bidNPawnController := controller.NewBidNPawnController(bidModel, pawnModel)
+	insertBidToPawn := s.connection.GetSession(bidNPawnController.InsertBidToPawn)
+	router.POST("/bids", insertBidToPawn)
 
 	router.POST("/auth", userController.CreateLogin(s.tokenMaker))
 	s.router = router
