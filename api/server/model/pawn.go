@@ -37,7 +37,7 @@ type PawnRead struct {
 	TokenAddress string             `json:"token_address" bson:"token_address,omitempty"` // address to smart contract that manages token of creator
 	TokenId      string             `json:"token_id" bson:"token_id,omitempty"`           // token id of creator on smart contract
 	Status       PawnStatus         `json:"status" bson:"status,omitempty"`               // status of pawn
-	BidID        []Bid              `json:"bids" bson:"bids,omitempty"`                   // data of bid that re
+	Bids         []BidRead          `json:"bids" bson:"bids,omitempty"`                   // data of bid that re
 }
 
 type PawnUpdate struct {
@@ -47,6 +47,10 @@ type PawnUpdate struct {
 
 type Pawns struct {
 	collection *mongo.Collection
+}
+
+func GetPawnQueriableParams() []string {
+	return []string{"id", "creator", "token_address", "token_id", "status"}
 }
 
 const (
@@ -103,156 +107,95 @@ func (p *Pawns) UpdateOneBy(key string, value string, data PawnUpdate) error {
 }
 
 func (p *Pawns) FindAllByCreatorAddress(address string) ([]PawnRead, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	query := []bson.M{
-		{
-			"$match": bson.M{
-				"creator": address,
-			},
-		},
-		{
-			"$lookup": bson.M{
-				// Define the tags collection for the join.
-				"from": BidCollectionName,
-				// Specify the variable to use in the pipeline stage.
-				"let": bson.M{
-					"bids": "$bids",
-				},
-				"pipeline": []bson.M{
-					// Select only the relevant bids from the bids collection.
-					// Otherwise all the bids are selected.
-					{
-						"$match": bson.M{
-							"$expr": bson.M{
-								"$in": []interface{}{
-									"$id",
-									"$$bids",
-								},
-							},
-						},
-					},
-					// Sort bids by their id field in asc. -1 = desc
-					{
-						"$sort": bson.M{
-							"id": 1,
-						},
-					},
-				},
-				// Use bids as the field name to match struct field.
-				"as": "bids",
-			},
-		},
-		{
-			"$lookup": bson.M{
-				// Define the tags collection for the join.
-				"from": UserCollectionName,
-				// Specify the variable to use in the pipeline stage.
-				"localField":   "creator",
-				"foreignField": "wallet_address",
-				// Use bids as the field name to match struct field.
-				"as": "creator",
-			},
-		},
-		{
-			"$unwind": bson.M{
-				"path":                       "$creator",
-				"preserveNullAndEmptyArrays": true,
-			},
-		},
+	filter := bson.M{
+		"creator": address,
 	}
-	curr, err := p.collection.Aggregate(ctx, query)
+	pawns, err := p.Find(filter)
 	if err != nil {
 		return nil, err
 	}
-	var pawn []PawnRead
-	if err = curr.All(context.Background(), &pawn); err != nil {
-		return nil, err
-	}
-	return pawn, nil
+	return pawns, nil
 }
 
 // find pawn by id in smart contract, not UUID in database
 func (p *Pawns) FindOne(id string) (*PawnRead, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	query := []bson.M{
-		{
-			"$match": bson.M{
-				"id": id,
-			},
-		},
-		{
-			"$lookup": bson.M{
-				// Define the tags collection for the join.
-				"from": BidCollectionName,
-				// Specify the variable to use in the pipeline stage.
-				"let": bson.M{
-					"bids": "$bids",
-				},
-				"pipeline": []bson.M{
-					// Select only the relevant bids from the bids collection.
-					// Otherwise all the bids are selected.
-					{
-						"$match": bson.M{
-							"$expr": bson.M{
-								"$in": []interface{}{
-									"$id",
-									"$$bids",
-								},
-							},
-						},
-					},
-					// Sort bids by their id field in asc. -1 = desc
-					{
-						"$sort": bson.M{
-							"id": 1,
-						},
-					},
-				},
-				// Use bids as the field name to match struct field.
-				"as": "bids",
-			},
-		},
-		{
-			"$lookup": bson.M{
-				// Define the tags collection for the join.
-				"from": UserCollectionName,
-				// Specify the variable to use in the pipeline stage.
-				"localField":   "creator",
-				"foreignField": "wallet_address",
-				// Use bids as the field name to match struct field.
-				"as": "creator",
-			},
-		},
-		{
-			"$unwind": bson.M{
-				"path":                       "$creator",
-				"preserveNullAndEmptyArrays": true,
-			},
-		},
+	filter := bson.M{
+		"id": id,
 	}
-	curr, err := p.collection.Aggregate(ctx, query)
+	pawns, err := p.Find(filter)
 	if err != nil {
 		return nil, err
 	}
-	var pawn []PawnRead
-	if err = curr.All(context.Background(), &pawn); err != nil {
-		return nil, err
-	}
-	return &pawn[0], nil
+	return &pawns[0], nil
 }
 
 func (p *Pawns) Find(filter interface{}) ([]PawnRead, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	cursor, err := p.collection.Find(ctx, filter)
+	query := []bson.M{
+		{
+			"$match": filter,
+		},
+		{
+			"$lookup": bson.M{
+				// Define the tags collection for the join.
+				"from": BidCollectionName,
+				// Specify the variable to use in the pipeline stage.
+				"let": bson.M{
+					"bids": "$bids",
+				},
+				"pipeline": []bson.M{
+					// Select only the relevant bids from the bids collection.
+					// Otherwise all the bids are selected.
+					{
+						"$match": bson.M{
+							"$expr": bson.M{
+								"$in": []interface{}{
+									"$id",
+									"$$bids",
+								},
+							},
+						},
+					},
+					// Sort bids by their id field in asc. -1 = desc
+					{
+						"$sort": bson.M{
+							"id": 1,
+						},
+					},
+				},
+				// Use bids as the field name to match struct field.
+				"as": "bids",
+			},
+		},
+		{
+			"$lookup": bson.M{
+				// Define the tags collection for the join.
+				"from": UserCollectionName,
+				// Specify the variable to use in the pipeline stage.
+				"localField":   "creator",
+				"foreignField": "wallet_address",
+				// Use bids as the field name to match struct field.
+				"as": "creator",
+			},
+		},
+		{
+			"$unwind": bson.M{
+				"path":                       "$creator",
+				"preserveNullAndEmptyArrays": true,
+			},
+		},
+	}
+	curr, err := p.collection.Aggregate(ctx, query)
 	if err != nil {
 		return nil, err
 	}
-	var pawns []PawnRead
-	if err = cursor.All(ctx, &pawns); err != nil {
+	var pawn []PawnRead
+	if err = curr.All(context.Background(), &pawn); err != nil {
 		return nil, err
 	}
-	return pawns, nil
+	if len(pawn) == 0 {
+		pawn = []PawnRead{}
+	}
+	return pawn, nil
 }

@@ -52,11 +52,13 @@ func (s *Server) setupRouter() {
 	router.POST("/pawns", pawnController.InsertOne)
 	router.PATCH("/pawns/:id", pawnController.UpdateById)
 	router.GET("/pawns/:id", pawnController.FindOne)
+	router.GET("/pawns", pawnController.FindAllBy)
 
 	bidModel := model.NewBids(*s.database)
 	bidController := controller.NewBidController(bidModel)
 	router.POST("/bids", bidController.InsertOne)
 	router.GET("/bids/:id", bidController.FindOne)
+	router.GET("/bids", bidController.FindAllBy)
 
 	router.POST("/auth", userController.CreateLogin(s.tokenMaker))
 	s.router = router

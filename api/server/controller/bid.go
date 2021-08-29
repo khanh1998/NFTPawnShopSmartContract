@@ -19,7 +19,7 @@ func NewBidController(model *model.Bids) *BidController {
 }
 
 func (b *BidController) InsertOne(c *gin.Context) {
-	var bidWrite model.Bid
+	var bidWrite model.BidWrite
 	if err := c.BindJSON(&bidWrite); err != nil {
 		log.Panic(err)
 	}
@@ -41,4 +41,14 @@ func (b *BidController) FindOne(c *gin.Context) {
 		log.Panic(err)
 	}
 	c.IndentedJSON(http.StatusOK, bid)
+}
+
+func (b *BidController) FindAllBy(c *gin.Context) {
+	query := c.Request.URL.Query()
+	filter := BuildFilterFromGinQuery(query, model.GetBidQueriableParams())
+	bids, err := b.model.Find(filter)
+	if err != nil {
+		log.Panic(err)
+	}
+	c.IndentedJSON(http.StatusOK, bids)
 }
