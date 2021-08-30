@@ -7,7 +7,7 @@ import { store } from '@/store/index';
 import { getRandomColor } from '@/utils/color';
 import { getStatusName } from '@/utils/contract';
 
-interface ComputedPawn extends Pawn {
+export interface ComputedPawn extends Pawn {
   color : string;
   statusName: string;
 }

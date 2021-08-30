@@ -11,7 +11,7 @@
       </v-col>
       <v-col>
         <pawn-list
-          :pawns="pawn.data"
+          :pawns="pawn.computedData"
           :accounts="accounts"
           :pawning-shop-contract="pawningShopContract"
         />

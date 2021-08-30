@@ -21,7 +21,7 @@ const (
 	PawnCancelledSignature    = "PawnCancelled(address,uint256)"
 	WhiteListAddedSignature   = "WhiteListAdded(address)"
 	WhiteListRemovedSignature = "WhiteListRemoved(address)"
-	BidCreatedNameSignature   = "BidCreated(address,uint256,unit256)"
+	BidCreatedNameSignature   = "BidCreated(address,uint256,uint256)"
 	BidCancelledNameSignature = "BidCancelled(address,uint256,uint256)"
 )
 

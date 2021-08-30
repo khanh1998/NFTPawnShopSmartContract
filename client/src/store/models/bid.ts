@@ -7,4 +7,5 @@ export class BidCreate {
 	interest!: number
 	loanStartTime!: number
 	loanDuration!: number
+	isInterestProRated!: boolean
 }

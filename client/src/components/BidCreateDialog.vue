@@ -1,13 +1,18 @@
 <template>
   <v-dialog v-model="value" persistent max-width="290">
     <v-card>
-      <v-card-title class="text-h5"> Make a bid </v-card-title>
+      <v-card-title class="text-h5"> Make a bid for Pawn id: {{ pawn.id }} </v-card-title>
       <v-card-text>
-        <v-text-field v-model="data.loanAmount" title="Loan amount" type="number" suffix="wei" />
-        <v-text-field v-model="data.interest" title="Interest" type="number" suffix="wei" />
+        <v-text-field v-model="data.loanAmount" label="Loan amount" type="number" suffix="wei" />
+        <v-text-field v-model="data.interest" label="Interest" type="number" suffix="wei" />
+        <v-switch
+          v-model="data.isInterestProRated"
+          inset
+          label="Is interest pro rated"
+        ></v-switch>
         <v-text-field
           v-model="data.loanDuration"
-          title="Loan duration"
+          label="Loan duration"
           type="number"
           suffix="Day"
         />
@@ -38,10 +43,13 @@
           ></v-date-picker>
         </v-menu>
       </v-card-text>
+      <v-card-subtitle>
+        Repay amount: {{ repayAmount }} wei, in {{ repayDate }}
+      </v-card-subtitle>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="green darken-1" text @click="closeDialog"> Cancel </v-btn>
-        <v-btn color="green darken-1" text @click="submitData"> Agree </v-btn>
+        <v-btn color="green darken-1" text @click="submitBid"> Agree </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -51,23 +59,37 @@ import {
   Component, Emit, Prop, Vue, Watch,
 } from 'vue-property-decorator';
 import { BidCreate } from '@/store/models/bid';
+import { ComputedPawn } from '@/store/PawnState.module';
 
 @Component({
   name: 'BidCreateDialog',
 })
 export default class BidCreateDialog extends Vue {
-  @Prop({ type: Boolean, default: false, required: true }) value!: boolean
+  @Prop({ type: Boolean, default: false, required: true }) value!: boolean;
+
+  @Prop({ required: true }) pawn!: ComputedPawn;
 
   data: BidCreate = {
     loanAmount: 0,
     interest: 0,
     loanStartTime: 0,
     loanDuration: 0,
+    isInterestProRated: false,
   }
 
   datePicker = false;
 
   dateString = ''
+
+  get repayAmount() {
+    return Number(this.data.loanAmount) + Number(this.data.interest);
+  }
+
+  get repayDate(): string {
+    const startDate = new Date(this.dateString);
+    startDate.setDate(startDate.getDate() + Number(this.data.loanDuration));
+    return startDate.toLocaleDateString('vi');
+  }
 
   closeDialog():void {
     this.input();
@@ -84,7 +106,7 @@ export default class BidCreateDialog extends Vue {
   }
 
   @Emit()
-  submitData(): BidCreate {
+  submitBid(): BidCreate {
     this.closeDialog();
     return this.data;
   }

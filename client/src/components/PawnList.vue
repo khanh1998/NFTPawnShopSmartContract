@@ -1,10 +1,11 @@
 <template>
   <v-sheet>
-    <bid-create-dialog v-model="dialog"/>
+    <bid-create-dialog v-model="dialog" @submit-bid="submitBid" :pawn="selectedPawn"/>
     <v-list three-line>
       <v-subheader>Your pawns</v-subheader>
+      <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
       <v-divider/>
-      <v-list-item v-for="pawn in colorPawns" :key="pawn.id">
+      <v-list-item v-for="pawn in pawns" :key="pawn.id">
         <v-list-item-avatar :color="pawn.color">
           <v-avatar>{{ pawn.id }}</v-avatar>
         </v-list-item-avatar>
@@ -13,7 +14,8 @@
             Token address: {{ pawn.token_address }}, Token ID: {{ pawn.token_id }}
           </v-list-item-title>
           <v-list-item-subtitle>
-            Pawn status: {{ pawn.statusName }}
+            <p>Pawn status: {{ pawn.statusName }}</p>
+            <p v-if="viewer === lender">Created by {{ pawn.creator.name }}</p>
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
@@ -25,7 +27,7 @@
           </v-btn>
           <v-btn
             v-if="pawn.status === 0 && viewer === lender"
-            @click="createBid(pawn.id)"
+            @click="showBidDialog(pawn.id)"
           >
             Bid
           </v-btn>
@@ -37,21 +39,16 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Contract } from 'web3-eth-contract';
-import { getRandomColor } from '@/utils/color';
-import { Pawn } from '@/store/models/pawn';
 import BidCreateDialog from '@/components/BidCreateDialog.vue';
-
-interface ColorPawn extends Pawn {
-  color : string;
-  statusName: string;
-}
+import { BidCreate } from '@/store/models/bid';
+import { ComputedPawn } from '@/store/PawnState.module';
 
 @Component({
   name: 'PawnList',
   components: { BidCreateDialog },
 })
 export default class PawnList extends Vue {
-  @Prop({ required: true, type: Array }) private pawns!: Pawn[];
+  @Prop({ required: true, type: Array }) private pawns!: ComputedPawn[];
 
   @Prop({ required: true, type: Contract }) private pawningShopContract!: Contract;
 
@@ -71,25 +68,10 @@ export default class PawnList extends Vue {
 
   dialog = false;
 
-  get colorPawns(): ColorPawn[] {
-    return this.pawns.map((pawn) => ({
-      ...pawn,
-      color: getRandomColor(),
-      statusName: this.getStatusName(pawn.status),
-    }));
-  }
+  pawnId = '';
 
-  getStatusName = (code: number) => {
-    switch (code) {
-      case 0:
-        return 'Created';
-      case 1:
-        return 'Cancelled';
-      case 2:
-        return '';
-      default:
-        return 'Unknown';
-    }
+  get selectedPawn(): ComputedPawn | undefined {
+    return this.pawns.find((pawn) => pawn.id === this.pawnId);
   }
 
   async cancelPawn(pawnId: string): Promise<void> {
@@ -100,9 +82,23 @@ export default class PawnList extends Vue {
     this.localLoading = false;
   }
 
-  async createBid(pawnId: string): Promise<void> {
+  async submitBid(data: BidCreate): Promise<void> {
+    this.dialog = false;
+    this.localLoading = true;
+    const {
+      loanAmount, loanStartTime, isInterestProRated, loanDuration, interest,
+    } = data;
+    const res = await this.pawningShopContract.methods.createBid(
+      interest, loanDuration, isInterestProRated, loanStartTime, this.pawnId,
+    )
+      .send({ from: this.accounts[0], value: loanAmount });
+    console.log({ data, res });
+    this.localLoading = false;
+  }
+
+  showBidDialog(pawnId: string): void {
     this.dialog = true;
-    console.log(`create bid for pawn ${pawnId} ${this.lender}`);
+    this.pawnId = pawnId;
   }
 }
 </script>
