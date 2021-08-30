@@ -3,11 +3,20 @@ package model
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+)
+
+type BidStatus int
+
+const (
+	BID_CREATED BidStatus = iota
+	BID_CANCELLED
+	BID_ACCEPTED
 )
 
 type BidWrite struct {
@@ -20,9 +29,14 @@ type BidWrite struct {
 	LoanDuration       string             `json:"loan_duration" bson:"loan_duration,omitempty"`
 	IsInterestProRated bool               `json:"pro_rated" bson:"pro_rated,omitempty"`
 	Pawn               string             `json:"pawn" bson:"pawn,omitempty"`
+	Status             BidStatus          `json:"status" bson:"status"`
 }
 
 type BidRead BidWrite
+
+type BidUpdate struct {
+	Status BidStatus `json:"status" bson:""`
+}
 
 func GetBidQueriableParams() map[string]string {
 	return map[string]string{
@@ -90,4 +104,34 @@ func (b *Bids) Find(filter interface{}) ([]BidRead, error) {
 		return nil, err
 	}
 	return bids, nil
+}
+
+// you only can update status of the pawn and,
+// add bid to pawn.
+// the key should be unique.
+func (b *Bids) UpdateOneBy(sc mongo.SessionContext, key string, value string, data BidUpdate) error {
+	filter := bson.M{key: value}
+	bid := bson.M{
+		"$set": bson.M{
+			"status": data.Status,
+		},
+	}
+	log.Println(bid)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	var response *mongo.UpdateResult
+	var err error
+	if sc != nil {
+		response, err = b.collection.UpdateOne(sc, filter, bid)
+	} else {
+		response, err = b.collection.UpdateOne(ctx, filter, bid)
+
+	}
+	if err != nil {
+		return err
+	}
+	if response.ModifiedCount == 1 {
+		return nil
+	}
+	return errors.New("didn't update anything")
 }
