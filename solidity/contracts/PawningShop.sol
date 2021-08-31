@@ -533,12 +533,10 @@ contract PawningShop {
         require(pawnId > 0, "PawningShop: The pawn is not existed");
         Pawn storage pawn = _pawns[pawnId];
         require(pawn.creator == msg.sender, "PawningShop: only creator of pawn can accept bid");
-        IERC721(pawn.contractAddress).transferFrom(pawn.creator, address(this), pawn.tokenId);
         address payable borrower = payable(pawn.creator);
         borrower.transfer(currBid.loanAmount);
         pawn.status = PawnStatus.DEAL;
         _pawnToBid[pawnId] = bidId;
-        pawn.status = PawnStatus.DEAL;
         currBid.loanStartTime = block.timestamp;
         emit BidAccepted(pawnId, bidId);
     }

@@ -37,7 +37,7 @@ func BidCreated(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, en
 		}
 		fmt.Println(bid)
 		client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
-		success := client.Bid.InsertOne(
+		success := client.BidPawn.InsertOne(
 			newBidIdStr,
 			bid.Creator.String(),
 			bid.LoanAmount.String(),
@@ -56,7 +56,16 @@ func BidAccepted(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, e
 	data := UnpackEvent(abi, BidAcceptedName, vlog.Data)
 	bidIdStr := data[1]
 	client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
-	success := client.BidPawn.UpdateOne(bidIdStr)
+	bidIdInt, ok := new(big.Int), false
+	if bidIdInt, ok = bidIdInt.SetString(bidIdStr, 10); !ok {
+		log.Panic("cannot convert string to big int")
+	}
+	bid, err := instance.Bids(nil, bidIdInt)
+	if err != nil {
+		log.Panic(err)
+	}
+	const BID_STATUS = 2
+	success := client.BidPawn.UpdateOne(bidIdStr, 2, bid.LoanStartTime.String())
 	log.Println(BidAcceptedName, success)
 }
 

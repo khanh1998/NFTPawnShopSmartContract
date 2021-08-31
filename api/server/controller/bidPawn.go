@@ -42,8 +42,9 @@ func (b *BidNPawnController) InsertBidToPawn(c *gin.Context, sc mongo.SessionCon
 }
 
 func (b *BidNPawnController) AcceptBid(c *gin.Context, sc mongo.SessionContext) error {
-	bidUpdate := model.BidUpdate{
-		Status: model.BID_ACCEPTED,
+	var bidUpdate model.BidUpdate
+	if err := c.Bind(&bidUpdate); err != nil {
+		return err
 	}
 	id := c.Param("id")
 	if err := b.bid.UpdateOneBy(sc, "id", id, bidUpdate); err != nil {

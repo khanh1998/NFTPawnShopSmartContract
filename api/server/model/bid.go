@@ -35,14 +35,16 @@ type BidWrite struct {
 type BidRead BidWrite
 
 type BidUpdate struct {
-	Status BidStatus `json:"status" bson:""`
+	Status        BidStatus `json:"status" bson:""`
+	LoanStartTime string    `json:"loan_start_time" bson:"loan_start_time,omitempty"`
 }
 
+// GetBidQueriableParams mapping from parameter name to it's data types
 func GetBidQueriableParams() map[string]string {
 	return map[string]string{
 		"id":      "string",
 		"creator": "string",
-		"pawn":    "string",
+		"pawn":    "strings", // pawn param can carry a array of string or just a string
 	}
 }
 
@@ -116,7 +118,8 @@ func (b *Bids) UpdateOneBy(sc mongo.SessionContext, key string, value string, da
 	filter := bson.M{key: value}
 	bid := bson.M{
 		"$set": bson.M{
-			"status": data.Status,
+			"status":          data.Status,
+			"loan_start_time": data.LoanStartTime,
 		},
 	}
 	log.Println(bid)
