@@ -24,7 +24,7 @@ const (
 
 func PawnCreated(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, env *config.Env) {
 	fmt.Println(PawnCreatedName)
-	data := UpackEvent(abi, PawnCreatedName, vlog.Data)
+	data := UnpackEvent(abi, PawnCreatedName, vlog.Data)
 	fmt.Println(data)
 	newPawnIdStr := data[1]
 	newPawnIdInt := new(big.Int)
@@ -37,8 +37,8 @@ func PawnCreated(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, e
 			log.Panic(err)
 		}
 		fmt.Println(pawn)
-		client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH)
-		success := client.Pawn.Post(
+		client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
+		success := client.Pawn.InsertOne(
 			newPawnIdStr,
 			pawn.Creator.String(),
 			pawn.ContractAddress.String(),
@@ -51,11 +51,11 @@ func PawnCreated(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, e
 
 func PawnCancelled(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, env *config.Env) {
 	fmt.Println(PawnCancelledName)
-	data := UpackEvent(abi, PawnCancelledName, vlog.Data)
+	data := UnpackEvent(abi, PawnCancelledName, vlog.Data)
 	fmt.Println(data)
 	newPawnIdStr := data[1]
-	client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH)
+	client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
 	const CANCELLED = 1
-	success := client.Pawn.Patch(newPawnIdStr, CANCELLED, "")
+	success := client.Pawn.UpdateOne(newPawnIdStr, CANCELLED, "")
 	log.Println(PawnCancelledName, success)
 }

@@ -10,6 +10,7 @@ type Env struct {
 	API_HOST         string
 	PAWN_PATH        string
 	BID_PATH         string
+	BID_PAWN_PATH    string
 	CONTRACT_ADDRESS string
 	NETWORK_ADDRESS  string
 }

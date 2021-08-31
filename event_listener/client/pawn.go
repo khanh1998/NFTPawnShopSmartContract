@@ -14,14 +14,14 @@ type PawnClient struct {
 	path string
 }
 
-func NewPawnClient(host string, path string) *PawnClient {
+func newPawnClient(host string, path string) *PawnClient {
 	return &PawnClient{
 		host: host,
 		path: path,
 	}
 }
 
-func (p *PawnClient) Post(id string, creator string, tokenAdd string, tokenId string, status uint8) bool {
+func (p *PawnClient) InsertOne(id string, creator string, tokenAdd string, tokenId string, status uint8) bool {
 	fullPath := fmt.Sprintf("%v%v", p.host, p.path)
 	postBody, _ := json.Marshal(map[string]interface{}{
 		"id":            id,
@@ -46,7 +46,7 @@ func (p *PawnClient) Post(id string, creator string, tokenAdd string, tokenId st
 	return true
 }
 
-func (p *PawnClient) Patch(id string, status int, bidId string) bool {
+func (p *PawnClient) UpdateOne(id string, status int, bidId string) bool {
 	log.Println("status and bid id", status, bidId)
 	fullPath := fmt.Sprintf("%v%v/%v", p.host, p.path, id)
 	payload, err := json.Marshal(map[string]interface{}{

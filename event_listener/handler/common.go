@@ -14,6 +14,7 @@ const (
 	WhiteListRemovedName = "WhiteListRemoved"
 	BidCreatedName       = "BidCreated"
 	BidCancelledName     = "BidCancelled"
+	BidAcceptedName      = "BidAccepted"
 )
 
 const (
@@ -23,9 +24,10 @@ const (
 	WhiteListRemovedSignature = "WhiteListRemoved(address)"
 	BidCreatedNameSignature   = "BidCreated(address,uint256,uint256)"
 	BidCancelledNameSignature = "BidCancelled(address,uint256,uint256)"
+	BidAcceptedNameSignature  = "BidAccepted(uint256,uint256)"
 )
 
-func UpackEvent(contractAbi abi.ABI, eventName string, data []byte) []string {
+func UnpackEvent(contractAbi abi.ABI, eventName string, data []byte) []string {
 	event, err := contractAbi.Unpack(eventName, data)
 	if err != nil {
 		log.Panic(err)

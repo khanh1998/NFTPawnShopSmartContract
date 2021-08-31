@@ -16,6 +16,7 @@
           type="number"
           suffix="Day"
         />
+        <!--
         <v-menu
           v-model="datePicker"
           :close-on-content-click="false"
@@ -42,6 +43,7 @@
             @input="datePicker = false"
           ></v-date-picker>
         </v-menu>
+        -->
       </v-card-text>
       <v-card-subtitle>
         Repay amount: {{ repayAmount }} wei, in {{ repayDate }}

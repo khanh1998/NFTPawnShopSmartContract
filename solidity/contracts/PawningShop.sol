@@ -479,7 +479,6 @@ contract PawningShop {
         uint8 rate,
         uint256 duration,
         bool isInterestProRated,
-        uint256 loanStartTime,
         uint256 pawnId
     ) public payable {
         _totalNumberOfBid += 1;

@@ -1,6 +1,8 @@
 <template>
   <v-sheet>
-    <bid-create-dialog v-model="dialog" @submit-bid="submitBid" :pawn="selectedPawn"/>
+    <bid-create-dialog v-if="selectedPawn" v-model="dialog" @submit-bid="submitBid"
+      :pawn="selectedPawn"
+    />
     <v-list three-line>
       <v-subheader>Your pawns</v-subheader>
       <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
@@ -70,6 +72,10 @@ export default class PawnList extends Vue {
 
   pawnId = '';
 
+  get loading(): boolean {
+    return this.localLoading;
+  }
+
   get selectedPawn(): ComputedPawn | undefined {
     return this.pawns.find((pawn) => pawn.id === this.pawnId);
   }
@@ -86,10 +92,10 @@ export default class PawnList extends Vue {
     this.dialog = false;
     this.localLoading = true;
     const {
-      loanAmount, loanStartTime, isInterestProRated, loanDuration, interest,
+      loanAmount, isInterestProRated, loanDuration, interest,
     } = data;
     const res = await this.pawningShopContract.methods.createBid(
-      interest, loanDuration, isInterestProRated, loanStartTime, this.pawnId,
+      interest, loanDuration, isInterestProRated, this.pawnId,
     )
       .send({ from: this.accounts[0], value: loanAmount });
     console.log({ data, res });

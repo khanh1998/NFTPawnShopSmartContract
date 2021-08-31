@@ -48,6 +48,8 @@ func main() {
 		log.Panic(err)
 	}
 
+	log.Println("started to listen to ", env.CONTRACT_ADDRESS)
+
 	for {
 		select {
 		case err := <-sub.Err():
@@ -73,6 +75,10 @@ func CategorizeEvent(log types.Log, abi abi.ABI, instance *pawningShop.Contracts
 		handler.WhiteListRemoved(log, abi, instance)
 	case Hash(handler.BidCreatedNameSignature):
 		handler.BidCreated(log, abi, instance, env)
+	case Hash(handler.BidCancelledNameSignature):
+		handler.BidCancelled(log, abi, instance, env)
+	case Hash(handler.BidAcceptedNameSignature):
+		handler.BidAccepted(log, abi, instance, env)
 	}
 }
 

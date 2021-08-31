@@ -40,3 +40,35 @@ func (b *BidNPawnController) InsertBidToPawn(c *gin.Context, sc mongo.SessionCon
 	}
 	return nil
 }
+
+func (b *BidNPawnController) AcceptBid(c *gin.Context, sc mongo.SessionContext) error {
+	bidUpdate := model.BidUpdate{
+		Status: model.BID_ACCEPTED,
+	}
+	id := c.Param("id")
+	if err := b.bid.UpdateOneBy(sc, "id", id, bidUpdate); err != nil {
+		return err
+	}
+	bid, err := b.bid.FindOne(id)
+	if err != nil {
+		return err
+	}
+	pawnUpdate := model.PawnUpdate{
+		Status: model.DEAL,
+	}
+	if err = b.pawn.UpdateOneBy(sc, "id", bid.Pawn, pawnUpdate); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (b *BidNPawnController) CancelBid(c *gin.Context, sc mongo.SessionContext) error {
+	bidUpdate := model.BidUpdate{
+		Status: model.BID_CANCELLED,
+	}
+	id := c.Param("id")
+	if err := b.bid.UpdateOneBy(sc, "id", id, bidUpdate); err != nil {
+		return err
+	}
+	return nil
+}

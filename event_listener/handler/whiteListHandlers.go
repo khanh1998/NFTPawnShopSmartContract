@@ -12,7 +12,7 @@ import (
 
 func WhiteListAdded(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts) {
 	fmt.Println(WhiteListAddedName)
-	data := UpackEvent(abi, WhiteListAddedName, vlog.Data)
+	data := UnpackEvent(abi, WhiteListAddedName, vlog.Data)
 	fmt.Println(data)
 	address, err := instance.WhiteListNFT(nil, big.NewInt(0))
 	if err != nil {
@@ -23,7 +23,7 @@ func WhiteListAdded(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts
 
 func WhiteListRemoved(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts) {
 	fmt.Println(WhiteListRemovedName)
-	data := UpackEvent(abi, WhiteListRemovedName, vlog.Data)
+	data := UnpackEvent(abi, WhiteListRemovedName, vlog.Data)
 	fmt.Println(data)
 	instance.WhiteListNFT(nil, big.NewInt(0))
 	address, err := instance.WhiteListNFT(nil, big.NewInt(0))

@@ -1,13 +1,15 @@
 package client
 
 type Client struct {
-	Pawn *PawnClient
-	Bid  *BidClient
+	Pawn    *PawnClient
+	Bid     *BidClient
+	BidPawn *BidPawnClient
 }
 
-func NewClient(host string, pawnPath string, bidPath string) *Client {
+func NewClient(host string, pawnPath string, bidPath string, bidPawnPath string) *Client {
 	return &Client{
-		Pawn: NewPawnClient(host, pawnPath),
-		Bid:  NewBidClient(host, bidPath),
+		Pawn:    newPawnClient(host, pawnPath),
+		Bid:     newBidClient(host, bidPath),
+		BidPawn: newBidPawnClient(host, bidPawnPath),
 	}
 }

@@ -34,6 +34,23 @@ func (b *BidController) InsertOne(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, bidRead)
 }
 
+func (b *BidController) UpdateOne(c *gin.Context) {
+	var bidUpdate model.BidUpdate
+	if err := c.BindJSON(&bidUpdate); err != nil {
+		log.Panic(err)
+	}
+	id := c.Param("id")
+	err := b.model.UpdateOneBy(nil, "id", id, bidUpdate)
+	if err != nil {
+		log.Panic(err)
+	}
+	bidRead, err := b.model.FindOne(id)
+	if err != nil {
+		log.Panic(err)
+	}
+	c.IndentedJSON(http.StatusOK, bidRead)
+}
+
 func (b *BidController) FindOne(c *gin.Context) {
 	id := c.Param("id")
 	bid, err := b.model.FindOne(id)

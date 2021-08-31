@@ -103,6 +103,9 @@ func (b *Bids) Find(filter interface{}) ([]BidRead, error) {
 	if err = cursor.All(ctx, &bids); err != nil {
 		return nil, err
 	}
+	if len(bids) == 0 {
+		bids = []BidRead{}
+	}
 	return bids, nil
 }
 

@@ -44,11 +44,27 @@ Go [here](https://golang.org/doc/install)\
 6.1 Go to `/api` folder\
 6.2 Run command `go get .` to install packages\
 6.3 Update mongodb uri in `app.env`\
+Add file `app.env` to `/api` folder, contains bellow content:
+>MONGODB_URI=mongodb+srv://username:password@cluster.v5cg7.azure.mongodb.net/databaseName?retryWrites=true&w=majority
+>HOST=localhost:4000
+>DATABASE_NAME=cooking_recipe
+>SYMMETRIC_KEY=this is my secret symmetric keya
+>TOKEN_DURATION=15m
+>NETWORK_HOST=ws://127.0.0.1:7545
+>SMART_CONTRACT_ADDRESS=0xFeD91767CFcd17a709118E0cF2B1A557076ff739
+
 6.4 Run command `go run .`\
 ## 7. Run event listener
 7.1 Go to `/event_listener` folder\
 7.2 Run command `go get .` to install packages\
 7.3 Update address of `PawningShop` contract to `app.env`, because your contract address is changed when deployed\
+Add a new `app.env`to `/event_listener` folder, contains bellow content:\
+>API_HOST=http://localhost:4000
+>PAWN_PATH=/pawns
+>BID_PATH=/bids
+>NETWORK_ADDRESS=ws://127.0.0.1:7545
+>CONTRACT_ADDRESS=0xFeD91767CFcd17a709118E0cF2B1A557076ff739
+
 7.4 run command `go run .`\
 ## 8. Run UI
 8.1 Go to `/client` folder\
