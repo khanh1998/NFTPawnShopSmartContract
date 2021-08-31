@@ -413,6 +413,7 @@ contract PawningShop {
     event PawnRepaid(address pawner, address lender, uint256 pawnId);
     event PawnLiquidated(address pawner, address lender, uint256 pawnId);
     event BidCreated(address creator, uint256 pawnId, uint256 bidId);
+    event BidAccepted(uint256 pawnId, uint256 bidId);
     event BidCancelled(address creator, uint256 pawnId, uint256 bidId);
     event WhiteListAdded(address smartContract);
     event WhiteListRemoved(address smartContract);
@@ -487,6 +488,10 @@ contract PawningShop {
         Pawn storage pawn = _pawns[pawnId];
         require(pawnId > 0, "PawningShop: pawn id is not valid");
         require(
+            pawn.creator != address(0) || pawn.contractAddress != address(0), 
+            "Pawningshop: pawn is not existed"
+        );
+        require(
             pawn.status == PawnStatus.CREATED,
             "PawningShop: cannot bid this pawn"
         );
@@ -500,7 +505,8 @@ contract PawningShop {
         _bids[_totalNumberOfBid].interest = rate;
         _bids[_totalNumberOfBid].loanDuration = duration;
         _bids[_totalNumberOfBid].isInterestProRated = isInterestProRated;
-        _bids[_totalNumberOfBid].loanStartTime = loanStartTime;
+        // _bids[_totalNumberOfBid].loanStartTime = loanStartTime;
+        // loanStartTime will be set when the borrower accepts bid
 
         _bidToPawn[_totalNumberOfBid] = pawnId;
         emit BidCreated(creator, pawnId, _totalNumberOfBid);
@@ -535,6 +541,7 @@ contract PawningShop {
         _pawnToBid[pawnId] = bidId;
         pawn.status = PawnStatus.DEAL;
         currBid.loanStartTime = block.timestamp;
+        emit BidAccepted(pawnId, bidId);
     }
 
     function repaid(uint256 pawnId) public payable {
@@ -561,6 +568,7 @@ contract PawningShop {
         lender.transfer(value);
         delete _pawnToBid[pawnId];
         delete _bidToPawn[bidId];
+        emit PawnRepaid(currPawn.creator, lender, pawnId);
     }
 
     function _calculateRepaidAmount(uint256 original, uint256 interest, uint256 totalDuration, uint256 elapsedDuration, bool isInterestProRated) internal pure returns (uint256) {
@@ -573,12 +581,15 @@ contract PawningShop {
 
     function liquidate(uint256 bidId) public {
         Bid storage currBid = _bids[bidId];
-        require(currBid.creator == msg.sender, "PawningShop: only creator of bid can liquidate token");
+        address lender = currBid.creator;
+        require(lender == msg.sender, "PawningShop: only creator of bid can liquidate token");
         require(block.timestamp > currBid.loanStartTime + currBid.loanAmount, "PawningShop: Not valid time to liquidate");
         uint256 pawnId = _bidToPawn[bidId];
         require(_pawnToBid[pawnId] == bidId, "PawningShop: this bid is not accepted by borrower");
         Pawn storage currPawn = _pawns[pawnId];
-        IERC721(currPawn.contractAddress).transferFrom(address(this), currBid.creator, currPawn.tokenId);
+        address pawner = currPawn.creator;
+        IERC721(currPawn.contractAddress).transferFrom(address(this), lender, currPawn.tokenId);
+        emit PawnLiquidated(pawner, lender, pawnId);
     }
 
     function addToWhiteList(address smartContract) public {
