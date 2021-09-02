@@ -50,12 +50,26 @@ func PawnCreated(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, e
 }
 
 func PawnCancelled(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, env *config.Env) {
-	fmt.Println(PawnCancelledName)
+	log.Println(PawnCancelledName)
 	data := UnpackEvent(abi, PawnCancelledName, vlog.Data)
 	fmt.Println(data)
 	newPawnIdStr := data[1]
 	client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
-	const CANCELLED = 1
-	success := client.Pawn.UpdateOne(newPawnIdStr, CANCELLED, "")
+	success := client.Pawn.UpdateOne(newPawnIdStr, int(CANCELLED), "")
 	log.Println(PawnCancelledName, success)
+}
+
+func PawnRepaid(pawnId string, env *config.Env) {
+	log.Println(PawnRepaidName)
+	client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
+	success := client.Pawn.UpdateOne(pawnId, int(REPAID), "")
+	log.Println(PawnRepaidName, success)
+}
+
+func PawnLiquidated(pawnId string, env *config.Env) {
+	log.Println(PawnLiquidatedName)
+	client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
+	success := client.Pawn.UpdateOne(pawnId, int(LIQUIDATED), "")
+	log.Println(PawnLiquidatedName, success)
+
 }

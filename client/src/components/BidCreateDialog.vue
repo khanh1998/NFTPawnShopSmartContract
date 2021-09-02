@@ -61,7 +61,7 @@ import {
   Component, Emit, Prop, Vue, Watch,
 } from 'vue-property-decorator';
 import { BidCreate } from '@/store/models/bid';
-import { ComputedPawn } from '@/store/PawnState.module';
+import { ComputedPawn } from '@/store/models/pawn';
 
 @Component({
   name: 'BidCreateDialog',

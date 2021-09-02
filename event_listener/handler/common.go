@@ -15,16 +15,20 @@ const (
 	BidCreatedName       = "BidCreated"
 	BidCancelledName     = "BidCancelled"
 	BidAcceptedName      = "BidAccepted"
+	PawnRepaidName       = "PawnRepaid"
+	PawnLiquidatedName   = "PawnLiquidated"
 )
 
 const (
-	PawnCreatedSignature      = "PawnCreated(address,uint256)"
-	PawnCancelledSignature    = "PawnCancelled(address,uint256)"
-	WhiteListAddedSignature   = "WhiteListAdded(address)"
-	WhiteListRemovedSignature = "WhiteListRemoved(address)"
-	BidCreatedNameSignature   = "BidCreated(address,uint256,uint256)"
-	BidCancelledNameSignature = "BidCancelled(address,uint256,uint256)"
-	BidAcceptedNameSignature  = "BidAccepted(uint256,uint256)"
+	PawnCreatedSignature        = "PawnCreated(address,uint256)"
+	PawnCancelledSignature      = "PawnCancelled(address,uint256)"
+	WhiteListAddedSignature     = "WhiteListAdded(address)"
+	WhiteListRemovedSignature   = "WhiteListRemoved(address)"
+	BidCreatedNameSignature     = "BidCreated(address,uint256,uint256)"
+	BidCancelledNameSignature   = "BidCancelled(address,uint256,uint256)"
+	BidAcceptedNameSignature    = "BidAccepted(uint256,uint256)"
+	PawnRepaidNameSignature     = "PawnRepaid(address,address,uint256)"
+	PawnLiquidatedNameSignature = "PawnLiquidated(address,address,uint256)"
 )
 
 func UnpackEvent(contractAbi abi.ABI, eventName string, data []byte) []string {

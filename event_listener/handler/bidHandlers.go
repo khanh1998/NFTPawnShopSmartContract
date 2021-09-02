@@ -64,8 +64,7 @@ func BidAccepted(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, e
 	if err != nil {
 		log.Panic(err)
 	}
-	const BID_STATUS = 2
-	success := client.BidPawn.UpdateOne(bidIdStr, 2, bid.LoanStartTime.String())
+	success := client.BidPawn.UpdateOne(bidIdStr, int(BID_ACCEPTED), bid.LoanStartTime.String())
 	log.Println(BidAcceptedName, success)
 }
 

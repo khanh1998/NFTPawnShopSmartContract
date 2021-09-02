@@ -1,17 +1,11 @@
 import {
   Module, VuexModule, Mutation, Action, getModule,
 } from 'vuex-module-decorators';
-import { Bid } from './models/bid';
+import { Bid, ComputedBid } from './models/bid';
 import { store } from '.';
 import { IBidState } from './IBidState';
 import { getRandomColor } from '@/utils/color';
 import { convertSecondAndDurationToDateStr, convertSecondToDateStr } from '@/utils/time';
-
-export interface ComputedBid extends Bid {
-  color: string;
-  loan_start_time_str: string; // eslint-disable-line
-  loan_end_time_str: string; // eslint-disable-line
-}
 
 @Module({
   namespaced: true,

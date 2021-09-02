@@ -12,7 +12,7 @@
           <v-list-item-title> Pawn id: {{ bid.pawn }} </v-list-item-title>
           <p>Loan amount: {{ bid.loan_amount }}</p>
           <p>Loan interest: {{ bid.interest }}</p>
-          <p>Repayment date: {{ bid.loan_end_time_str }}</p>
+          <p v-if="bid.status === 2">Repayment date: {{ bid.loan_end_time_str }}</p>
           <p v-if="viewer === borrower">Created by {{ bid.creator }}</p>
         </v-list-item-content>
         <v-list-item-action>
@@ -21,9 +21,6 @@
           </v-btn>
           <v-btn v-if="viewer === borrower && bid.status == 0" @click="acceptBid(bid.id)">
             Accept
-          </v-btn>
-          <v-btn v-if="viewer === borrower && bid.status == 2">
-            Repay
           </v-btn>
         </v-list-item-action>
       </v-list-item>

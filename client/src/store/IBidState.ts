@@ -1,4 +1,4 @@
-import { Bid } from "./models/bid";
+import { Bid } from './models/bid';
 
 export interface IBidState {
   loading: boolean;

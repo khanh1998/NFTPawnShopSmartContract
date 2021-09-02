@@ -1,16 +1,12 @@
 import {
   Module, VuexModule, Mutation, Action, getModule,
 } from 'vuex-module-decorators';
-import { Pawn } from '@/store/models/pawn';
-import { IPawnState } from '@/store/IPawnState';
-import { store } from '@/store/index';
+import { ComputedPawn, Pawn } from '@/store/models/pawn';
 import { getRandomColor } from '@/utils/color';
 import { getStatusName } from '@/utils/contract';
-
-export interface ComputedPawn extends Pawn {
-  color : string;
-  statusName: string;
-}
+import { IPawnState } from '@/store/IPawnState';
+import { store } from '@/store/index';
+import { Bid, BidStatus } from './models/bid';
 
 @Module({
   namespaced: true,
@@ -30,6 +26,7 @@ export class PawnState extends VuexModule implements IPawnState {
       ...pawn,
       color: getRandomColor(),
       statusName: getStatusName(pawn.status),
+      acceptedBid: pawn.bids.find((bid: Bid) => bid.status === BidStatus.ACCEPTED),
     }));
   }
 

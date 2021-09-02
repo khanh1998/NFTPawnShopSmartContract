@@ -14,5 +14,12 @@ export class Pawn {// eslint-disable-line
 
   status!: number;
 
+  acceptedBid!: Bid | undefined;
+
   bids!: Bid[];
+}
+
+export interface ComputedPawn extends Pawn {
+  color : string;
+  statusName: string;
 }

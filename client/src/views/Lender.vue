@@ -65,7 +65,7 @@ export default class extends Vue {
 
   async created() {
     this.localLoading = true;
-    this.pawn.findAllBy('status=0');
+    this.pawn.findAllBy('');
     this.accounts = await this.getAccounts();
     this.bid.findAllBy(`creator=${this.accounts[0]}`);
     this.networkId = await this.getNetworkId();

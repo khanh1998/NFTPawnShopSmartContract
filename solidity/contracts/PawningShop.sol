@@ -382,13 +382,13 @@ contract PawningShop {
         PawnStatus status;
     }
     struct Bid {
-        address creator;
+        address creator; // who create the bid
         uint256 loanAmount;
-        // the amount of wei borrower have to pay more
-        uint256 interest;
-        uint256 loanStartTime;
-        uint256 loanDuration;
-        bool isInterestProRated;
+        // the amount of wei the lender lend to the borrower
+        uint256 interest; // the maximum interest that the borrower have to pay in wei
+        uint256 loanStartTime; // timestamp
+        uint256 loanDuration; // duration in days
+        bool isInterestProRated; // if the borrower pays sonner, then pays less interest
     }
     address public owner;
     address[] public _whiteListNFT;
@@ -491,6 +491,10 @@ contract PawningShop {
             "Pawningshop: pawn is not existed"
         );
         require(
+            pawn.creator != creator,
+            "PawningShop: creator of the pawn cannot make a bid"
+        );
+        require(
             pawn.status == PawnStatus.CREATED,
             "PawningShop: cannot bid this pawn"
         );
@@ -519,7 +523,10 @@ contract PawningShop {
             "PawningShop: only creator can cancel the bid"
         );
         uint256 pawnId = _bidToPawn[bidId];
-        require(_pawnToBid[pawnId] != bidId, "PawningShop: your bid is accepted, cannot cancel");
+        require(
+            _pawnToBid[pawnId] != bidId,
+            "PawningShop: your bid is accepted, cannot cancel"
+        );
         address payable lender = payable(currBid.creator);
         lender.transfer(currBid.loanAmount);
         delete _bids[bidId];
@@ -530,9 +537,15 @@ contract PawningShop {
     function acceptBid(uint256 bidId) public {
         Bid storage currBid = _bids[bidId];
         uint256 pawnId = _bidToPawn[bidId];
-        require(pawnId > 0, "PawningShop: The pawn is not existed");
+        require(
+            pawnId > 0,
+            "PawningShop: The pawn is not existed"
+        );
         Pawn storage pawn = _pawns[pawnId];
-        require(pawn.creator == msg.sender, "PawningShop: only creator of pawn can accept bid");
+        require(
+            pawn.creator == msg.sender,
+            "PawningShop: only creator of pawn can accept bid"
+        );
         address payable borrower = payable(pawn.creator);
         borrower.transfer(currBid.loanAmount);
         pawn.status = PawnStatus.DEAL;
@@ -553,11 +566,23 @@ contract PawningShop {
             "PawningShop: This pawn doen't have any accepted bid"
         );
         Bid storage currBid = _bids[bidId];
-        require(block.timestamp <= currBid.loanStartTime + currBid.loanDuration, "PawningShop: to late to repaid");
+        uint256 repayDeadline = _calculateRepayDeadline(currBid.loanStartTime, currBid.loanDuration);
+        require(
+            block.timestamp <= repayDeadline,
+            "PawningShop: to late to repaid"
+        );
         uint256 value = msg.value;
-        uint256 elapsedDuration = block.timestamp - currBid.loanStartTime;
-        uint256 repaidAmount = _calculateRepaidAmount(currBid.loanAmount, currBid.interest, currBid.loanDuration, elapsedDuration, currBid.isInterestProRated);
-        require(value == repaidAmount, "PawningShop: pay exactly repaid amount");
+        uint256 repaidAmount = _calculateRepaidAmount(
+            currBid.loanAmount,
+            currBid.interest,
+            currBid.loanStartTime,
+            currBid.loanDuration,
+            currBid.isInterestProRated
+        );
+        require(
+            value == repaidAmount,
+            "PawningShop: pay exactly repaid amount"
+        );
         // transfer token back to borrower
         IERC721(currPawn.contractAddress).transferFrom(address(this), currPawn.creator, currPawn.tokenId);
         // transfer money to lender
@@ -568,12 +593,37 @@ contract PawningShop {
         emit PawnRepaid(currPawn.creator, lender, pawnId);
     }
 
-    function _calculateRepaidAmount(uint256 original, uint256 interest, uint256 totalDuration, uint256 elapsedDuration, bool isInterestProRated) internal pure returns (uint256) {
+    function _calculateRepayDeadline(uint256 loanStartTime, uint256 loanDuration) public pure returns(uint256) {
+        uint256 loanDurationInSeconds = loanDuration.mul(1 days);
+        uint256 repayDeadline = loanStartTime.add(loanDurationInSeconds);
+        return repayDeadline;
+    }
+
+    function _calculateRepaidAmount(
+        uint256 original, uint256 interest, uint256 loanStartTime, uint256 duration, bool isInterestProRated
+    ) public view returns (uint256) {
         uint256 interestDue = interest;
         if (isInterestProRated) {
-            interestDue = (interest.div(totalDuration)).mul(elapsedDuration);
+            uint256 interestPerDay = interest.div(duration);
+            uint256 secondPassed = block.timestamp.sub(loanStartTime);
+            uint256 dayPassed = ceilDiv(secondPassed, 1 days);
+            interestDue = dayPassed.mul(interestPerDay);
         }
-        return original.add(interest);
+        return original.add(interestDue);
+    }
+
+    function getRepaidAmount(uint256 pawnId) public view returns(uint256) {
+        require(pawnId > 0, "PawningShop: pawn id is not existed");
+        uint256 bidId = _pawnToBid[pawnId];
+        require(bidId > 0, "PawningShop: pawn doesn't have a accepted bid or the pawn is done");
+        Bid storage bid = _bids[bidId];
+        return _calculateRepaidAmount(bid.loanAmount, bid.interest, bid.loanStartTime, bid.loanDuration, bid.isInterestProRated);
+    }
+    
+    // get this from openzeppelin
+    function ceilDiv(uint256 a, uint256 b) internal pure returns (uint256) {
+        // (a + b - 1) / b can overflow on addition, so we distribute.
+        return a / b + (a % b == 0 ? 0 : 1);
     }
 
     function liquidate(uint256 bidId) public {

@@ -48,14 +48,34 @@ func main() {
 		log.Panic(err)
 	}
 
+	pawnRepaidChannel := make(chan *pawningShop.ContractsPawnRepaid)
+	pawnRepayChannelErr, err := instance.WatchPawnRepaid(nil, pawnRepaidChannel)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	pawnLiquidatedChannel := make(chan *pawningShop.ContractsPawnLiquidated)
+	pawnLiquidatedChannelErr, err := instance.WatchPawnLiquidated(nil, pawnLiquidatedChannel)
+	if err != nil {
+		log.Panic(err)
+	}
+
 	log.Println("started to listen to ", env.CONTRACT_ADDRESS)
 
 	for {
 		select {
 		case err := <-sub.Err():
-			log.Fatal(err)
+			log.Panic(err)
 		case vLog := <-logs:
 			CategorizeEvent(vLog, contractAbi, instance, env)
+		case err := <-pawnRepayChannelErr.Err():
+			log.Panic(err)
+		case repay := <-pawnRepaidChannel:
+			handler.PawnRepaid(repay.PawnId.String(), env)
+		case err := <-pawnLiquidatedChannelErr.Err():
+			log.Panic(err)
+		case liquidated := <-pawnLiquidatedChannel:
+			handler.PawnLiquidated(liquidated.PawnId.String(), env)
 		}
 	}
 
