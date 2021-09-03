@@ -31,6 +31,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Contract } from 'web3-eth-contract';
 import { Bid } from '@/store/models/bid';
+import { extractErrorObjFromMessage } from '@/utils/contract';
 
 @Component({
   name: 'BidList',
@@ -61,19 +62,29 @@ export default class PawnList extends Vue {
 
   async cancelBid(bidId: string): Promise<void> {
     this.localLoading = true;
-    const res = await this.pawningShopContract.methods
-      .cancelBid(bidId)
-      .send({ from: this.accounts[0] });
-    console.log(res);
+    try {
+      const res = await this.pawningShopContract.methods
+        .cancelBid(bidId)
+        .send({ from: this.accounts[0] });
+      console.log(res);
+    } catch (error) {
+      const err = extractErrorObjFromMessage(error.message);
+      alert(err.reason);
+    }
     this.localLoading = false;
   }
 
   async acceptBid(bidId: string): Promise<void> {
     this.localLoading = true;
-    const res = await this.pawningShopContract.methods
-      .acceptBid(bidId)
-      .send({ from: this.accounts[0] });
-    console.log(res);
+    try {
+      const res = await this.pawningShopContract.methods
+        .acceptBid(bidId)
+        .send({ from: this.accounts[0] });
+      console.log(res);
+    } catch (error) {
+      const err = extractErrorObjFromMessage(error.message);
+      alert(err.reason);
+    }
     this.localLoading = false;
   }
 }

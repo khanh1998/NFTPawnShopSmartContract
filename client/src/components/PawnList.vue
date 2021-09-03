@@ -133,23 +133,33 @@ export default class PawnList extends Vue {
 
   async cancelPawn(pawnId: string): Promise<void> {
     this.localLoading = true;
-    const res = await this.pawningShopContract.methods.cancelPawn(pawnId)
-      .send({ from: this.accounts[0] });
-    console.log(res);
+    try {
+      const res = await this.pawningShopContract.methods.cancelPawn(pawnId)
+        .send({ from: this.accounts[0] });
+      console.log(res);
+    } catch (error) {
+      const err = extractErrorObjFromMessage(error.message);
+      alert(err.reason);
+    }
     this.localLoading = false;
   }
 
   async submitBid(data: BidCreate): Promise<void> {
     this.dialog = false;
     this.localLoading = true;
-    const {
-      loanAmount, isInterestProRated, loanDuration, interest,
-    } = data;
-    const res = await this.pawningShopContract.methods.createBid(
-      interest, loanDuration, isInterestProRated, this.pawnId,
-    )
-      .send({ from: this.accounts[0], value: loanAmount });
-    console.log({ data, res });
+    try {
+      const {
+        loanAmount, isInterestProRated, loanDuration, interest,
+      } = data;
+      const res = await this.pawningShopContract.methods.createBid(
+        interest, loanDuration, isInterestProRated, this.pawnId,
+      )
+        .send({ from: this.accounts[0], value: loanAmount });
+      console.log({ data, res });
+    } catch (error) {
+      const err = extractErrorObjFromMessage(error.message);
+      alert(err.reason);
+    }
     this.localLoading = false;
   }
 
