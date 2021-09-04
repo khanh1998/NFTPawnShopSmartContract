@@ -6,19 +6,19 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    origin: '*',
-  });
-  // const configService = app.get(ConfigService)
-  // await app.connectMicroservice<MicroserviceOptions>({
-  //   transport: Transport.GRPC,
-  //   options: {
-  //     package: 'app',
-  //     protoPath: join(process.cwd(), 'src/app.proto'),
-  //     url: configService.get('GRPC_CONNECTION_URL'),
-  //   },
-  // })
-  // app.startAllMicroservices();
-  await app.listen(5000);
+  const configService = app.get(ConfigService)
+  await app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.GRPC,
+    options: {
+      package: 'app',
+      protoPath: join(process.cwd(), 'src/app.proto'),
+      url: configService.get('GRPC_CONNECTION_URL'),
+    },
+  })
+  await app.startAllMicroservices();
+  // for socket
+  const app1 = await NestFactory.create(AppModule);
+  app1.enableCors();
+  await app1.listen(7789);
 }
 bootstrap();
