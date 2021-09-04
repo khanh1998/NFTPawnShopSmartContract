@@ -476,7 +476,7 @@ contract PawningShop {
     }
 
     function createBid(
-        uint8 rate,
+        uint256 rate,
         uint256 duration,
         bool isInterestProRated,
         uint256 pawnId
