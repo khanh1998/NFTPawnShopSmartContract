@@ -72,8 +72,8 @@ export default class extends Vue {
   }
 
   async mounted() {
-    this.$socket.emit('message', 'hello from client');
-    this.$socket.on('message', (args) => console.log(args));
+    this.$socket.emit('data_update', 'hello from client');
+    this.$socket.on('data_update', (args) => console.log(args));
     const accounts = await this.$web3.eth.getAccounts();
     console.log(accounts[0]);
     this.user.findUserByAddress(accounts[0]);
