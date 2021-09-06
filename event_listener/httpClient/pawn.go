@@ -1,4 +1,4 @@
-package client
+package httpClient
 
 import (
 	"bytes"
@@ -35,11 +35,13 @@ func (p *PawnClient) InsertOne(id string, creator string, tokenAdd string, token
 	resp, err := http.Post(fullPath, "application/json", responseBody)
 	if err != nil {
 		log.Panic(err)
+		return false
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Panic(err)
+		return false
 	}
 	sb := string(body)
 	fmt.Println(sb)

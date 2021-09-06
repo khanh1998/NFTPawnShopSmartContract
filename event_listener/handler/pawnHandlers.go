@@ -2,14 +2,10 @@ package handler
 
 import (
 	"fmt"
-	"khanh/client"
-	"khanh/config"
 	pawningShop "khanh/contracts"
+	"khanh/httpClient"
 	"log"
 	"math/big"
-
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/core/types"
 )
 
 type PawnStatus int
@@ -22,54 +18,70 @@ const (
 	REPAID
 )
 
-func PawnCreated(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, env *config.Env) {
+func PawnCreated(pawnId *big.Int, instance *pawningShop.Contracts, client *httpClient.Client) {
 	fmt.Println(PawnCreatedName)
-	data := UnpackEvent(abi, PawnCreatedName, vlog.Data)
-	fmt.Println(data)
-	newPawnIdStr := data[1]
-	newPawnIdInt := new(big.Int)
-	newPawnIdInt, ok := newPawnIdInt.SetString(newPawnIdStr, 10)
-	if !ok {
-		log.Panic("cannot convert string to bigint")
-	} else {
-		pawn, err := instance.Pawns(nil, newPawnIdInt)
-		if err != nil {
-			log.Panic(err)
-		}
-		fmt.Println(pawn)
-		client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
-		success := client.Pawn.InsertOne(
-			newPawnIdStr,
-			pawn.Creator.String(),
-			pawn.ContractAddress.String(),
-			pawn.TokenId.String(),
-			pawn.Status,
-		)
-		log.Println(PawnCreatedName, success)
+	pawn, err := instance.Pawns(nil, pawnId)
+	if err != nil {
+		log.Panic(err)
+	}
+	fmt.Println(pawn)
+	success := client.Pawn.InsertOne(
+		pawnId.String(),
+		pawn.Creator.String(),
+		pawn.ContractAddress.String(),
+		pawn.TokenId.String(),
+		pawn.Status,
+	)
+	log.Println("to api", PawnCreatedName, success)
+	if success {
+		success := client.Notify.SendNotification(httpClient.Notification{
+			Message:  "New pawn is created",
+			Code:     PawnCreatedName,
+			PawnID:   pawnId.String(),
+			Borrower: pawn.Creator.String(),
+		})
+		log.Println("to notify", PawnCreatedName, success)
 	}
 }
 
-func PawnCancelled(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, env *config.Env) {
+func PawnCancelled(pawnId *big.Int, instance *pawningShop.Contracts, client *httpClient.Client) {
 	log.Println(PawnCancelledName)
-	data := UnpackEvent(abi, PawnCancelledName, vlog.Data)
-	fmt.Println(data)
-	newPawnIdStr := data[1]
-	client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
-	success := client.Pawn.UpdateOne(newPawnIdStr, int(CANCELLED), "")
-	log.Println(PawnCancelledName, success)
+	success := client.Pawn.UpdateOne(pawnId.String(), int(CANCELLED), "")
+	log.Println("to api", PawnCancelledName, success)
+	if success {
+		success := client.Notify.SendNotification(httpClient.Notification{
+			Message: "A pawn is cancelled",
+			Code:    PawnCancelledName,
+			PawnID:  pawnId.String(),
+		})
+		log.Println("to notify", PawnCancelledName, success)
+	}
 }
 
-func PawnRepaid(pawnId string, env *config.Env) {
+func PawnRepaid(pawnId *big.Int, client *httpClient.Client) {
 	log.Println(PawnRepaidName)
-	client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
-	success := client.Pawn.UpdateOne(pawnId, int(REPAID), "")
-	log.Println(PawnRepaidName, success)
+	success := client.Pawn.UpdateOne(pawnId.String(), int(REPAID), "")
+	log.Println("to api", PawnRepaidName, success)
+	if success {
+		success := client.Notify.SendNotification(httpClient.Notification{
+			Message: "A pawn is repaid",
+			Code:    PawnRepaidName,
+			PawnID:  pawnId.String(),
+		})
+		log.Println("to notify", PawnRepaidName, success)
+	}
 }
 
-func PawnLiquidated(pawnId string, env *config.Env) {
+func PawnLiquidated(pawnId *big.Int, client *httpClient.Client) {
 	log.Println(PawnLiquidatedName)
-	client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
-	success := client.Pawn.UpdateOne(pawnId, int(LIQUIDATED), "")
-	log.Println(PawnLiquidatedName, success)
-
+	success := client.Pawn.UpdateOne(pawnId.String(), int(LIQUIDATED), "")
+	log.Println("to api", PawnLiquidatedName, success)
+	if success {
+		success := client.Notify.SendNotification(httpClient.Notification{
+			Message: "A pawn is liquidated",
+			Code:    PawnLiquidatedName,
+			PawnID:  pawnId.String(),
+		})
+		log.Println("to notify", PawnLiquidatedName, success)
+	}
 }

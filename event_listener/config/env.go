@@ -7,12 +7,14 @@ import (
 )
 
 type Env struct {
-	API_HOST         string
-	PAWN_PATH        string
-	BID_PATH         string
-	BID_PAWN_PATH    string
-	CONTRACT_ADDRESS string
-	NETWORK_ADDRESS  string
+	API_HOST          string
+	PAWN_PATH         string
+	BID_PATH          string
+	BID_PAWN_PATH     string
+	NOTIFY_HOST       string
+	NOTIFICATION_PATH string
+	CONTRACT_ADDRESS  string
+	NETWORK_ADDRESS   string
 }
 
 func LoadEnv() (*Env, error) {

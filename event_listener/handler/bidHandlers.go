@@ -2,14 +2,12 @@ package handler
 
 import (
 	"fmt"
-	"khanh/client"
-	"khanh/config"
 	pawningShop "khanh/contracts"
+	"khanh/httpClient"
 	"log"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type BidStatus int
@@ -20,59 +18,65 @@ const (
 	BID_ACCEPTED
 )
 
-func BidCreated(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, env *config.Env) {
+func BidCreated(bidId *big.Int, pawnId *big.Int, instance *pawningShop.Contracts, client *httpClient.Client) {
 	fmt.Println(BidCreatedName)
-	data := UnpackEvent(abi, BidCreatedName, vlog.Data)
-	fmt.Println(data)
-	pawnIdStr := data[1]
-	newBidIdStr := data[2]
-	newBidIdInt := new(big.Int)
-	newBidIdInt, ok := newBidIdInt.SetString(newBidIdStr, 10)
-	if !ok {
-		log.Panic("cannot convert string to bigint")
-	} else {
-		bid, err := instance.Bids(nil, newBidIdInt)
-		if err != nil {
-			log.Panic(err)
-		}
-		fmt.Println(bid)
-		client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
-		success := client.BidPawn.InsertOne(
-			newBidIdStr,
-			bid.Creator.String(),
-			bid.LoanAmount.String(),
-			bid.Interest.String(),
-			bid.LoanStartTime.String(),
-			bid.LoanDuration.String(),
-			bid.IsInterestProRated,
-			pawnIdStr,
-		)
-		log.Println(BidCreatedName, success)
-	}
-}
-
-func BidAccepted(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, env *config.Env) {
-	log.Println(BidAcceptedName)
-	data := UnpackEvent(abi, BidAcceptedName, vlog.Data)
-	bidIdStr := data[1]
-	client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
-	bidIdInt, ok := new(big.Int), false
-	if bidIdInt, ok = bidIdInt.SetString(bidIdStr, 10); !ok {
-		log.Panic("cannot convert string to big int")
-	}
-	bid, err := instance.Bids(nil, bidIdInt)
+	bid, err := instance.Bids(nil, bidId)
 	if err != nil {
 		log.Panic(err)
 	}
-	success := client.BidPawn.UpdateOne(bidIdStr, int(BID_ACCEPTED), bid.LoanStartTime.String())
-	log.Println(BidAcceptedName, success)
+	fmt.Println(bid)
+	success := client.BidPawn.InsertOne(
+		bidId.String(),
+		bid.Creator.String(),
+		bid.LoanAmount.String(),
+		bid.Interest.String(),
+		bid.LoanStartTime.String(),
+		bid.LoanDuration.String(),
+		bid.IsInterestProRated,
+		pawnId.String(),
+	)
+	log.Println("to api", BidCreatedName, success)
+	if success {
+		client.Notify.SendNotification(httpClient.Notification{
+			Message: "New bid is created",
+			Code:    BidCreatedName,
+			PawnID:  pawnId.String(),
+			BidID:   bidId.String(),
+			Lender:  bid.Creator.String(),
+		})
+	}
+	log.Println("to notify", BidCreatedName, success)
 }
 
-func BidCancelled(vlog types.Log, abi abi.ABI, instance *pawningShop.Contracts, env *config.Env) {
+func BidAccepted(bidId *big.Int, instance *pawningShop.Contracts, client *httpClient.Client) {
+	log.Println(BidAcceptedName)
+	bid, err := instance.Bids(nil, bidId)
+	if err != nil {
+		log.Panic(err)
+	}
+	success := client.BidPawn.UpdateOne(bidId.String(), int(BID_ACCEPTED), bid.LoanStartTime.String())
+	log.Println("to api", BidAcceptedName, success)
+	if success {
+		success := client.Notify.SendNotification(httpClient.Notification{
+			Code:    BidAcceptedName,
+			Message: "A bid is accepted",
+			BidID:   bidId.String(),
+		})
+		log.Println("to notify", BidAcceptedName, success)
+	}
+}
+
+func BidCancelled(bidId *big.Int, creator common.Address, instance *pawningShop.Contracts, client *httpClient.Client) {
 	log.Println(BidCancelledName)
-	data := UnpackEvent(abi, BidCancelledName, vlog.Data)
-	bidIdStr := data[2]
-	client := client.NewClient(env.API_HOST, env.PAWN_PATH, env.BID_PATH, env.BID_PAWN_PATH)
-	success := client.Bid.UpdateOne(bidIdStr, int(BID_CANCELLED))
-	log.Println(BidCancelledName, success)
+	success := client.Bid.UpdateOne(bidId.String(), int(BID_CANCELLED))
+	log.Println("to api", BidCancelledName, success)
+	if success {
+		success := client.Notify.SendNotification(httpClient.Notification{
+			Code:    BidCancelledName,
+			Message: "A bid is cancelled",
+			BidID:   bidId.String(),
+			Lender:  creator.String(),
+		})
+		log.Println("to notify", BidCancelledName, success)
+	}
 }
