@@ -407,14 +407,14 @@ contract PawningShop {
         owner = msg.sender;
     }
 
-    event PawnCreated(address pawner, uint256 pawnId);
-    event PawnCancelled(address pawner, uint256 pawnId);
-    event PawnDeal(address pawner, address lender, uint256 pawnId);
-    event PawnRepaid(address pawner, address lender, uint256 pawnId);
-    event PawnLiquidated(address pawner, address lender, uint256 pawnId);
-    event BidCreated(address creator, uint256 pawnId, uint256 bidId);
-    event BidAccepted(uint256 pawnId, uint256 bidId);
-    event BidCancelled(address creator, uint256 pawnId, uint256 bidId);
+    event PawnCreated(address borrower, uint256 indexed pawnId);
+    event PawnCancelled(address borrower, uint256 indexed pawnId);
+    event PawnDeal(address borrower, address lender, uint256 indexed pawnId, uint256 bidId);
+    event PawnRepaid(address borrower, address lender, uint256 indexed pawnId, uint256 bidId);
+    event PawnLiquidated(address borrower, address lender, uint256 indexed pawnId, uint256 bidId);
+    event BidCreated(address borrower, address lender, uint256 pawnId, uint256 indexed bidId);
+    event BidAccepted(address borrower, address lender, uint256 pawnId, uint256 indexed bidId);
+    event BidCancelled(address borrower, address lender, uint256 pawnId, uint256 indexed bidId);
     event WhiteListAdded(address smartContract);
     event WhiteListRemoved(address smartContract);
 
@@ -482,16 +482,17 @@ contract PawningShop {
         uint256 pawnId
     ) public payable {
         _totalNumberOfBid += 1;
-        address creator = msg.sender;
+        address lender = msg.sender;
         uint256 amount = msg.value;
         Pawn storage pawn = _pawns[pawnId];
+        address borrower = pawn.creator;
         require(pawnId > 0, "PawningShop: pawn id is not valid");
         require(
-            pawn.creator != address(0) || pawn.contractAddress != address(0), 
+            borrower != address(0) || pawn.contractAddress != address(0), 
             "Pawningshop: pawn is not existed"
         );
         require(
-            pawn.creator != creator,
+            borrower != lender,
             "PawningShop: creator of the pawn cannot make a bid"
         );
         require(
@@ -503,7 +504,7 @@ contract PawningShop {
             "PawningShop: amount of money must be bigger than 0"
         );
 
-        _bids[_totalNumberOfBid].creator = creator;
+        _bids[_totalNumberOfBid].creator = lender;
         _bids[_totalNumberOfBid].loanAmount = amount;
         _bids[_totalNumberOfBid].interest = rate;
         _bids[_totalNumberOfBid].loanDuration = duration;
@@ -512,52 +513,55 @@ contract PawningShop {
         // loanStartTime will be set when the borrower accepts bid
 
         _bidToPawn[_totalNumberOfBid] = pawnId;
-        emit BidCreated(creator, pawnId, _totalNumberOfBid);
+        emit BidCreated(borrower, lender, pawnId, _totalNumberOfBid);
     }
 
     function cancelBid(uint256 bidId) public {
         Bid memory currBid = _bids[bidId];
+        address payable lender = payable(currBid.creator);
         address sender = msg.sender;
         require(
-            sender == currBid.creator,
+            sender == lender,
             "PawningShop: only creator can cancel the bid"
         );
         uint256 pawnId = _bidToPawn[bidId];
+        address borrower = _pawns[pawnId].creator;
         require(
             _pawnToBid[pawnId] != bidId,
             "PawningShop: your bid is accepted, cannot cancel"
         );
-        address payable lender = payable(currBid.creator);
         lender.transfer(currBid.loanAmount);
         delete _bids[bidId];
         delete _bidToPawn[bidId];
-        emit BidCancelled(sender, pawnId, bidId);
+        emit BidCancelled(borrower, lender, pawnId, bidId);
     }
 
     function acceptBid(uint256 bidId) public {
         Bid storage currBid = _bids[bidId];
+        address lender = currBid.creator;
         uint256 pawnId = _bidToPawn[bidId];
         require(
             pawnId > 0,
             "PawningShop: The pawn is not existed"
         );
         Pawn storage pawn = _pawns[pawnId];
+        address payable borrower = payable(pawn.creator);
         require(
-            pawn.creator == msg.sender,
+            borrower == msg.sender,
             "PawningShop: only creator of pawn can accept bid"
         );
-        address payable borrower = payable(pawn.creator);
         borrower.transfer(currBid.loanAmount);
         pawn.status = PawnStatus.DEAL;
         _pawnToBid[pawnId] = bidId;
         currBid.loanStartTime = block.timestamp;
-        emit BidAccepted(pawnId, bidId);
+        emit BidAccepted(borrower, lender, pawnId, bidId);
     }
 
     function repaid(uint256 pawnId) public payable {
         Pawn storage currPawn = _pawns[pawnId];
+        address borrower = currPawn.creator;
         require(
-            currPawn.creator == msg.sender,
+            borrower == msg.sender,
             "PawningShop: Only creator of pawn can repay"
         );
         uint256 bidId = _pawnToBid[pawnId];
@@ -590,7 +594,7 @@ contract PawningShop {
         lender.transfer(value);
         delete _pawnToBid[pawnId];
         delete _bidToPawn[bidId];
-        emit PawnRepaid(currPawn.creator, lender, pawnId);
+        emit PawnRepaid(borrower, lender, pawnId, bidId);
     }
 
     function _calculateRepayDeadline(uint256 loanStartTime, uint256 loanDuration) public pure returns(uint256) {
@@ -636,7 +640,7 @@ contract PawningShop {
         Pawn storage currPawn = _pawns[pawnId];
         address pawner = currPawn.creator;
         IERC721(currPawn.contractAddress).transferFrom(address(this), lender, currPawn.tokenId);
-        emit PawnLiquidated(pawner, lender, pawnId);
+        emit PawnLiquidated(pawner, lender, pawnId, bidId);
     }
 
     function addToWhiteList(address smartContract) public {

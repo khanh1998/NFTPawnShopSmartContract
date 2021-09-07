@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"math/big"
 
 	"khanh/config"
 	pawningShop "khanh/contracts"
@@ -32,43 +33,43 @@ func main() {
 	)
 
 	pawnRepaidChannel := make(chan *pawningShop.ContractsPawnRepaid)
-	pawnRepaidChannelErr, err := instance.WatchPawnRepaid(nil, pawnRepaidChannel)
+	pawnRepaidChannelErr, err := instance.WatchPawnRepaid(nil, pawnRepaidChannel, []*big.Int{})
 	if err != nil {
 		log.Panic(err)
 	}
 
 	pawnLiquidatedChannel := make(chan *pawningShop.ContractsPawnLiquidated)
-	pawnLiquidatedChannelErr, err := instance.WatchPawnLiquidated(nil, pawnLiquidatedChannel)
+	pawnLiquidatedChannelErr, err := instance.WatchPawnLiquidated(nil, pawnLiquidatedChannel, []*big.Int{})
 	if err != nil {
 		log.Panic(err)
 	}
 
 	pawnCreatedChannel := make(chan *pawningShop.ContractsPawnCreated)
-	pawnCreatedChannelErr, err := instance.WatchPawnCreated(nil, pawnCreatedChannel)
+	pawnCreatedChannelErr, err := instance.WatchPawnCreated(nil, pawnCreatedChannel, []*big.Int{})
 	if err != nil {
 		log.Panic(err)
 	}
 
 	pawnCancelledChannel := make(chan *pawningShop.ContractsPawnCancelled)
-	pawnCancelledChannelErr, err := instance.WatchPawnCancelled(nil, pawnCancelledChannel)
+	pawnCancelledChannelErr, err := instance.WatchPawnCancelled(nil, pawnCancelledChannel, []*big.Int{})
 	if err != nil {
 		log.Panic(err)
 	}
 
 	bidCreatedChannel := make(chan *pawningShop.ContractsBidCreated)
-	bidCreatedChannelErr, err := instance.WatchBidCreated(nil, bidCreatedChannel)
+	bidCreatedChannelErr, err := instance.WatchBidCreated(nil, bidCreatedChannel, []*big.Int{})
 	if err != nil {
 		log.Panic(err)
 	}
 
 	bidCancelledChannel := make(chan *pawningShop.ContractsBidCancelled)
-	bidCancelledChannelErr, err := instance.WatchBidCancelled(nil, bidCancelledChannel)
+	bidCancelledChannelErr, err := instance.WatchBidCancelled(nil, bidCancelledChannel, []*big.Int{})
 	if err != nil {
 		log.Panic(err)
 	}
 
 	bidAcceptedChannel := make(chan *pawningShop.ContractsBidAccepted)
-	bidAcceptedChannelErr, err := instance.WatchBidAccepted(nil, bidAcceptedChannel)
+	bidAcceptedChannelErr, err := instance.WatchBidAccepted(nil, bidAcceptedChannel, []*big.Int{})
 	if err != nil {
 		log.Panic(err)
 	}
@@ -109,19 +110,19 @@ func main() {
 			log.Panic(err)
 
 		case repay := <-pawnRepaidChannel:
-			handler.PawnRepaid(repay.PawnId, myClient)
+			handler.PawnRepaid(repay, myClient)
 		case liquidated := <-pawnLiquidatedChannel:
-			handler.PawnLiquidated(liquidated.PawnId, myClient)
+			handler.PawnLiquidated(liquidated, myClient)
 		case pawnCreated := <-pawnCreatedChannel:
-			handler.PawnCreated(pawnCreated.PawnId, instance, myClient)
+			handler.PawnCreated(pawnCreated, instance, myClient)
 		case pawnCancelled := <-pawnCancelledChannel:
-			handler.PawnCancelled(pawnCancelled.PawnId, instance, myClient)
+			handler.PawnCancelled(pawnCancelled, instance, myClient)
 		case bidCreated := <-bidCreatedChannel:
-			handler.BidCreated(bidCreated.BidId, bidCreated.PawnId, instance, myClient)
+			handler.BidCreated(bidCreated, instance, myClient)
 		case bidCancelled := <-bidCancelledChannel:
-			handler.BidCancelled(bidCancelled.BidId, bidCancelled.Creator, instance, myClient)
+			handler.BidCancelled(bidCancelled, instance, myClient)
 		case bidAccepted := <-bidAcceptedChannel:
-			handler.BidAccepted(bidAccepted.BidId, instance, myClient)
+			handler.BidAccepted(bidAccepted, instance, myClient)
 		case whiteListAdded := <-whiteListAddedChannel:
 			handler.WhiteListAdded(whiteListAdded.SmartContract, myClient)
 		case whiteListRemoved := <-whiteListRemovedChannel:
