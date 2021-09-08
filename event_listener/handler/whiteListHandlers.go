@@ -10,7 +10,7 @@ import (
 
 func WhiteListAdded(SmartContract common.Address, client *httpClient.Client) {
 	fmt.Println(WhiteListAddedName)
-	success := client.Notify.SendNotification(httpClient.Notification{
+	success, _ := client.Notify.SendNotification(httpClient.Notification{
 		Code:    WhiteListAddedName,
 		Message: "A new smart contract is add to white list",
 		Payload: SmartContract.String(),
@@ -20,7 +20,7 @@ func WhiteListAdded(SmartContract common.Address, client *httpClient.Client) {
 
 func WhiteListRemoved(smartContract common.Address, client *httpClient.Client) {
 	fmt.Println(WhiteListRemovedName)
-	success := client.Notify.SendNotification(httpClient.Notification{
+	success, _ := client.Notify.SendNotification(httpClient.Notification{
 		Code:    WhiteListRemovedName,
 		Message: "A new smart contract is removed from white list",
 		Payload: smartContract.String(),

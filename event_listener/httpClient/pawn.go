@@ -21,7 +21,7 @@ func newPawnClient(host string, path string) *PawnClient {
 	}
 }
 
-func (p *PawnClient) InsertOne(id string, creator string, tokenAdd string, tokenId string, status uint8) bool {
+func (p *PawnClient) InsertOne(id string, creator string, tokenAdd string, tokenId string, status uint8) (bool, string) {
 	fullPath := fmt.Sprintf("%v%v", p.host, p.path)
 	postBody, _ := json.Marshal(map[string]interface{}{
 		"id":            id,
@@ -35,20 +35,20 @@ func (p *PawnClient) InsertOne(id string, creator string, tokenAdd string, token
 	resp, err := http.Post(fullPath, "application/json", responseBody)
 	if err != nil {
 		log.Panic(err)
-		return false
+		return false, ""
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Panic(err)
-		return false
+		return false, ""
 	}
 	sb := string(body)
 	fmt.Println(sb)
-	return true
+	return true, sb
 }
 
-func (p *PawnClient) UpdateOne(id string, status int, bidId string) bool {
+func (p *PawnClient) UpdateOne(id string, status int, bidId string) (bool, string) {
 	log.Println("status and bid id", status, bidId)
 	fullPath := fmt.Sprintf("%v%v/%v", p.host, p.path, id)
 	payload, err := json.Marshal(map[string]interface{}{
@@ -80,5 +80,5 @@ func (p *PawnClient) UpdateOne(id string, status int, bidId string) bool {
 	}
 	sb := string(body)
 	fmt.Println(sb)
-	return true
+	return true, sb
 }

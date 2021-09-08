@@ -21,7 +21,7 @@ func newBidClient(host string, path string) *BidClient {
 	}
 }
 
-func (b *BidClient) UpdateOne(id string, status int) bool {
+func (b *BidClient) UpdateOne(id string, status int) (bool, string) {
 	fullPath := fmt.Sprintf("%v%v/%v", b.host, b.path, id)
 	payload, err := json.Marshal(map[string]interface{}{
 		"status": status,
@@ -51,5 +51,5 @@ func (b *BidClient) UpdateOne(id string, status int) bool {
 	}
 	sb := string(body)
 	fmt.Println(sb)
-	return true
+	return true, sb
 }

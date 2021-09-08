@@ -31,20 +31,19 @@ func newNotifyClient(host string, path string) *NotifyClient {
 	}
 }
 
-func (n *NotifyClient) SendNotification(noti Notification) bool {
+func (n *NotifyClient) SendNotification(noti Notification) (bool, string) {
 	fullPath := fmt.Sprintf("%v%v", n.host, n.path)
 	payload, _ := json.Marshal(noti)
 	res, err := http.Post(fullPath, "application/json", bytes.NewBuffer(payload))
 	if err != nil {
 		log.Panic(err)
-		return false
+		return false, ""
 	}
 	defer res.Body.Close()
 	resBody, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Panic(err)
-		return false
+		return false, ""
 	}
-	fmt.Println(string(resBody))
-	return true
+	return true, string(resBody)
 }

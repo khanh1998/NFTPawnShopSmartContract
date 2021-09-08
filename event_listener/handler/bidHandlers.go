@@ -59,7 +59,7 @@ func BidAccepted(bidAcc *pawningShop.ContractsBidAccepted, instance *pawningShop
 	success := client.BidPawn.UpdateOne(bidAcc.BidId.String(), int(BID_ACCEPTED), bid.LoanStartTime.String())
 	log.Println("to api", BidAcceptedName, success)
 	if success {
-		success := client.Notify.SendNotification(httpClient.Notification{
+		success, _ := client.Notify.SendNotification(httpClient.Notification{
 			Code:     BidAcceptedName,
 			Message:  "A bid is accepted",
 			BidID:    bidAcc.BidId.String(),
@@ -73,16 +73,17 @@ func BidAccepted(bidAcc *pawningShop.ContractsBidAccepted, instance *pawningShop
 
 func BidCancelled(bidCancel *pawningShop.ContractsBidCancelled, instance *pawningShop.Contracts, client *httpClient.Client) {
 	log.Println(BidCancelledName)
-	success := client.Bid.UpdateOne(bidCancel.BidId.String(), int(BID_CANCELLED))
+	success, resBody := client.Bid.UpdateOne(bidCancel.BidId.String(), int(BID_CANCELLED))
 	log.Println("to api", BidCancelledName, success)
 	if success {
-		success := client.Notify.SendNotification(httpClient.Notification{
+		success, _ := client.Notify.SendNotification(httpClient.Notification{
 			Code:     BidCancelledName,
 			Message:  "A bid is cancelled",
 			BidID:    bidCancel.BidId.String(),
 			PawnID:   bidCancel.PawnId.String(),
 			Lender:   bidCancel.Lender.String(),
 			Borrower: bidCancel.Borrower.String(),
+			Payload:  resBody,
 		})
 		log.Println("to notify", BidCancelledName, success)
 	}
