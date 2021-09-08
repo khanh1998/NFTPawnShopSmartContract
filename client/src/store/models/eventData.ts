@@ -5,6 +5,7 @@ export interface EventData {
   pawnid: string
   lender: string
   payload: string
+  message: string
 }
 
 export interface PawnPayload {
@@ -24,13 +25,13 @@ export interface BidPayload {
 }
 
 export const EventName = {
-  PawnCreatedName      : "PawnCreated",
-	PawnCancelledName    : "PawnCancelled",
-	WhiteListAddedName   : "WhiteListAdded",
-	WhiteListRemovedName : "WhiteListRemoved",
-	BidCreatedName       : "BidCreated",
-	BidCancelledName     : "BidCancelled",
-	BidAcceptedName      : "BidAccepted",
-	PawnRepaidName       : "PawnRepaid",
-	PawnLiquidatedName   : "PawnLiquidated",
-}
+  PawnCreated: 'PawnCreated',
+  PawnCancelled: 'PawnCancelled',
+  WhiteListAdded: 'WhiteListAdded',
+  WhiteListRemoved: 'WhiteListRemoved',
+  BidCreated: 'BidCreated',
+  BidCancelled: 'BidCancelled',
+  BidAccepted: 'BidAccepted',
+  PawnRepaid: 'PawnRepaid',
+  PawnLiquidated: 'PawnLiquidated',
+};
