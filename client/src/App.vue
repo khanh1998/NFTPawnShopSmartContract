@@ -83,6 +83,7 @@ export default class extends Vue {
   async mounted() {
     this.$socket.emit('data_update', 'hello from client');
     this.$socket.on('data_update', (args) => {
+      console.log(args);
       const data = args as EventData;
       let bidPayload!: BidPayload;
       let pawnPayload!: PawnPayload;
