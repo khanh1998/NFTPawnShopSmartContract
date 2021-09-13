@@ -15,6 +15,7 @@ import (
 
 func main() {
 	env, err := config.LoadEnv()
+	log.Println(env)
 	if err != nil {
 		log.Panic(err)
 	}

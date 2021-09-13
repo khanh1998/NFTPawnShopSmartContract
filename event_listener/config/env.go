@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -20,7 +21,26 @@ type Env struct {
 func LoadEnv() (*Env, error) {
 	var env Env
 	viper.AddConfigPath(".")
-	viper.SetConfigName("app")
+	log.Println("Environment: ", os.Getenv("ENV"))
+	if os.Getenv("ENV") == "PROD" {
+		viper.SetConfigName("prod")
+	} else if os.Getenv("ENV") == "DEV" {
+		viper.SetConfigName("dev")
+		log.Println("load env config from dev.env")
+	} else {
+		log.Print("load variable from environment")
+		env = Env{
+			API_HOST:          os.Getenv("API_HOST"),
+			NOTIFY_HOST:       os.Getenv("NOTIFY_HOST"),
+			CONTRACT_ADDRESS:  os.Getenv("CONTRACT_ADDRESS"),
+			NETWORK_ADDRESS:   os.Getenv("NETWORK_ADDRESS"),
+			PAWN_PATH:         os.Getenv("PAWN_PATH"),
+			BID_PATH:          os.Getenv("BID_PATH"),
+			BID_PAWN_PATH:     os.Getenv("BID_PAWN_PATH"),
+			NOTIFICATION_PATH: os.Getenv("NOTIFICATION_PATH"),
+		}
+		return &env, nil
+	}
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
 	err := viper.ReadInConfig()
