@@ -43,8 +43,8 @@ Go [here](https://golang.org/doc/install)
 ## 6. Run api
 6.1 Go to `/api` folder\
 6.2 Run command `go mod download` to install packages\
-6.3 Update mongodb uri in `dev.env`\
-Add file `dev.env` to `/api` folder, contains bellow content:
+6.3 Update mongodb uri in `app.env`\
+Add file `app.env` to `/api` folder, contains bellow content:
 >MONGODB_URI=mongodb+srv://username:password@cluster.v5cg7.azure.mongodb.net/databaseName?retryWrites=true&w=majority
 >HOST=localhost:4000
 >DATABASE_NAME=cooking_recipe
@@ -55,8 +55,8 @@ Add file `dev.env` to `/api` folder, contains bellow content:
 ## 7. Run event listener
 7.1 Go to `/event_listener` folder\
 7.2 Run command `go mod download` to install packages\
-7.3 Update address of `PawningShop` contract to `app.env`, because your contract address is changed when deployed\
-Add a new `app.env`to `/event_listener` folder, contains bellow content:
+7.3 Update address of `PawningShop` contract to `dev.env`, because your contract address is changed when deployed\
+Add a new `dev.env`to `/event_listener` folder, contains bellow content:
 >API_HOST=pawningshop:4000
 >PAWN_PATH=/pawns
 >BID_PATH=/bids
