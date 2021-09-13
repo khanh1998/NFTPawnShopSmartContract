@@ -69,7 +69,7 @@ Add a new `dev.env`to `/event_listener` folder, contains bellow content:
 CONTRACT_ADDRESS is address of `PawningShop` contract.
 
 7.4 Because this project using `go-ethereum` library, and it requires `gcc`, `g++` and `make`. In Ubuntu, these tools are available by default, but in Windows you have to install those tools by yourself.
-7.5 Run command `go run .`
+7.5 Run command `ENV=DEV go run .`
 
 ## 8. Run notify
 8.1 Go to `/notify` folder
