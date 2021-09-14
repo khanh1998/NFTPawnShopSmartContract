@@ -1,0 +1,49 @@
+version: '3'
+services: 
+  ganache:
+    image: trufflesuite/ganache-cli
+    ports: 
+      - 8545:8545
+    networks:
+      - pawningshop
+    volumes:
+      - ganache_volume:/app/ganache-data
+    command:
+      - --mnemonic
+      - jealous expect hundred young unlock disagree major siren surge acoustic machine catalog
+      - --db
+      - /app/ganache-data
+      - --networkId
+      - '5777'
+
+  notify:
+    image: notify
+    ports: 
+      - 7789:7789
+    networks:
+      - pawningshop
+
+  api:
+    image: api
+    ports:
+      - 4000:4000
+    networks:
+      - pawningshop
+
+  client:
+    image: client
+    ports:
+      - 80:80
+    networks:
+      - pawningshop
+
+  event_listener:
+    image: event_listener
+    env_file: ./event_listener/prod.env
+    networks:
+      - pawningshop
+
+volumes:
+  ganache_volume:
+networks: 
+  pawningshop:
