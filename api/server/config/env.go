@@ -9,6 +9,10 @@ import (
 
 type Env struct {
 	MongoDBUri           string        `mapstructure:"MongoDB_URI"`
+	MongoHost            string        `mapstructure:"MONGODB_HOST"`
+	MongoPort            string        `mapstructure:"MONGODB_PORT"`
+	MongoUsername        string        `mapstructure:"MONGODB_USERNAME"`
+	MongoPassword        string        `mapstructure:"MONGODB_PASSWORD"`
 	Host                 string        `mapstructure:"HOST"`
 	DatabaseName         string        `mapstructure:"DATABASE_NAME"`
 	SymmetricKey         string        `mapstructure:"SYMMETRIC_KEY"`

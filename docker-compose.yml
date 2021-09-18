@@ -1,4 +1,4 @@
-version: '3'
+version: '3.1'
 services: 
   ganache:
     image: trufflesuite/ganache-cli
@@ -15,27 +15,38 @@ services:
       - /app/ganache-data
       - --networkId
       - '5777'
+  mongo:
+    image: mongo
+    secrets:
+      - db_password
+      - db_username
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/db_username
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/db_password
+    networks:
+      - pawningshop
+    ports:
+      - 27017:27017
 
   notify:
     image: notify
-    ports: 
-      - 7789:7789
     networks:
       - pawningshop
 
   api:
     image: api
-    ports:
-      - 4000:4000
     networks:
       - pawningshop
 
-  client:
+  client: # client service acts like a front-end host and a reverse proxy as well
     image: client
     ports:
       - 80:80
+      - 443:443
     networks:
       - pawningshop
+    volumes:
+      - ./reverse_proxy/nginx.conf:/etc/nginx/conf.d/default.conf
 
   event_listener:
     image: event_listener
@@ -45,5 +56,10 @@ services:
 
 volumes:
   ganache_volume:
+secrets:
+  db_password:
+    file: ./db_password.txt
+  db_username:
+    file: ./db_username.txt
 networks: 
   pawningshop:
