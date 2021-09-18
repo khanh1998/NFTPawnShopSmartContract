@@ -10,7 +10,7 @@ services:
       - ganache_volume:/app/ganache-data
     command:
       - --mnemonic
-      - jealous expect hundred young unlock disagree major siren surge acoustic machine catalog
+      - indoor neither various team olympic kit middle involve magnet topic history liar
       - --db
       - /app/ganache-data
       - --networkId
@@ -30,6 +30,8 @@ services:
 
   notify:
     image: notify
+    ports:
+      - 7789:7789
     networks:
       - pawningshop
 

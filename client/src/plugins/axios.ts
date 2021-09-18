@@ -1,12 +1,13 @@
 import _Vue from 'vue';
 import axios from 'axios';
 
+const apiUri = `${process.env.VUE_APP_HOST}${process.env.VUE_APP_API_PATH}`;
 const axiosConfig = {
-  baseURL: process.env.VUE_APP_API_HOST,
+  baseURL: apiUri,
   timeout: 30000,
 };
 
-console.log(process.env.VUE_APP_API_HOST);
+console.log(apiUri);
 
 const axiosInstance = axios.create(axiosConfig);
 
