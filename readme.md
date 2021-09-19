@@ -1,6 +1,20 @@
 # NFT Pawning Shop
 This application is for people who own some NFT token, they need money but don't want to sell their's token, they can list the token in our application as collateral, and other users can give them a loan. So, the borrower got the money, their token is locked in our smart contract. When the time of repayment comes in, the borrower has to pay the original money plus interest to the lender, if they are not, then the token will be transferred to the lender.
-# Run project
+# Run project with Docker
+1. In root folder of project, run: `docker-compose up -d`
+2. `docker-compose exec mongo mongo` to open mongodb shell
+3. Pass bellow command and enter to initilize MongoDB replica set:
+```javascript
+rs.initiate({
+	_id : 'rsmongo',
+	members: [
+		{ _id : 0, host : "mongo:27017" },
+		{ _id : 1, host : "mongo1:27017" },
+	]
+});
+```
+4. `rs.secondaryOk()` to allow query on secondary node.
+# Run project without Docker
 ## 1. Install Metamask
 1.1 Install Metamask extension in Chrome [here](https://metamask.io/download.html)\
 1.2 After that, create an account.\
@@ -44,27 +58,50 @@ Go [here](https://golang.org/doc/install)
 6.1 Go to `/api` folder\
 6.2 Run command `go mod download` to install packages\
 6.3 Update mongodb uri in `app.env`\
-Add file `app.env` to `/api` folder, contains bellow content:
->MONGODB_URI=mongodb+srv://username:password@cluster.v5cg7.azure.mongodb.net/databaseName?retryWrites=true&w=majority
->HOST=localhost:4000
->DATABASE_NAME=cooking_recipe
->SYMMETRIC_KEY=this is my secret symmetric keya
->TOKEN_DURATION=15m
+Add file `dev.env` to `/api` folder, contains bellow content:
+```
+MONGODB_URI=mongodb+srv://username:password@host
+HOST=localhost:4000
+DATABASE_NAME=cooking_recipe
+SYMMETRIC_KEY=this is my secret symmetric keya
+TOKEN_DURATION=15m
+```
+and `prod.env`:
+```
+MONGODB_URI=mongodb://khanh:handsome@mongo:27017
+HOST=:4000
+DATABASE_NAME=pawningshop
+SYMMETRIC_KEY=this is my secret symmetric keya
+TOKEN_DURATION=15
+```
 
-6.4 Run command `go run .`
+6.4 Run command `ENV=DEV go run .`
 ## 7. Run event listener
 7.1 Go to `/event_listener` folder\
 7.2 Run command `go mod download` to install packages\
 7.3 Update address of `PawningShop` contract to `dev.env`, because your contract address is changed when deployed\
 Add a new `dev.env`to `/event_listener` folder, contains bellow content:
->API_HOST=pawningshop:4000
->PAWN_PATH=/pawns
->BID_PATH=/bids
->BID_PAWN_PATH=/bids-pawns
->NOTIFY_HOST=http://localhost:7789
->NOTIFICATION_PATH=/notifications
->NETWORK_ADDRESS=ws://localhost:8545
->CONTRACT_ADDRESS=0xF8eC32B1884F17275aEed75DFd877DAd54ab2Ce4
+```
+API_HOST=pawningshop:4000
+PAWN_PATH=/pawns
+BID_PATH=/bids
+BID_PAWN_PATH=/bids-pawns
+NOTIFY_HOST=http://localhost:7789
+NOTIFICATION_PATH=/notifications
+NETWORK_ADDRESS=ws://localhost:8545
+CONTRACT_ADDRESS=0xF8eC32B1884F17275aEed75DFd877DAd54ab2Ce4
+```
+and `prod.env`:
+```
+API_HOST=http://api:4000
+PAWN_PATH=/pawns
+BID_PATH=/bids
+BID_PAWN_PATH=/bids-pawns
+NOTIFY_HOST=http://notify:7789
+NOTIFICATION_PATH=/notifications
+NETWORK_ADDRESS=ws://ganache:8545
+CONTRACT_ADDRESS=0xF8eC32B1884F17275aEed75DFd877DAd54ab2Ce4
+```
 
 CONTRACT_ADDRESS is address of `PawningShop` contract.
 
@@ -77,6 +114,18 @@ CONTRACT_ADDRESS is address of `PawningShop` contract.
 8.3 Run command `npm run dev`
 
 ## 9. Run UI
+Add `.env` for local development and `env.production` for production mode.
+`.env` file:
+```
+VUE_APP_API_HOST=http://localhost:4000
+VUE_APP_SOCKET_HOST=http://localhost:7789
+```
+`.env.production` file:
+```
+VUE_APP_API_PATH=/api
+VUE_APP_HOST=http://localhost:80
+VUE_APP_SOCKET_PATH=/notify
+```
 9.1 Go to `/client` folder\
 9.2 Run command `npm install`\
 9.3 Run command `npm run serve`

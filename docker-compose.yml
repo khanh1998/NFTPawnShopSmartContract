@@ -27,9 +27,23 @@ services:
       - pawningshop
     ports:
       - 27017:27017
+    command: /usr/bin/mongod --replSet rsmongo --bind_ip_all
+
+  mongo1:
+    image: mongo
+    secrets:
+      - db_password
+      - db_username
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/db_username
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/db_password
+    networks:
+      - pawningshop
+    command: /usr/bin/mongod --replSet rsmongo --bind_ip_all
 
   notify:
     image: notify
+    build: ./notify
     ports:
       - 7789:7789
     networks:
@@ -43,6 +57,7 @@ services:
 
   client: # client service acts like a front-end host and a reverse proxy as well
     image: client
+    build: ./client
     ports:
       - 80:80
       - 443:443
@@ -53,6 +68,7 @@ services:
 
   event_listener:
     image: event_listener
+    build: ./event_listener
     env_file: ./event_listener/prod.env
     networks:
       - pawningshop
