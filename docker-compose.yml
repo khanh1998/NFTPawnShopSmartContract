@@ -39,6 +39,7 @@ services:
     image: api
     networks:
       - pawningshop
+    env_file: ./api/prod.env
 
   client: # client service acts like a front-end host and a reverse proxy as well
     image: client
