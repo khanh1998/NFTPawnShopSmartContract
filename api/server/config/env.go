@@ -35,7 +35,7 @@ func LoadEnv() (Env, error) {
 			log.Panic(err)
 		}
 		env = Env{
-			MongoDBUri:           os.Getenv("MongoDB_URI"),
+			MongoDBUri:           os.Getenv("MONGODB_URI"),
 			Host:                 os.Getenv("HOST"),
 			DatabaseName:         os.Getenv("DATABASE_NAME"),
 			SymmetricKey:         os.Getenv("SYMMETRIC_KEY"),
@@ -43,6 +43,8 @@ func LoadEnv() (Env, error) {
 			NetworkHost:          os.Getenv("NETWORK_HOST"),
 			SmartContractAddress: os.Getenv("SMART_CONTRACT_ADDRESS"),
 		}
+		log.Println(env)
+		return env, nil
 	}
 
 	viper.SetConfigType("env")
