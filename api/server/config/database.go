@@ -17,7 +17,7 @@ type Connection struct {
 }
 
 func GetConnection() (*Connection, error) {
-	env, err := LoadEnv("")
+	env, err := LoadEnv()
 	if err != nil {
 		log.Panic(err)
 	}

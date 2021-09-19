@@ -16,7 +16,7 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-	env, err := config.LoadEnv("")
+	env, err := config.LoadEnv()
 	if err != nil {
 		log.Panic(err)
 	}
