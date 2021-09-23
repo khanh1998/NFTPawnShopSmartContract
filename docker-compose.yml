@@ -17,29 +17,53 @@ services:
       - '5777'
   mongo:
     image: mongo
-    secrets:
-      - db_password
-      - db_username
-    environment: 
-      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/db_username
-      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/db_password
     networks:
       - pawningshop
-    ports:
-      - 27017:27017
-    command: /usr/bin/mongod --replSet rsmongo --bind_ip_all
+    command: /usr/bin/mongod --replSet rsmongo --shardsvr --port 27017 --bind_ip_all
 
   mongo1:
     image: mongo
+    networks:
+      - pawningshop
+    command: /usr/bin/mongod --replSet rsmongo --shardsvr --port 27017 --bind_ip_all
+
+  mongo2:
+    image: mongo
+    networks:
+      - pawningshop
+    command: /usr/bin/mongod --replSet rsmongo1 --shardsvr --port 27017 --bind_ip_all
+
+  mongo3:
+    image: mongo
+    networks:
+      - pawningshop
+    command: /usr/bin/mongod --replSet rsmongo1 --shardsvr --port 27017 --bind_ip_all
+  
+  mongocfg:
+    image: mongo
+    networks:
+      - pawningshop
+    command: /usr/bin/mongod --configsvr --replSet rsmongo1cfg --port 27017 --bind_ip_all
+
+  mongocfg1:
+    image: mongo
+    networks:
+      - pawningshop
+    command: /usr/bin/mongod --configsvr --replSet rsmongo1cfg --port 27017 --bind_ip_all
+
+  mongos:
+    image: mongo
+    networks:
+      - pawningshop
     secrets:
       - db_password
       - db_username
     environment: 
       MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/db_username
       MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/db_password
-    networks:
-      - pawningshop
-    command: /usr/bin/mongod --replSet rsmongo --bind_ip_all
+    command: mongos --configdb rsmongo1cfg/mongocfg:27017,mongocfg1:27017 --port 27017  --bind_ip_all
+    ports:
+      - 27017:27017
 
   notify:
     image: notify

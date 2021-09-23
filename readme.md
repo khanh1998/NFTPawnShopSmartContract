@@ -2,8 +2,19 @@
 This application is for people who own some NFT token, they need money but don't want to sell their's token, they can list the token in our application as collateral, and other users can give them a loan. So, the borrower got the money, their token is locked in our smart contract. When the time of repayment comes in, the borrower has to pay the original money plus interest to the lender, if they are not, then the token will be transferred to the lender.
 # Run project with Docker
 1. In root folder of project, run: `docker-compose up -d`
-2. `docker-compose exec mongo mongo` to open mongodb shell
-3. Pass bellow command and enter to initilize MongoDB replica set:
+[Deploy shard tutorial](https://docs.mongodb.com/manual/tutorial/deploy-shard-cluster/)
+2. Setup config server `sudo docker-compose exec mongocfg mongosh`
+```javascript
+rs.initiate({
+	_id : 'rsmongo1cfg',
+	configsvr: true,
+	members: [
+		{ _id : 0, host : "mongocfg:27017" },
+		{ _id : 1, host : "mongocfg1:27017" },
+	]
+});
+```
+3. `docker-compose exec mongo mongosh` to open mongodb shell. Pass bellow command and enter to initilize MongoDB replica set:
 ```javascript
 rs.initiate({
 	_id : 'rsmongo',
@@ -13,7 +24,27 @@ rs.initiate({
 	]
 });
 ```
-4. `rs.secondaryOk()` to allow query on secondary node.
+`rs.secondaryOk()` to allow query on secondary node.
+`rs.status()` to see current status
+4. `docker-compose exec mongo2 mongosh` to open mongodb shell. Pass bellow command and enter to initilize MongoDB replica set:
+```javascript
+rs.initiate({
+	_id : 'rsmongo1',
+	members: [
+		{ _id : 0, host : "mongo2:27017" },
+		{ _id : 1, host : "mongo3:27017" },
+	]
+});
+```
+`rs.secondaryOk()` to allow query on secondary node.
+`rs.status()` to see current status
+5. `docker-compose exec mongos mongosh` and run bellow command to register shards to mongos router
+```javascript
+sh.addShard('rsmongo/mongo:27017,mongo1:27017');
+sh.addShard('rsmongo1/mongo2:27017,mongo3:27017');
+```
+`sh.status()` to see shards status.
+
 # Run project without Docker
 ## 1. Install Metamask
 1.1 Install Metamask extension in Chrome [here](https://metamask.io/download.html)\
