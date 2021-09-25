@@ -9,17 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/auth"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/model"
+	"github.com/uss-kelvin/NFTPawningShopBackend/server/service"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type UserController struct {
-	model model.Users
+	service *service.User
 }
 
-func NewUserController(model model.Users) *UserController {
+func NewUserController(service *service.User) *UserController {
 	return &UserController{
-		model: model,
+		service: service,
 	}
 }
 
@@ -28,11 +29,7 @@ func (u *UserController) InsertOne(c *gin.Context) {
 	if err := c.BindJSON(&user); err != nil {
 		log.Panic(err)
 	}
-	insertedId, err := u.model.InsertOne(user)
-	if err != nil {
-		log.Panic(err)
-	}
-	data, err := u.model.FindOne(insertedId)
+	data, err := u.service.InsertOne(user)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -41,7 +38,7 @@ func (u *UserController) InsertOne(c *gin.Context) {
 
 func (u *UserController) FindOneByAddress(c *gin.Context) {
 	address := c.Param("address")
-	user, err := u.model.FindBy("wallet_address", address)
+	user, err := u.service.FindOneByAddress(address)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -59,7 +56,7 @@ func (u *UserController) CreateLogin(tokenMaker auth.Maker) func(c *gin.Context)
 		if err := c.BindJSON(&loginData); err != nil {
 			log.Panic(err)
 		}
-		user, err := u.model.FindByUsername(loginData.Username)
+		user, err := u.service.FindOneByUsername(loginData.Username)
 		if err != nil {
 			log.Panic(err)
 		}

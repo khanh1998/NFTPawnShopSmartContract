@@ -7,6 +7,7 @@ import (
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/config"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/controller"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/model"
+	"github.com/uss-kelvin/NFTPawningShopBackend/server/service"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -16,6 +17,7 @@ type Server struct {
 	database   *mongo.Database
 	tokenMaker auth.Maker
 	env        *config.Env
+	redis      *config.RedisClient
 }
 
 func NewServer(con *config.Connection, env *config.Env) (*Server, error) {
@@ -24,11 +26,13 @@ func NewServer(con *config.Connection, env *config.Env) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
+	redisClient := config.NewRedisClient(env.RedisHost)
 	server := Server{
 		connection: con,
 		database:   database,
 		tokenMaker: tokenMaker,
 		env:        env,
+		redis:      redisClient,
 	}
 	server.setupRouter()
 	return &server, nil
@@ -41,7 +45,8 @@ func (s *Server) setupRouter() {
 	// authRouter := router.Group("/").Use(authMiddleware)
 
 	userModel := model.NewUsers(s.database)
-	userController := controller.NewUserController(*userModel)
+	userService := service.NewUserService(userModel)
+	userController := controller.NewUserController(userService)
 	// authRouter.GET("/users/:address", userController.FindOne)
 	router.GET("/users/:address", userController.FindOneByAddress)
 	router.POST("/users", userController.InsertOne)

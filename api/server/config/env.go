@@ -11,6 +11,7 @@ import (
 type Env struct {
 	MongoDBUri           string        `mapstructure:"MongoDB_URI"`
 	Host                 string        `mapstructure:"HOST"`
+	RedisHost            string        `mapstructure:"REDIS_HOST"`
 	DatabaseName         string        `mapstructure:"DATABASE_NAME"`
 	SymmetricKey         string        `mapstructure:"SYMMETRIC_KEY"`
 	TokenDuration        time.Duration `mapstructure:"TOKEN_DURATION"`
