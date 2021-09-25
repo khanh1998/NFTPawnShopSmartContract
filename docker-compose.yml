@@ -1,3 +1,5 @@
+# the tutorial is right here:
+# https://dev.to/sntnupl/improving-the-local-development-setup-for-running-mongodb-replica-set-with-docker-2j7k
 version: '3.1'
 services: 
   ganache:
@@ -15,6 +17,12 @@ services:
       - /app/ganache-data
       - --networkId
       - '5777'
+  
+  redis:
+    image: redis
+    networks:
+      - pawningshop
+
   mongo:
     image: mongo
     networks:

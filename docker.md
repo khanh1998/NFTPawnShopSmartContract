@@ -10,3 +10,14 @@ docker run -dp 8545:8545 --network pawningshop -v ganache_volume:/app/ganache-da
 by default, docker-compose doen't support secret, but we do have a workaround:
 docker-compose up -d
 docker-compose exec mongo cat /run/secrets/db_username
+
+## Setup MongoDB replica set for dev
+```javascript
+rs.initiate({
+	_id : 'rsmongo',
+	members: [
+		{ _id : 0, host : "127.0.0.1:27017" },
+		{ _id : 1, host : "127.0.0.1:27018" },
+	]
+});
+```
