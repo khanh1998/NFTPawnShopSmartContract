@@ -9,7 +9,7 @@ sleep 30
 echo "done"
 
 echo SETUP.sh time now: `date +"%T" `
-mongo --host ${MONGODB1}:27018 -u khanh -p handsome <<EOF
+mongosh --host ${MONGODB1}:27018 -u khanh -p handsome <<EOF
 var cfg = {
     "_id": "rsmongo",
     "protocolVersion": 1,

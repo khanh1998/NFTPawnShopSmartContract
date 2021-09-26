@@ -46,7 +46,7 @@ func (s *Server) setupRouter() {
 
 	userModel := model.NewUsers(s.database)
 	userService := service.NewUserService(userModel)
-	userController := controller.NewUserController(userService)
+	userController := controller.NewUserController(userService, s.redis)
 	// authRouter.GET("/users/:address", userController.FindOne)
 	router.GET("/users/:address", userController.FindOneByAddress)
 	router.POST("/users", userController.InsertOne)

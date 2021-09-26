@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/auth"
+	"github.com/uss-kelvin/NFTPawningShopBackend/server/config"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/model"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/service"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/utils"
@@ -16,11 +17,13 @@ import (
 
 type UserController struct {
 	service *service.User
+	redis   *config.RedisClient
 }
 
-func NewUserController(service *service.User) *UserController {
+func NewUserController(service *service.User, redis *config.RedisClient) *UserController {
 	return &UserController{
 		service: service,
+		redis:   redis,
 	}
 }
 
@@ -37,10 +40,23 @@ func (u *UserController) InsertOne(c *gin.Context) {
 }
 
 func (u *UserController) FindOneByAddress(c *gin.Context) {
+	var user *model.User = &model.User{}
+	var err error
 	address := c.Param("address")
-	user, err := u.service.FindOneByAddress(address)
+	redisKey := fmt.Sprintf("%v/%v", "user", address)
+	cacheHit, err := u.redis.Get(redisKey, user)
 	if err != nil {
 		log.Panic(err)
+	}
+	if !cacheHit {
+		log.Println("cache miss", redisKey)
+		user, err = u.service.FindOneByAddress(address)
+		u.redis.Put(redisKey, user)
+		if err != nil {
+			log.Panic(err)
+		}
+	} else {
+		log.Println("cache hit", redisKey)
 	}
 	c.IndentedJSON(http.StatusOK, user)
 }
