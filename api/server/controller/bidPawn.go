@@ -3,15 +3,16 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/model"
+	"github.com/uss-kelvin/NFTPawningShopBackend/server/service"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type BidNPawnController struct {
-	bid  *model.Bids
-	pawn *model.Pawns
+	bid  *service.Bid
+	pawn *service.Pawn
 }
 
-func NewBidNPawnController(bid *model.Bids, pawn *model.Pawns) *BidNPawnController {
+func NewBidNPawnController(bid *service.Bid, pawn *service.Pawn) *BidNPawnController {
 	return &BidNPawnController{
 		bid:  bid,
 		pawn: pawn,
@@ -25,7 +26,7 @@ func (b *BidNPawnController) InsertBidToPawn(c *gin.Context, sc mongo.SessionCon
 		// log.Panic(err)
 		return err
 	}
-	_, err = b.bid.InsertOne(sc, newBid)
+	_, err = b.bid.InsertOne(sc, &newBid)
 	if err != nil {
 		// log.Panic(err)
 		return err
@@ -33,7 +34,7 @@ func (b *BidNPawnController) InsertBidToPawn(c *gin.Context, sc mongo.SessionCon
 	payload := model.PawnUpdate{
 		Bid: newBid.ID,
 	}
-	err = b.pawn.UpdateOneBy(sc, "id", newBid.Pawn, payload)
+	_, err = b.pawn.UpdateOneById(sc, newBid.Pawn, &payload)
 	if err != nil {
 		// log.Panic(err)
 		return err
@@ -47,17 +48,17 @@ func (b *BidNPawnController) AcceptBid(c *gin.Context, sc mongo.SessionContext) 
 		return err
 	}
 	id := c.Param("id")
-	if err := b.bid.UpdateOneBy(sc, "id", id, bidUpdate); err != nil {
+	if _, err := b.bid.UpdateOneById(sc, id, &bidUpdate); err != nil {
 		return err
 	}
-	bid, err := b.bid.FindOne(id)
+	bid, err := b.bid.FindOneById(id)
 	if err != nil {
 		return err
 	}
 	pawnUpdate := model.PawnUpdate{
 		Status: model.DEAL,
 	}
-	if err = b.pawn.UpdateOneBy(sc, "id", bid.Pawn, pawnUpdate); err != nil {
+	if _, err = b.pawn.UpdateOneById(sc, bid.Pawn, &pawnUpdate); err != nil {
 		return err
 	}
 	return nil
@@ -68,7 +69,7 @@ func (b *BidNPawnController) CancelBid(c *gin.Context, sc mongo.SessionContext) 
 		Status: model.BID_CANCELLED,
 	}
 	id := c.Param("id")
-	if err := b.bid.UpdateOneBy(sc, "id", id, bidUpdate); err != nil {
+	if _, err := b.bid.UpdateOneById(sc, id, &bidUpdate); err != nil {
 		return err
 	}
 	return nil

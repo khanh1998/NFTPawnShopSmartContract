@@ -89,7 +89,7 @@ func (p *Pawns) InsertOne(data PawnWrite) (string, error) {
 // you only can update status of the pawn and,
 // add bid to pawn.
 // the key should be unique.
-func (p *Pawns) UpdateOneBy(sc mongo.SessionContext, key string, value string, data PawnUpdate) error {
+func (p *Pawns) UpdateOneBy(sc mongo.SessionContext, key string, value string, data *PawnUpdate) error {
 	filter := bson.M{key: value}
 	pawn := bson.M{
 		"$set": bson.M{

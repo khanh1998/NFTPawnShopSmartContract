@@ -77,7 +77,7 @@ func (p *PawnController) UpdateById(c *gin.Context) {
 	}
 	log.Println(data)
 	id := c.Param("id")
-	pawn, err := p.service.UpdateById(id, data)
+	pawn, err := p.service.UpdateOneById(nil, id, &data)
 	if err != nil {
 		log.Panic(err)
 	}

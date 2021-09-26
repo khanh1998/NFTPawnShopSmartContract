@@ -62,7 +62,7 @@ func NewBids(dabase mongo.Database) *Bids {
 	}
 }
 
-func (b *Bids) InsertOne(sc mongo.SessionContext, data BidWrite) (string, error) {
+func (b *Bids) InsertOne(sc mongo.SessionContext, data *BidWrite) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	var result *mongo.InsertOneResult
@@ -83,10 +83,10 @@ func (b *Bids) InsertOne(sc mongo.SessionContext, data BidWrite) (string, error)
 }
 
 // find bid by id in smart contract
-func (b *Bids) FindOne(id string) (*BidRead, error) {
+func (b *Bids) FindOneBy(key string, value string) (*BidRead, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	filter := bson.M{"id": id}
+	filter := bson.M{key: value}
 	var bid BidRead
 	if err := b.collection.FindOne(ctx, filter).Decode(&bid); err != nil {
 		return nil, err
@@ -114,7 +114,7 @@ func (b *Bids) Find(filter interface{}) ([]BidRead, error) {
 // you only can update status of the pawn and,
 // add bid to pawn.
 // the key should be unique.
-func (b *Bids) UpdateOneBy(sc mongo.SessionContext, key string, value string, data BidUpdate) error {
+func (b *Bids) UpdateOneBy(sc mongo.SessionContext, key string, value string, data *BidUpdate) error {
 	filter := bson.M{key: value}
 	bid := bson.M{
 		"$set": bson.M{

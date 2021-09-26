@@ -61,13 +61,14 @@ func (s *Server) setupRouter() {
 	router.GET("/pawns", pawnController.FindAllBy)
 
 	bidModel := model.NewBids(*s.database)
-	bidController := controller.NewBidController(bidModel)
+	bidService := service.NewBid(bidModel)
+	bidController := controller.NewBidController(bidService)
 	// router.POST("/bids", bidController.InsertOne)
 	router.GET("/bids/:id", bidController.FindOne)
 	router.GET("/bids", bidController.FindAllBy)
 	router.PATCH("/bids/:id", bidController.UpdateOne)
 
-	bidNPawnController := controller.NewBidNPawnController(bidModel, pawnModel)
+	bidNPawnController := controller.NewBidNPawnController(bidService, pawnService)
 	insertBidToPawn := s.connection.GetSession(bidNPawnController.InsertBidToPawn)
 	acceptBid := s.connection.GetSession(bidNPawnController.AcceptBid)
 	router.POST("/bids-pawns", insertBidToPawn)

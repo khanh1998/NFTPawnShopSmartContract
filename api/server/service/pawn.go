@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/model"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Pawn struct {
@@ -52,8 +53,8 @@ func (p *Pawn) Find(filter interface{}) ([]model.PawnRead, error) {
 	return p.model.Find(filter)
 }
 
-func (p *Pawn) UpdateById(id string, data model.PawnUpdate) (*model.PawnRead, error) {
-	err := p.model.UpdateOneBy(nil, "id", id, data)
+func (p *Pawn) UpdateOneById(sc mongo.SessionContext, id string, data *model.PawnUpdate) (*model.PawnRead, error) {
+	err := p.model.UpdateOneBy(sc, "id", id, data)
 	if err != nil {
 		return nil, err
 	}

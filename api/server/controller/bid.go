@@ -6,15 +6,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/model"
+	"github.com/uss-kelvin/NFTPawningShopBackend/server/service"
 )
 
 type BidController struct {
-	model *model.Bids
+	service *service.Bid
 }
 
-func NewBidController(model *model.Bids) *BidController {
+func NewBidController(service *service.Bid) *BidController {
 	return &BidController{
-		model: model,
+		service: service,
 	}
 }
 
@@ -23,11 +24,7 @@ func (b *BidController) InsertOne(c *gin.Context) {
 	if err := c.BindJSON(&bidWrite); err != nil {
 		log.Panic(err)
 	}
-	_, err := b.model.InsertOne(nil, bidWrite)
-	if err != nil {
-		log.Panic(err)
-	}
-	bidRead, err := b.model.FindOne(bidWrite.ID)
+	bidRead, err := b.service.InsertOne(nil, &bidWrite)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -40,11 +37,7 @@ func (b *BidController) UpdateOne(c *gin.Context) {
 		log.Panic(err)
 	}
 	id := c.Param("id")
-	err := b.model.UpdateOneBy(nil, "id", id, bidUpdate)
-	if err != nil {
-		log.Panic(err)
-	}
-	bidRead, err := b.model.FindOne(id)
+	bidRead, err := b.service.UpdateOneById(nil, id, &bidUpdate)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -53,7 +46,7 @@ func (b *BidController) UpdateOne(c *gin.Context) {
 
 func (b *BidController) FindOne(c *gin.Context) {
 	id := c.Param("id")
-	bid, err := b.model.FindOne(id)
+	bid, err := b.service.FindOneById(id)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -66,7 +59,7 @@ func (b *BidController) FindAllBy(c *gin.Context) {
 	if err != nil {
 		log.Panic(err)
 	}
-	bids, err := b.model.Find(filter)
+	bids, err := b.service.FindAllBy(filter)
 	if err != nil {
 		log.Panic(err)
 	}
