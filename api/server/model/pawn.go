@@ -119,29 +119,6 @@ func (p *Pawns) UpdateOneBy(sc mongo.SessionContext, key string, value string, d
 	return errors.New("didn't update anything")
 }
 
-func (p *Pawns) FindAllByCreatorAddress(address string) ([]PawnRead, error) {
-	filter := bson.M{
-		"creator": address,
-	}
-	pawns, err := p.Find(filter)
-	if err != nil {
-		return nil, err
-	}
-	return pawns, nil
-}
-
-// find pawn by id in smart contract, not UUID in database
-func (p *Pawns) FindOne(id string) (*PawnRead, error) {
-	filter := bson.M{
-		"id": id,
-	}
-	pawns, err := p.Find(filter)
-	if err != nil {
-		return nil, err
-	}
-	return &pawns[0], nil
-}
-
 func (p *Pawns) Find(filter interface{}) ([]PawnRead, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

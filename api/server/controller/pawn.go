@@ -6,15 +6,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/uss-kelvin/NFTPawningShopBackend/server/model"
+	"github.com/uss-kelvin/NFTPawningShopBackend/server/service"
 )
 
 type PawnController struct {
-	model *model.Pawns
+	service *service.Pawn
 }
 
-func NewPawnController(model *model.Pawns) *PawnController {
+func NewPawnController(service *service.Pawn) *PawnController {
 	return &PawnController{
-		model: model,
+		service: service,
 	}
 }
 
@@ -25,11 +26,11 @@ func (p *PawnController) InsertOne(c *gin.Context) {
 	}
 	pawnWrite.Bids = []string{}
 	log.Println(pawnWrite)
-	_, err := p.model.InsertOne(pawnWrite)
+	_, err := p.service.InsertOne(pawnWrite)
 	if err != nil {
 		log.Panic(err)
 	}
-	pawnRead, err := p.model.FindOne(pawnWrite.ID)
+	pawnRead, err := p.service.FindOne(pawnWrite.ID)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -39,7 +40,7 @@ func (p *PawnController) InsertOne(c *gin.Context) {
 // find pawn by id in smart contract
 func (p *PawnController) FindOne(c *gin.Context) {
 	id := c.Param("id")
-	pawn, err := p.model.FindOne(id)
+	pawn, err := p.service.FindOne(id)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -48,7 +49,7 @@ func (p *PawnController) FindOne(c *gin.Context) {
 
 func (p *PawnController) FindAllByCreatorAddress(c *gin.Context) {
 	address := c.Param("address")
-	pawns, err := p.model.FindAllByCreatorAddress(address)
+	pawns, err := p.service.FindAllByCreatorAddress(address)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -61,7 +62,7 @@ func (p *PawnController) FindAllBy(c *gin.Context) {
 	if err != nil {
 		log.Panic(err)
 	}
-	pawns, err := p.model.Find(filter)
+	pawns, err := p.service.Find(filter)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -76,11 +77,7 @@ func (p *PawnController) UpdateById(c *gin.Context) {
 	}
 	log.Println(data)
 	id := c.Param("id")
-	err := p.model.UpdateOneBy(nil, "id", id, data)
-	if err != nil {
-		log.Panic(err)
-	}
-	pawn, err := p.model.FindOne(id)
+	pawn, err := p.service.UpdateById(id, data)
 	if err != nil {
 		log.Panic(err)
 	}

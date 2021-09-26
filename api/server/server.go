@@ -52,7 +52,8 @@ func (s *Server) setupRouter() {
 	router.POST("/users", userController.InsertOne)
 
 	pawnModel := model.NewPawns(s.database)
-	pawnController := controller.NewPawnController(pawnModel)
+	pawnService := service.NewPawn(pawnModel)
+	pawnController := controller.NewPawnController(pawnService)
 	router.GET("/users/:address/pawns", pawnController.FindAllByCreatorAddress)
 	router.POST("/pawns", pawnController.InsertOne)
 	router.PATCH("/pawns/:id", pawnController.UpdateById)
