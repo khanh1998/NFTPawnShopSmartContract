@@ -4,6 +4,7 @@ import (
 	"fmt"
 	pawningShop "khanh/contracts"
 	"khanh/httpClient"
+	"khanh/rabbitmq"
 	"log"
 )
 
@@ -17,14 +18,29 @@ const (
 	REPAID
 )
 
-func PawnCreated(pawnCreated *pawningShop.ContractsPawnCreated, instance *pawningShop.Contracts, client *httpClient.Client) {
+type PawnHandler struct {
+	instance    *pawningShop.Contracts
+	client      *httpClient.Client
+	queue       *rabbitmq.RabbitMQ
+	channelName string
+}
+
+func NewPawnHandler(instance *pawningShop.Contracts, client *httpClient.Client, rabbit *rabbitmq.RabbitMQ, channelName string) *PawnHandler {
+	return &PawnHandler{
+		instance: instance,
+		client:   client,
+		queue:    rabbit,
+	}
+}
+
+func (p *PawnHandler) PawnCreated(pawnCreated *pawningShop.ContractsPawnCreated) {
 	fmt.Println(PawnCreatedName)
-	pawn, err := instance.Pawns(nil, pawnCreated.PawnId)
+	pawn, err := p.instance.Pawns(nil, pawnCreated.PawnId)
 	if err != nil {
 		log.Panic(err)
 	}
 	fmt.Println(pawn)
-	success, resBody := client.Pawn.InsertOne(
+	success, resBody := p.client.Pawn.InsertOne(
 		pawnCreated.PawnId.String(),
 		pawn.Creator.String(),
 		pawn.ContractAddress.String(),
@@ -33,39 +49,53 @@ func PawnCreated(pawnCreated *pawningShop.ContractsPawnCreated, instance *pawnin
 	)
 	log.Println("to api", PawnCreatedName, success)
 	if success {
-		success, _ := client.Notify.SendNotification(httpClient.Notification{
+		data := httpClient.Notification{
 			Message:  "New pawn is created",
 			Code:     PawnCreatedName,
 			PawnID:   pawnCreated.PawnId.String(),
 			Borrower: pawn.Creator.String(),
 			Payload:  string(resBody),
-		})
+		}
+		success, _ := p.client.Notify.SendNotification(data)
 		log.Println("to notify", PawnCreatedName, success)
+		err := p.queue.SerializeAndSend(p.channelName, data)
+		if err != nil {
+			log.Panic(err)
+		} else {
+			log.Println("to notify rabbitmq", BidCreatedName, success)
+		}
 	}
 }
 
-func PawnCancelled(pawn *pawningShop.ContractsPawnCancelled, instance *pawningShop.Contracts, client *httpClient.Client) {
+func (p *PawnHandler) PawnCancelled(pawn *pawningShop.ContractsPawnCancelled) {
 	log.Println(PawnCancelledName)
-	success, resBody := client.Pawn.UpdateOne(pawn.PawnId.String(), int(CANCELLED), "")
+	success, resBody := p.client.Pawn.UpdateOne(pawn.PawnId.String(), int(CANCELLED), "")
 	log.Println("to api", PawnCancelledName, success)
 	if success {
-		success, _ := client.Notify.SendNotification(httpClient.Notification{
+		data := httpClient.Notification{
 			Message:  "A pawn is cancelled",
 			Code:     PawnCancelledName,
 			PawnID:   pawn.PawnId.String(),
 			Borrower: pawn.Borrower.String(),
 			Payload:  string(resBody),
-		})
+		}
+		success, _ := p.client.Notify.SendNotification(data)
 		log.Println("to notify", PawnCancelledName, success)
+		err := p.queue.SerializeAndSend(p.channelName, data)
+		if err != nil {
+			log.Panic(err)
+		} else {
+			log.Println("to notify rabbitmq", BidCreatedName, success)
+		}
 	}
 }
 
-func PawnRepaid(pawn *pawningShop.ContractsPawnRepaid, client *httpClient.Client) {
+func (p *PawnHandler) PawnRepaid(pawn *pawningShop.ContractsPawnRepaid) {
 	log.Println(PawnRepaidName)
-	success, resBody := client.Pawn.UpdateOne(pawn.PawnId.String(), int(REPAID), "")
+	success, resBody := p.client.Pawn.UpdateOne(pawn.PawnId.String(), int(REPAID), "")
 	log.Println("to api", PawnRepaidName, success)
 	if success {
-		success, _ := client.Notify.SendNotification(httpClient.Notification{
+		data := httpClient.Notification{
 			Message:  "A pawn is repaid",
 			Code:     PawnRepaidName,
 			PawnID:   pawn.PawnId.String(),
@@ -73,17 +103,24 @@ func PawnRepaid(pawn *pawningShop.ContractsPawnRepaid, client *httpClient.Client
 			Lender:   pawn.Lender.String(),
 			Borrower: pawn.Borrower.String(),
 			Payload:  resBody,
-		})
+		}
+		success, _ := p.client.Notify.SendNotification(data)
 		log.Println("to notify", PawnRepaidName, success)
+		err := p.queue.SerializeAndSend(p.channelName, data)
+		if err != nil {
+			log.Panic(err)
+		} else {
+			log.Println("to notify rabbitmq", BidCreatedName, success)
+		}
 	}
 }
 
-func PawnLiquidated(pawn *pawningShop.ContractsPawnLiquidated, client *httpClient.Client) {
+func (p *PawnHandler) PawnLiquidated(pawn *pawningShop.ContractsPawnLiquidated) {
 	log.Println(PawnLiquidatedName)
-	success, resBody := client.Pawn.UpdateOne(pawn.PawnId.String(), int(LIQUIDATED), "")
+	success, resBody := p.client.Pawn.UpdateOne(pawn.PawnId.String(), int(LIQUIDATED), "")
 	log.Println("to api", PawnLiquidatedName, success)
 	if success {
-		success, _ := client.Notify.SendNotification(httpClient.Notification{
+		data := httpClient.Notification{
 			Message:  "A pawn is liquidated",
 			Code:     PawnLiquidatedName,
 			PawnID:   pawn.PawnId.String(),
@@ -91,7 +128,14 @@ func PawnLiquidated(pawn *pawningShop.ContractsPawnLiquidated, client *httpClien
 			Lender:   pawn.Lender.String(),
 			Borrower: pawn.Borrower.String(),
 			Payload:  resBody,
-		})
+		}
+		success, _ := p.client.Notify.SendNotification(data)
 		log.Println("to notify", PawnLiquidatedName, success)
+		err := p.queue.SerializeAndSend(p.channelName, data)
+		if err != nil {
+			log.Panic(err)
+		} else {
+			log.Println("to notify rabbitmq", BidCreatedName, success)
+		}
 	}
 }

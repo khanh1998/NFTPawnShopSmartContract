@@ -5,6 +5,7 @@ import (
 	"fmt"
 	pawningShop "khanh/contracts"
 	"khanh/httpClient"
+	"khanh/rabbitmq"
 	"log"
 )
 
@@ -16,14 +17,29 @@ const (
 	BID_ACCEPTED
 )
 
-func BidCreated(bidCreated *pawningShop.ContractsBidCreated, instance *pawningShop.Contracts, client *httpClient.Client) {
+type BidHandler struct {
+	instance    *pawningShop.Contracts
+	client      *httpClient.Client
+	queue       *rabbitmq.RabbitMQ
+	channelName string
+}
+
+func NewBidHandler(instance *pawningShop.Contracts, client *httpClient.Client, rabbit *rabbitmq.RabbitMQ, channelName string) *BidHandler {
+	return &BidHandler{
+		instance: instance,
+		client:   client,
+		queue:    rabbit,
+	}
+}
+
+func (b *BidHandler) BidCreated(bidCreated *pawningShop.ContractsBidCreated) {
 	fmt.Println(BidCreatedName)
-	bid, err := instance.Bids(nil, bidCreated.BidId)
+	bid, err := b.instance.Bids(nil, bidCreated.BidId)
 	if err != nil {
 		log.Panic(err)
 	}
 	fmt.Println(bid)
-	success := client.BidPawn.InsertOne(
+	success := b.client.BidPawn.InsertOne(
 		bidCreated.BidId.String(),
 		bid.Creator.String(),
 		bid.LoanAmount.String(),
@@ -35,9 +51,9 @@ func BidCreated(bidCreated *pawningShop.ContractsBidCreated, instance *pawningSh
 	)
 	log.Println("to api", BidCreatedName, success)
 	if success {
-		bidData, _ := instance.Bids(nil, bidCreated.BidId)
+		bidData, _ := b.instance.Bids(nil, bidCreated.BidId)
 		payload, _ := json.Marshal(bidData)
-		client.Notify.SendNotification(httpClient.Notification{
+		data := httpClient.Notification{
 			Message:  "New bid is created",
 			Code:     BidCreatedName,
 			PawnID:   bidCreated.PawnId.String(),
@@ -45,38 +61,52 @@ func BidCreated(bidCreated *pawningShop.ContractsBidCreated, instance *pawningSh
 			Lender:   bidCreated.Lender.String(),
 			Borrower: bidCreated.Borrower.String(),
 			Payload:  string(payload),
-		})
+		}
+		success, _ := b.client.Notify.SendNotification(data)
+		log.Println("to notify", BidCreatedName, success)
+		err := b.queue.SerializeAndSend(b.channelName, data)
+		if err != nil {
+			log.Panic(err)
+		} else {
+			log.Println("to notify rabbitmq", BidCreatedName, success)
+		}
 	}
-	log.Println("to notify", BidCreatedName, success)
 }
 
-func BidAccepted(bidAcc *pawningShop.ContractsBidAccepted, instance *pawningShop.Contracts, client *httpClient.Client) {
+func (b *BidHandler) BidAccepted(bidAcc *pawningShop.ContractsBidAccepted) {
 	log.Println(BidAcceptedName)
-	bid, err := instance.Bids(nil, bidAcc.BidId)
+	bid, err := b.instance.Bids(nil, bidAcc.BidId)
 	if err != nil {
 		log.Panic(err)
 	}
-	success := client.BidPawn.UpdateOne(bidAcc.BidId.String(), int(BID_ACCEPTED), bid.LoanStartTime.String())
+	success := b.client.BidPawn.UpdateOne(bidAcc.BidId.String(), int(BID_ACCEPTED), bid.LoanStartTime.String())
 	log.Println("to api", BidAcceptedName, success)
 	if success {
-		success, _ := client.Notify.SendNotification(httpClient.Notification{
+		data := httpClient.Notification{
 			Code:     BidAcceptedName,
 			Message:  "A bid is accepted",
 			BidID:    bidAcc.BidId.String(),
 			PawnID:   bidAcc.PawnId.String(),
 			Lender:   bidAcc.Lender.String(),
 			Borrower: bidAcc.Borrower.String(),
-		})
+		}
+		success, _ := b.client.Notify.SendNotification(data)
 		log.Println("to notify", BidAcceptedName, success)
+		err := b.queue.SerializeAndSend(b.channelName, data)
+		if err != nil {
+			log.Panic(err)
+		} else {
+			log.Println("to notify rabbitmq", BidCreatedName, success)
+		}
 	}
 }
 
-func BidCancelled(bidCancel *pawningShop.ContractsBidCancelled, instance *pawningShop.Contracts, client *httpClient.Client) {
+func (b *BidHandler) BidCancelled(bidCancel *pawningShop.ContractsBidCancelled) {
 	log.Println(BidCancelledName)
-	success, resBody := client.Bid.UpdateOne(bidCancel.BidId.String(), int(BID_CANCELLED))
+	success, resBody := b.client.Bid.UpdateOne(bidCancel.BidId.String(), int(BID_CANCELLED))
 	log.Println("to api", BidCancelledName, success)
 	if success {
-		success, _ := client.Notify.SendNotification(httpClient.Notification{
+		data := httpClient.Notification{
 			Code:     BidCancelledName,
 			Message:  "A bid is cancelled",
 			BidID:    bidCancel.BidId.String(),
@@ -84,7 +114,14 @@ func BidCancelled(bidCancel *pawningShop.ContractsBidCancelled, instance *pawnin
 			Lender:   bidCancel.Lender.String(),
 			Borrower: bidCancel.Borrower.String(),
 			Payload:  resBody,
-		})
+		}
+		success, _ := b.client.Notify.SendNotification(data)
 		log.Println("to notify", BidCancelledName, success)
+		err := b.queue.SerializeAndSend(b.channelName, data)
+		if err != nil {
+			log.Panic(err)
+		} else {
+			log.Println("to notify rabbitmq", BidCreatedName, success)
+		}
 	}
 }

@@ -20,11 +20,11 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-	r, err := rabbitmq.NewRabbitMQ(env.RABBIT_MQ_URI)
+	rabbit, err := rabbitmq.NewRabbitMQ(env.RABBIT_MQ_URI)
 	if err != nil {
 		log.Panic(err)
 	}
-	err = r.Send("notification", "hello it's khanh")
+	err = rabbit.Send("test", []byte("this is a test message"))
 	if err != nil {
 		log.Panic(err)
 	}
@@ -99,6 +99,16 @@ func main() {
 
 	log.Println("started to listen to ", env.CONTRACT_ADDRESS)
 
+	bidHandler := handler.NewBidHandler(
+		instance, myClient, rabbit, "notification",
+	)
+	pawnHandler := handler.NewPawnHandler(
+		instance, myClient, rabbit, "notification",
+	)
+	whiteListHandler := handler.NewWhiteListHandler(
+		instance, myClient, rabbit, "notification",
+	)
+
 	for {
 		select {
 		case err := <-pawnRepaidChannelErr.Err():
@@ -121,23 +131,23 @@ func main() {
 			log.Panic(err)
 
 		case repay := <-pawnRepaidChannel:
-			handler.PawnRepaid(repay, myClient)
+			pawnHandler.PawnRepaid(repay)
 		case liquidated := <-pawnLiquidatedChannel:
-			handler.PawnLiquidated(liquidated, myClient)
+			pawnHandler.PawnLiquidated(liquidated)
 		case pawnCreated := <-pawnCreatedChannel:
-			handler.PawnCreated(pawnCreated, instance, myClient)
+			pawnHandler.PawnCreated(pawnCreated)
 		case pawnCancelled := <-pawnCancelledChannel:
-			handler.PawnCancelled(pawnCancelled, instance, myClient)
+			pawnHandler.PawnCancelled(pawnCancelled)
 		case bidCreated := <-bidCreatedChannel:
-			handler.BidCreated(bidCreated, instance, myClient)
+			bidHandler.BidCreated(bidCreated)
 		case bidCancelled := <-bidCancelledChannel:
-			handler.BidCancelled(bidCancelled, instance, myClient)
+			bidHandler.BidCancelled(bidCancelled)
 		case bidAccepted := <-bidAcceptedChannel:
-			handler.BidAccepted(bidAccepted, instance, myClient)
+			bidHandler.BidAccepted(bidAccepted)
 		case whiteListAdded := <-whiteListAddedChannel:
-			handler.WhiteListAdded(whiteListAdded.SmartContract, myClient)
+			whiteListHandler.WhiteListAdded(whiteListAdded.SmartContract)
 		case whiteListRemoved := <-whiteListRemovedChannel:
-			handler.WhiteListRemoved(whiteListRemoved.SmartContract, myClient)
+			whiteListHandler.WhiteListRemoved(whiteListRemoved.SmartContract)
 		}
 	}
 

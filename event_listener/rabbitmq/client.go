@@ -1,6 +1,11 @@
 package rabbitmq
 
-import "github.com/streadway/amqp"
+import (
+	"bytes"
+	"encoding/json"
+
+	"github.com/streadway/amqp"
+)
 
 type RabbitMQ struct {
 	uri  string
@@ -18,7 +23,18 @@ func NewRabbitMQ(uri string) (*RabbitMQ, error) {
 	}, nil
 }
 
-func (r *RabbitMQ) Send(channelName string, message string) error {
+func (r *RabbitMQ) SerializeAndSend(channelName string, obj interface{}) error {
+	var buffer bytes.Buffer
+	encoder := json.NewEncoder(&buffer)
+	err := encoder.Encode(obj)
+	if err != nil {
+		return err
+	}
+	r.Send(channelName, buffer.Bytes())
+	return nil
+}
+
+func (r *RabbitMQ) Send(channelName string, message []byte) error {
 	ch, err := r.conn.Channel()
 	if err != nil {
 		return err
@@ -41,8 +57,8 @@ func (r *RabbitMQ) Send(channelName string, message string) error {
 		false,  // mandatory
 		false,  // immediate
 		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(message),
+			ContentType: "text/plainapplication/json",
+			Body:        message,
 		},
 	)
 	if err != nil {
