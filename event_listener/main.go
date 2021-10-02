@@ -8,6 +8,7 @@ import (
 	pawningShop "khanh/contracts"
 	"khanh/handler"
 	"khanh/httpClient"
+	"khanh/rabbitmq"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -19,6 +20,15 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
+	r, err := rabbitmq.NewRabbitMQ(env.RABBIT_MQ_URI)
+	if err != nil {
+		log.Panic(err)
+	}
+	err = r.Send("hello it's khanh")
+	if err != nil {
+		log.Panic(err)
+	}
+
 	client, err := ethclient.Dial(env.NETWORK_ADDRESS)
 	if err != nil {
 		log.Fatal(err)

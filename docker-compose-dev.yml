@@ -22,6 +22,17 @@ services:
       - pawningshopdev
     ports:
       - 6969:6379
+  
+  rabbitmq:
+    image: rabbitmq:3-management
+    networks:
+      - pawningshopdev
+    environment:
+    - RABBITMQ_DEFAULT_USER=khanh
+    - RABBITMQ_DEFAULT_PASS=handsome
+    ports:
+      - 5672:5672
+      - 15672:15672
     
   mongo:
     image: mongo

@@ -16,6 +16,7 @@ type Env struct {
 	NOTIFICATION_PATH string
 	CONTRACT_ADDRESS  string
 	NETWORK_ADDRESS   string
+	RABBIT_MQ_URI     string
 }
 
 func LoadEnv() (*Env, error) {
@@ -38,6 +39,7 @@ func LoadEnv() (*Env, error) {
 			BID_PATH:          os.Getenv("BID_PATH"),
 			BID_PAWN_PATH:     os.Getenv("BID_PAWN_PATH"),
 			NOTIFICATION_PATH: os.Getenv("NOTIFICATION_PATH"),
+			RABBIT_MQ_URI:     os.Getenv("RABBIT_MQ_URI"),
 		}
 		return &env, nil
 	}
