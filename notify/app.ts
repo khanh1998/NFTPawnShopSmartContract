@@ -2,7 +2,9 @@ import express, { Request, Response, NextFunction, urlencoded, json } from 'expr
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
+import { RabbitMQ } from './rabbitmq/client';
 
+const rabbitMq = new RabbitMQ('amqp://khanh:handsome@localhost:5672', 'notification', null)
 const app = express();
 app.use(cors());
 app.use(json());

@@ -18,19 +18,19 @@ func NewRabbitMQ(uri string) (*RabbitMQ, error) {
 	}, nil
 }
 
-func (r *RabbitMQ) Send(message string) error {
+func (r *RabbitMQ) Send(channelName string, message string) error {
 	ch, err := r.conn.Channel()
 	if err != nil {
 		return err
 	}
 	defer ch.Close()
 	q, err := ch.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // argument
+		channelName, // name
+		false,       // durable
+		false,       // delete when unused
+		false,       // exclusive
+		false,       // no-wait
+		nil,         // argument
 	)
 	if err != nil {
 		return err

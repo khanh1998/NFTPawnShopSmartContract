@@ -24,7 +24,7 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-	err = r.Send("hello it's khanh")
+	err = r.Send("notification", "hello it's khanh")
 	if err != nil {
 		log.Panic(err)
 	}
