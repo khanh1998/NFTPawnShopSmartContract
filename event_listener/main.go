@@ -24,7 +24,8 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-	err = rabbit.Send("test", []byte("this is a test message"))
+	err = rabbit.SerializeAndSend("notification", "this is a test message1")
+	err = rabbit.SerializeAndSend("notification", "this is a test message2")
 	if err != nil {
 		log.Panic(err)
 	}

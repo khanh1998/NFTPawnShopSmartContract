@@ -3,6 +3,7 @@ package rabbitmq
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 
 	"github.com/streadway/amqp"
 )
@@ -24,17 +25,18 @@ func NewRabbitMQ(uri string) (*RabbitMQ, error) {
 }
 
 func (r *RabbitMQ) SerializeAndSend(channelName string, obj interface{}) error {
+	log.Println("serialize and send is called: ", channelName, obj)
 	var buffer bytes.Buffer
 	encoder := json.NewEncoder(&buffer)
 	err := encoder.Encode(obj)
 	if err != nil {
 		return err
 	}
-	r.Send(channelName, buffer.Bytes())
-	return nil
+	return r.Send(channelName, buffer.Bytes())
 }
 
 func (r *RabbitMQ) Send(channelName string, message []byte) error {
+	log.Println("send is called: ", channelName, string(message))
 	ch, err := r.conn.Channel()
 	if err != nil {
 		return err

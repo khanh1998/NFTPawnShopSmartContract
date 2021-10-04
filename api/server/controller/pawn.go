@@ -30,7 +30,7 @@ func (p *PawnController) InsertOne(c *gin.Context) {
 	if err != nil {
 		log.Panic(err)
 	}
-	pawnRead, err := p.service.FindOne(pawnWrite.ID)
+	pawnRead, err := p.service.FindOne(pawnWrite.TokenId)
 	if err != nil {
 		log.Panic(err)
 	}
