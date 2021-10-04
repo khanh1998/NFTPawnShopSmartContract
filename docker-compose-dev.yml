@@ -1,3 +1,4 @@
+#https://docs.mongodb.com/manual/tutorial/deploy-replica-set-with-keyfile-access-control/
 version: '3.1'
 services: 
   ganache:
@@ -38,55 +39,33 @@ services:
     image: mongo
     ports:
       - 27018:27018
-    secrets:
-      - db_password
-      - db_username
-    environment: 
-      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/db_username
-      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/db_password
+    volumes:
+      - ./mongodb/file.key:/auth/file.key
+    env_file:
+      - ./mongodb/.env
     networks:
       - pawningshopdev
-    command: /usr/bin/mongod --replSet rsmongo --bind_ip_all --port 27018
-    healthcheck:
-      test: test $$(echo "rs.status().ok" | mongo -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet) -eq 1
-      interval: 30s
-      start_period: 60s
+    command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27018
 
   mongo1:
     image: mongo
     ports:
       - 27019:27019
-    secrets:
-      - db_password
-      - db_username
-    environment: 
-      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/db_username
-      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/db_password
-    networks:
-      - pawningshopdev
-    command: /usr/bin/mongod --replSet rsmongo --bind_ip_all --port 27019
-    healthcheck:
-      test: test $$(echo "rs.status().ok" | mongo -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet) -eq 1
-      interval: 30s
-      start_period: 60s
-  
-  mongo-replica-setup:
-    image: mongo
-    restart: on-failure
-    networks:
-      - pawningshopdev
     volumes:
-      - ./mongodb/mongoSetup.sh:/scripts/mongoSetup.sh
-    entrypoint: ["bash", "/scripts/mongoSetup.sh" ]
-    secrets:
-      - db_password
-      - db_username
-    environment: 
-      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/db_username
-      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/db_password
-    depends_on:
-        - mongo
-        - mongo1
+      - ./mongodb/file.key:/auth/file.key
+    networks:
+      - pawningshopdev
+    command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27019
+
+  mongo2:
+    image: mongo
+    ports:
+      - 27020:27020
+    volumes:
+      - ./mongodb/file.key:/auth/file.key
+    networks:
+      - pawningshopdev
+    command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27020
 
 volumes:
   ganache_volume:

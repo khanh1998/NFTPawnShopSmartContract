@@ -5,6 +5,7 @@ import cors from 'cors';
 import { RabbitMQ } from './rabbitmq/client';
 
 const rabbitMq = new RabbitMQ('amqp://khanh:handsome@localhost:5672', 'notification', null)
+const rabbitMqTest = new RabbitMQ('amqp://khanh:handsome@localhost:5672', 'test', null)
 const app = express();
 app.use(cors());
 app.use(json());
