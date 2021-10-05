@@ -116,6 +116,7 @@ func (p *PawnHandler) PawnRepaid(pawn *pawningShop.ContractsPawnRepaid) interfac
 		} else {
 			log.Println("to notify rabbitmq", BidCreatedName, success)
 		}
+		return data
 	}
 	return nil
 }
