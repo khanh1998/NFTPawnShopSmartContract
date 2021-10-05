@@ -119,9 +119,7 @@ func (p *Pawns) UpdateOneBy(sc mongo.SessionContext, key string, value string, d
 	return errors.New("didn't update anything")
 }
 
-func (p *Pawns) Find(filter interface{}) ([]PawnRead, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+func (p *Pawns) Find(sc mongo.SessionContext, filter interface{}) ([]PawnRead, error) {
 	query := []bson.M{
 		{
 			"$match": filter,
@@ -176,7 +174,15 @@ func (p *Pawns) Find(filter interface{}) ([]PawnRead, error) {
 			},
 		},
 	}
-	curr, err := p.collection.Aggregate(ctx, query)
+	var err error
+	var curr *mongo.Cursor
+	if sc == nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		curr, err = p.collection.Aggregate(ctx, query)
+	} else {
+		curr, err = p.collection.Aggregate(sc, query)
+	}
 	if err != nil {
 		return nil, err
 	}

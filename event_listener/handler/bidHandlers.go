@@ -32,7 +32,7 @@ func NewBidHandler(instance *pawningShop.Contracts, client *httpClient.Client, r
 	}
 }
 
-func (b *BidHandler) BidCreated(bidCreated *pawningShop.ContractsBidCreated) {
+func (b *BidHandler) BidCreated(bidCreated *pawningShop.ContractsBidCreated) interface{} {
 	fmt.Println(BidCreatedName)
 	bid, err := b.instance.Bids(nil, bidCreated.BidId)
 	if err != nil {
@@ -70,10 +70,12 @@ func (b *BidHandler) BidCreated(bidCreated *pawningShop.ContractsBidCreated) {
 		} else {
 			log.Println("to notify rabbitmq", BidCreatedName, success)
 		}
+		return data
 	}
+	return nil
 }
 
-func (b *BidHandler) BidAccepted(bidAcc *pawningShop.ContractsBidAccepted) {
+func (b *BidHandler) BidAccepted(bidAcc *pawningShop.ContractsBidAccepted) interface{} {
 	log.Println(BidAcceptedName)
 	bid, err := b.instance.Bids(nil, bidAcc.BidId)
 	if err != nil {
@@ -98,10 +100,12 @@ func (b *BidHandler) BidAccepted(bidAcc *pawningShop.ContractsBidAccepted) {
 		} else {
 			log.Println("to notify rabbitmq", BidCreatedName, success)
 		}
+		return data
 	}
+	return nil
 }
 
-func (b *BidHandler) BidCancelled(bidCancel *pawningShop.ContractsBidCancelled) {
+func (b *BidHandler) BidCancelled(bidCancel *pawningShop.ContractsBidCancelled) interface{} {
 	log.Println(BidCancelledName)
 	success, resBody := b.client.Bid.UpdateOne(bidCancel.BidId.String(), int(BID_CANCELLED))
 	log.Println("to api", BidCancelledName, success)
@@ -123,5 +127,7 @@ func (b *BidHandler) BidCancelled(bidCancel *pawningShop.ContractsBidCancelled) 
 		} else {
 			log.Println("to notify rabbitmq", BidCreatedName, success)
 		}
+		return data
 	}
+	return nil
 }

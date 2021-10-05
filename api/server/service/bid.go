@@ -20,7 +20,7 @@ func (b *Bid) InsertOne(sc mongo.SessionContext, bidWrite *model.BidWrite) (*mod
 	if err != nil {
 		return nil, err
 	}
-	bidRead, err := b.model.FindOneBy("id", bidWrite.ID)
+	bidRead, err := b.model.FindOneBy(sc, "id", bidWrite.ID)
 	return bidRead, err
 }
 
@@ -29,12 +29,12 @@ func (b *Bid) UpdateOneById(sc mongo.SessionContext, id string, bidUpdate *model
 	if err != nil {
 		return nil, err
 	}
-	bidRead, err := b.model.FindOneBy("id", id)
+	bidRead, err := b.model.FindOneBy(sc, "id", id)
 	return bidRead, err
 }
 
-func (b *Bid) FindOneById(id string) (*model.BidRead, error) {
-	return b.model.FindOneBy("id", id)
+func (b *Bid) FindOneById(sc mongo.SessionContext, id string) (*model.BidRead, error) {
+	return b.model.FindOneBy(sc, "id", id)
 }
 
 func (b *Bid) FindAllBy(filter interface{}) ([]model.BidRead, error) {

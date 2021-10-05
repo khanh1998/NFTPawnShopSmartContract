@@ -22,16 +22,16 @@ func (p *Pawn) InsertOne(pawnWrite model.PawnWrite) (*model.PawnRead, error) {
 	if err != nil {
 		return nil, err
 	}
-	pawnRead, err := p.FindOne(pawnWrite.ID)
+	pawnRead, err := p.FindOne(nil, pawnWrite.ID)
 	return pawnRead, err
 }
 
 // find pawn by id in smart contract, not UUID in database
-func (p *Pawn) FindOne(id string) (*model.PawnRead, error) {
+func (p *Pawn) FindOne(sc mongo.SessionContext, id string) (*model.PawnRead, error) {
 	filter := bson.M{
 		"id": id,
 	}
-	pawns, err := p.model.Find(filter)
+	pawns, err := p.model.Find(sc, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (p *Pawn) FindAllByCreatorAddress(address string) ([]model.PawnRead, error)
 	filter := bson.M{
 		"creator": address,
 	}
-	pawns, err := p.model.Find(filter)
+	pawns, err := p.model.Find(nil, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (p *Pawn) FindAllByCreatorAddress(address string) ([]model.PawnRead, error)
 }
 
 func (p *Pawn) Find(filter interface{}) ([]model.PawnRead, error) {
-	return p.model.Find(filter)
+	return p.model.Find(nil, filter)
 }
 
 func (p *Pawn) UpdateOneById(sc mongo.SessionContext, id string, data *model.PawnUpdate) (*model.PawnRead, error) {
@@ -58,6 +58,6 @@ func (p *Pawn) UpdateOneById(sc mongo.SessionContext, id string, data *model.Paw
 	if err != nil {
 		return nil, err
 	}
-	pawn, err := p.FindOne(id)
+	pawn, err := p.FindOne(sc, id)
 	return pawn, err
 }

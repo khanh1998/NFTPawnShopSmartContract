@@ -30,7 +30,7 @@ func (p *PawnController) InsertOne(c *gin.Context) {
 	if err != nil {
 		log.Panic(err)
 	}
-	pawnRead, err := p.service.FindOne(pawnWrite.TokenId)
+	pawnRead, err := p.service.FindOne(nil, pawnWrite.ID)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -40,7 +40,7 @@ func (p *PawnController) InsertOne(c *gin.Context) {
 // find pawn by id in smart contract
 func (p *PawnController) FindOne(c *gin.Context) {
 	id := c.Param("id")
-	pawn, err := p.service.FindOne(id)
+	pawn, err := p.service.FindOne(nil, id)
 	if err != nil {
 		log.Panic(err)
 	}

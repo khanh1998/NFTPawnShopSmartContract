@@ -41,8 +41,6 @@ services:
       - 27018:27018
     volumes:
       - ./mongodb/file.key:/auth/file.key
-    env_file:
-      - ./mongodb/.env
     networks:
       - pawningshopdev
     command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27018

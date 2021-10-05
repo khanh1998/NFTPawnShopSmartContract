@@ -110,6 +110,7 @@ func main() {
 		instance, myClient, rabbit, "notification",
 	)
 
+	var data interface{}
 	for {
 		select {
 		case err := <-pawnRepaidChannelErr.Err():
@@ -130,25 +131,33 @@ func main() {
 			log.Panic(err)
 		case err := <-whiteListRemovedChannelErr.Err():
 			log.Panic(err)
-
 		case repay := <-pawnRepaidChannel:
-			pawnHandler.PawnRepaid(repay)
+			data = pawnHandler.PawnRepaid(repay)
+			rabbit.SerializeAndSend("notification", data)
 		case liquidated := <-pawnLiquidatedChannel:
-			pawnHandler.PawnLiquidated(liquidated)
+			data = pawnHandler.PawnLiquidated(liquidated)
+			rabbit.SerializeAndSend("notification", data)
 		case pawnCreated := <-pawnCreatedChannel:
-			pawnHandler.PawnCreated(pawnCreated)
+			data = pawnHandler.PawnCreated(pawnCreated)
+			rabbit.SerializeAndSend("notification", data)
 		case pawnCancelled := <-pawnCancelledChannel:
-			pawnHandler.PawnCancelled(pawnCancelled)
+			data = pawnHandler.PawnCancelled(pawnCancelled)
+			rabbit.SerializeAndSend("notification", data)
 		case bidCreated := <-bidCreatedChannel:
-			bidHandler.BidCreated(bidCreated)
+			data = bidHandler.BidCreated(bidCreated)
+			rabbit.SerializeAndSend("notification", data)
 		case bidCancelled := <-bidCancelledChannel:
-			bidHandler.BidCancelled(bidCancelled)
+			data = bidHandler.BidCancelled(bidCancelled)
+			rabbit.SerializeAndSend("notification", data)
 		case bidAccepted := <-bidAcceptedChannel:
-			bidHandler.BidAccepted(bidAccepted)
+			data = bidHandler.BidAccepted(bidAccepted)
+			rabbit.SerializeAndSend("notification", data)
 		case whiteListAdded := <-whiteListAddedChannel:
-			whiteListHandler.WhiteListAdded(whiteListAdded.SmartContract)
+			data = whiteListHandler.WhiteListAdded(whiteListAdded.SmartContract)
+			rabbit.SerializeAndSend("notification", data)
 		case whiteListRemoved := <-whiteListRemovedChannel:
-			whiteListHandler.WhiteListRemoved(whiteListRemoved.SmartContract)
+			data = whiteListHandler.WhiteListRemoved(whiteListRemoved.SmartContract)
+			rabbit.SerializeAndSend("notification", data)
 		}
 	}
 

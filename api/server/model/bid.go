@@ -73,6 +73,7 @@ func (b *Bids) InsertOne(sc mongo.SessionContext, data *BidWrite) (string, error
 		result, err = b.collection.InsertOne(ctx, data)
 	}
 	if err != nil {
+		log.Println("here is the error: ", err)
 		return "", err
 	}
 	objectId, ok := result.InsertedID.(primitive.ObjectID)
@@ -83,13 +84,19 @@ func (b *Bids) InsertOne(sc mongo.SessionContext, data *BidWrite) (string, error
 }
 
 // find bid by id in smart contract
-func (b *Bids) FindOneBy(key string, value string) (*BidRead, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+func (b *Bids) FindOneBy(sc mongo.SessionContext, key string, value string) (*BidRead, error) {
 	filter := bson.M{key: value}
 	var bid BidRead
-	if err := b.collection.FindOne(ctx, filter).Decode(&bid); err != nil {
-		return nil, err
+	if sc == nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := b.collection.FindOne(ctx, filter).Decode(&bid); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := b.collection.FindOne(sc, filter).Decode(&bid); err != nil {
+			return nil, err
+		}
 	}
 	return &bid, nil
 }

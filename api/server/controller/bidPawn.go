@@ -23,12 +23,10 @@ func (b *BidNPawnController) InsertBidToPawn(c *gin.Context, sc mongo.SessionCon
 	var newBid model.BidWrite
 	err := c.Bind(&newBid)
 	if err != nil {
-		// log.Panic(err)
 		return err
 	}
 	_, err = b.bid.InsertOne(sc, &newBid)
 	if err != nil {
-		// log.Panic(err)
 		return err
 	}
 	payload := model.PawnUpdate{
@@ -36,7 +34,6 @@ func (b *BidNPawnController) InsertBidToPawn(c *gin.Context, sc mongo.SessionCon
 	}
 	_, err = b.pawn.UpdateOneById(sc, newBid.Pawn, &payload)
 	if err != nil {
-		// log.Panic(err)
 		return err
 	}
 	return nil
@@ -51,7 +48,7 @@ func (b *BidNPawnController) AcceptBid(c *gin.Context, sc mongo.SessionContext) 
 	if _, err := b.bid.UpdateOneById(sc, id, &bidUpdate); err != nil {
 		return err
 	}
-	bid, err := b.bid.FindOneById(id)
+	bid, err := b.bid.FindOneById(sc, id)
 	if err != nil {
 		return err
 	}

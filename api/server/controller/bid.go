@@ -46,7 +46,7 @@ func (b *BidController) UpdateOne(c *gin.Context) {
 
 func (b *BidController) FindOne(c *gin.Context) {
 	id := c.Param("id")
-	bid, err := b.service.FindOneById(id)
+	bid, err := b.service.FindOneById(nil, id)
 	if err != nil {
 		log.Panic(err)
 	}

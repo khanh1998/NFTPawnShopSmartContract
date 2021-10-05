@@ -33,7 +33,7 @@ func NewPawnHandler(instance *pawningShop.Contracts, client *httpClient.Client, 
 	}
 }
 
-func (p *PawnHandler) PawnCreated(pawnCreated *pawningShop.ContractsPawnCreated) {
+func (p *PawnHandler) PawnCreated(pawnCreated *pawningShop.ContractsPawnCreated) interface{} {
 	fmt.Println(PawnCreatedName)
 	pawn, err := p.instance.Pawns(nil, pawnCreated.PawnId)
 	if err != nil {
@@ -64,10 +64,12 @@ func (p *PawnHandler) PawnCreated(pawnCreated *pawningShop.ContractsPawnCreated)
 		} else {
 			log.Println("to notify rabbitmq", BidCreatedName, success)
 		}
+		return data
 	}
+	return nil
 }
 
-func (p *PawnHandler) PawnCancelled(pawn *pawningShop.ContractsPawnCancelled) {
+func (p *PawnHandler) PawnCancelled(pawn *pawningShop.ContractsPawnCancelled) interface{} {
 	log.Println(PawnCancelledName)
 	success, resBody := p.client.Pawn.UpdateOne(pawn.PawnId.String(), int(CANCELLED), "")
 	log.Println("to api", PawnCancelledName, success)
@@ -87,10 +89,12 @@ func (p *PawnHandler) PawnCancelled(pawn *pawningShop.ContractsPawnCancelled) {
 		} else {
 			log.Println("to notify rabbitmq", BidCreatedName, success)
 		}
+		return data
 	}
+	return nil
 }
 
-func (p *PawnHandler) PawnRepaid(pawn *pawningShop.ContractsPawnRepaid) {
+func (p *PawnHandler) PawnRepaid(pawn *pawningShop.ContractsPawnRepaid) interface{} {
 	log.Println(PawnRepaidName)
 	success, resBody := p.client.Pawn.UpdateOne(pawn.PawnId.String(), int(REPAID), "")
 	log.Println("to api", PawnRepaidName, success)
@@ -113,9 +117,10 @@ func (p *PawnHandler) PawnRepaid(pawn *pawningShop.ContractsPawnRepaid) {
 			log.Println("to notify rabbitmq", BidCreatedName, success)
 		}
 	}
+	return nil
 }
 
-func (p *PawnHandler) PawnLiquidated(pawn *pawningShop.ContractsPawnLiquidated) {
+func (p *PawnHandler) PawnLiquidated(pawn *pawningShop.ContractsPawnLiquidated) interface{} {
 	log.Println(PawnLiquidatedName)
 	success, resBody := p.client.Pawn.UpdateOne(pawn.PawnId.String(), int(LIQUIDATED), "")
 	log.Println("to api", PawnLiquidatedName, success)
@@ -137,5 +142,7 @@ func (p *PawnHandler) PawnLiquidated(pawn *pawningShop.ContractsPawnLiquidated) 
 		} else {
 			log.Println("to notify rabbitmq", BidCreatedName, success)
 		}
+		return data
 	}
+	return nil
 }
