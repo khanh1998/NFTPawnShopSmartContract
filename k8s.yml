@@ -1,8 +1,80 @@
+# https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
 apiVersion: v1
-kind: Pod
+kind: PersistentVolume
 metadata:
-  name: nginx
+  name: ganache-pv
+  labels:
+    type: local
 spec:
-  containers:
-  - name: nginx
-    image
+  storageClassName: manual
+  capacity:
+    storage: 15Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/khanh/Documents/solidity/pawningShopData"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ganache-pvc
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ganache
+  name: ganache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ganache
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ganache
+    spec:
+      containers:
+      - image: trufflesuite/ganache-cli
+        name: ganache-cli
+        volumeMounts:
+        - name: ganache-storage
+          mountPath: /app/ganache-data
+        args:
+        - --mnemonic
+        - indoor neither various team olympic kit middle involve magnet topic history liar
+        - --db
+        - /app/ganache-data
+        - --networkId
+        - '5777'
+        ports:
+        - containerPort: 8545
+      volumes:
+      - name: ganache-storage
+        persistentVolumeClaim:
+          claimName: ganache-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ganache
+  name: ganache
+spec:
+  ports:
+  - port: 8545
+    protocol: TCP
+    targetPort: 8545
+  selector:
+    app: ganache
