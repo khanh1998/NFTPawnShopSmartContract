@@ -1,0 +1,20 @@
+{
+  "name": "solidity",
+  "version": "1.0.0",
+  "description": "On window, install solcjs and abigen",
+  "main": "truffle-config.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^1.5.1",
+    "dotenv": "^10.0.0",
+    "truffle": "^5.4.14"
+  }
+}
