@@ -1,4 +1,6 @@
 # https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
+# https://microk8s.io/docs/registry-images
+# https://medium.com/manikkothu/build-and-deploy-apps-on-microk8s-1df26d1ddd3c
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -78,3 +80,54 @@ spec:
     targetPort: 8545
   selector:
     app: ganache
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-config
+data:
+  systemLog:
+    destination: file
+    path: "/var/log/mongodb/mongod.log"
+    logAppend: false
+  storage:
+    journal:
+      enabled: false
+  processManagement:
+    fork: true
+  net:
+    bindIp: 127.0.0.1
+    port: 27017
+  setParameter:
+    enableLocalhostAuthBypass: false
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongo-secret
+type: kubernetes.io/basic-auth
+stringData:
+  username: khanh
+  password: handsome
+---
+apiVersion: mongodb.com/v1
+kind: MongoDB
+metadata:
+  name: mongo
+spec:
+  members: 3
+  version: "5.0.0"
+  opsManager:
+    configMapRef:
+      name: mongo-config
+  podSpec:
+    persistence:
+      single:
+        storage: 20Mi
+  credentials: mongo-secret-volume
+  volume:
+  - name: mongo-secret-volume
+    secret:
+      secretName: mongo-secret
+  type: ReplicaSet
+  persistent: true
