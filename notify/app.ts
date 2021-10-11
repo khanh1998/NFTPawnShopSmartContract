@@ -4,7 +4,6 @@ import { Server, Socket } from 'socket.io';
 import cors from 'cors';
 import { RabbitMQ } from './rabbitmq/client';
 
-const rabbitMq = new RabbitMQ('amqp://khanh:handsome@localhost:5672', 'notification', null)
 const app = express();
 app.use(cors());
 app.use(json());
@@ -28,6 +27,8 @@ io.on('connection', (socket: Socket) => {
   });
 });
 
+const rabbitMq = new RabbitMQ('amqp://khanh:handsome@localhost:5672', 'notification', io)
+
 server.listen(port, () => {
   console.log(`Timezones by location application is running on port ${port}.`);
 });
@@ -37,7 +38,8 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
 
 app.post('/notifications', (req: Request, res: Response, next: NextFunction) => {
   const data = req.body;
-  const success = io.emit('data_update', data)
+  // const success = io.emit('data_update', data)
+  const success = true
   if (success) {
     res.status(200).json({ message: "your notification has sent to clients" });
   } else {

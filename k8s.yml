@@ -110,24 +110,36 @@ stringData:
   username: khanh
   password: handsome
 ---
-apiVersion: mongodb.com/v1
-kind: MongoDB
+apiVersion: v1
+kind: Service
 metadata:
+  creationTimestamp: null
+  labels:
+    app: mongo
   name: mongo
 spec:
-  members: 3
-  version: "5.0.0"
-  opsManager:
-    configMapRef:
-      name: mongo-config
-  podSpec:
-    persistence:
-      single:
-        storage: 20Mi
-  credentials: mongo-secret-volume
-  volume:
-  - name: mongo-secret-volume
-    secret:
-      secretName: mongo-secret
-  type: ReplicaSet
-  persistent: true
+  ports:
+  - port: 27017
+    protocol: TCP
+    targetPort: 27017
+  selector:
+    app: mongo
+---
+apiVersion: v1
+kind: Deployment
+metadata:
+  labels:
+    name: mongo
+  name: mongo1
+spec:
+  containers:
+  - name: mongo1
+    image: mongo
+    ports:
+    - containerPort: 27017
+    command:
+    - /usr/bin/mongod
+    - --replSet
+    - rsmongo
+    - --port 27017
+    - --bind_ip_all

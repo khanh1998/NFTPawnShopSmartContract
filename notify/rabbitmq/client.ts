@@ -1,8 +1,11 @@
 import amqp = require('amqplib/callback_api')
+import { Server } from 'socket.io';
 
 export class RabbitMQ {
 	protected conn: any = null
-	constructor(uri: string, channelName: string, callback: (msg: any) => void) {
+	protected io: Server = null
+	constructor(uri: string, channelName: string, io: Server) {
+		this.io = io
 		amqp.connect(uri, function(error, connection) {
 			if (error) {
 				throw error
@@ -17,6 +20,7 @@ export class RabbitMQ {
 					});
 					channel.consume(channelName, function(msg) {
 						console.log(" [x] Received %s", msg.content.toString());
+						io.emit('data_update', JSON.parse(msg.content))
 						}, { noAck: true }
 					);
 				});
