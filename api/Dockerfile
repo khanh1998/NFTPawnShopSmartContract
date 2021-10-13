@@ -1,4 +1,7 @@
-FROM golang:1.17-alpine
+##
+## Build
+##
+FROM golang:1.17-alpine AS build
 
 WORKDIR /app
 
@@ -9,8 +12,19 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build
+RUN go build -o /NFTPawningShopBackend
+
+##
+## Deploy
+##
+FROM gcr.io/distroless/base-debian10
+
+WORKDIR /
+
+COPY --from=build /NFTPawningShopBackend /NFTPawningShopBackend
 
 EXPOSE 4000
 
-CMD [ "./NFTPawningShopBackend" ]
+USER nonroot:nonroot
+
+ENTRYPOINT ["/NFTPawningShopBackend"]

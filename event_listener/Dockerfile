@@ -1,4 +1,7 @@
-FROM golang:1.17-alpine
+##
+## Build
+##
+FROM golang:1.17-alpine AS build
 
 RUN apk add gcc g++ musl-dev
 
@@ -11,8 +14,17 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build
+RUN go build -o /listener
 
-EXPOSE 135
+##
+## Deploy
+##
+FROM gcr.io/distroless/base-debian10
 
-CMD [ "./khanh" ]
+WORKDIR /
+
+COPY --from=build /listener /listener
+
+USER nonroot:nonroot
+
+ENTRYPOINT ["/listener"]
