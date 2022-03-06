@@ -40,7 +40,7 @@ services:
     ports:
       - 27018:27018
     volumes:
-      - ./mongodb/file.key:/auth/file.key
+      - mongo_volume:/auth
     networks:
       - pawningshopdev
     command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27018
@@ -50,7 +50,7 @@ services:
     ports:
       - 27019:27019
     volumes:
-      - ./mongodb/file.key:/auth/file.key
+      - mongo_volume:/auth
     networks:
       - pawningshopdev
     command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27019
@@ -60,13 +60,18 @@ services:
     ports:
       - 27020:27020
     volumes:
-      - ./mongodb/file.key:/auth/file.key
+      - mongo_volume:/auth
     networks:
       - pawningshopdev
     command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27020
 
 volumes:
   ganache_volume:
+  mongo_volume:
+    driver_opts:
+      type: none
+      device: /com.docker.devenvironments.code/mongodb #NOTE needs full path (~ doesn't work)
+      o: bind
 secrets:
   db_password:
     file: ./db_password.txt

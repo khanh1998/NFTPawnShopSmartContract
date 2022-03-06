@@ -83,6 +83,7 @@ services:
 
   api:
     image: api
+    build: ./api
     networks:
       - pawningshop
     env_file: ./api/prod.env
