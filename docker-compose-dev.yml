@@ -1,8 +1,9 @@
 #https://docs.mongodb.com/manual/tutorial/deploy-replica-set-with-keyfile-access-control/
-version: '3.1'
+version: '3.9'
 services: 
   ganache:
     image: trufflesuite/ganache-cli
+    container_name: ganache-cli-dev
     ports: 
       - 8545:8545
     networks:
@@ -19,6 +20,7 @@ services:
   
   redis:
     image: redis
+    container_name: redis-dev
     networks:
       - pawningshopdev
     ports:
@@ -26,6 +28,7 @@ services:
   
   rabbitmq:
     image: rabbitmq:3-management
+    container_name: rabbitmq-dev
     networks:
       - pawningshopdev
     environment:
@@ -37,41 +40,62 @@ services:
     
   mongo:
     image: mongo
+    container_name: mongo-dev
+    tty: true
     ports:
       - 27018:27018
     volumes:
-      - mongo_volume:/auth
+      - ./mongodb:/auth   
     networks:
       - pawningshopdev
-    command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27018
-
+#    command: bash -c "/usr/bin/mongod --replSet rsmongo --keyFile /auth/mongo.key --bind_ip_all --port 27018"
+#    command: bash -c "chmod 600 /auth/file.key/mongo.key && chown -R mongodb:mongodb /auth && /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key/mongo.key --bind_ip_all --port 27018"
+#    command: bash -c "chmod 600 /auth/file.key/mongo.key && chown -R mongodb:mongodb /auth && tail -F anything"
+    command: bash -c "tail -F anything"
   mongo1:
     image: mongo
+    container_name: mongo1-dev
     ports:
       - 27019:27019
     volumes:
-      - mongo_volume:/auth
+      - ./mongodb:/auth
     networks:
       - pawningshopdev
-    command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27019
+    command: bash -c "/usr/bin/mongod --replSet rsmongo --keyFile /auth/mongo.key --bind_ip_all --port 27019"
+#    command: bash -c "chmod 600 /auth/file.key/mongo.key && chown -R mongodb:mongodb /auth && /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key/mongo.key --bind_ip_all --port 27019"
+#    command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27019
 
   mongo2:
     image: mongo
+    container_name: mongo2-dev
     ports:
       - 27020:27020
     volumes:
-      - mongo_volume:/auth
+      - ./mongodb/file.key:/auth/file.key
     networks:
       - pawningshopdev
-    command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27020
+    command: bash -c "/usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key/mongo.key --bind_ip_all --port 27020"
+#    command: bash -c "chmod 600 /auth/file.key/mongo.key && chown -R mongodb:mongodb /auth && /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key/mongo.key --bind_ip_all --port 27020"
+#    command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27020
 
 volumes:
   ganache_volume:
-  mongo_volume:
-    driver_opts:
-      type: none
-      device: /com.docker.devenvironments.code/mongodb #NOTE needs full path (~ doesn't work)
-      o: bind
+    name: ganache_volume_dev
+#  mongo_volume:
+#    name: mongo_volume_dev
+#    external: true
+
+#  mongo_authvolume:
+#    name: mongo_authvolume_dev
+#    driver_opts:
+#      type: none
+#      device: /com.docker.devenvironments.code/mongodb/auth/file.key #NOTE needs full path (~ doesn't work)
+#      o: bind
+#  mongo_datavolume:
+#    driver_opts:
+#      type: none
+#      device: /com.docker.devenvironments.code/mongodb/data #NOTE needs full path (~ doesn't work)
+#      o: bind
 secrets:
   db_password:
     file: ./db_password.txt
