@@ -1,16 +1,12 @@
 #!/bin/bash
 
-MONGODB1=mongo1
-MONGODB2=mongo2
-MONGODB3=mongo3
-
-echo "**********************************************" ${MONGODB1}
+echo "**********************************************" ${MONGO_MONGO1_HOST}
 echo "Waiting for startup.."
 sleep 30
 echo "done"
 
 echo SETUP.sh time now: `date +"%T" `
-mongo --host ${MONGODB1}:30001 -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} <<EOF
+mongosh --host ${MONGO_MONGO1_HOST}:${MONGO_MONGO1_PORT}  -u ${MONGO_INITDB_ROOT_USERNAME} -p ${MONGO_INITDB_ROOT_PASSWORD} <<EOF
 var cfg = {
     "_id": "${MONGO_REPLICA_SET_NAME}",
     "protocolVersion": 1,
@@ -18,17 +14,17 @@ var cfg = {
     "members": [
         {
             "_id": 0,
-            "host": "${MONGODB1}:30001",
+            "host": "${MONGO_MONGO1_HOST}:${MONGO_MONGO1_PORT}",
             "priority": 2
         },
         {
             "_id": 1,
-            "host": "${MONGODB2}:30002",
+            "host": "${MONGO_MONGO2_HOST}:${MONGO_MONGO2_PORT}",
             "priority": 0
         },
         {
             "_id": 2,
-            "host": "${MONGODB3}:30003",
+            "host": "${MONGO_MONGO3_HOST}:${MONGO_MONGO2_PORT}",
             "priority": 0,
         }
     ]
