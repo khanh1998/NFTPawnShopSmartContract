@@ -25,12 +25,15 @@ services:
       - pawningshopdev
     ports:
       - 6969:6379
-  
+    volumes:
+      - redis_volume:/data  
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq-dev
     networks:
       - pawningshopdev
+    volumes:
+      - rabbitmq_volume:/var/lib/rabbitmq
     environment:
     - RABBITMQ_DEFAULT_USER=khanh
     - RABBITMQ_DEFAULT_PASS=handsome
@@ -38,64 +41,153 @@ services:
       - 5672:5672
       - 15672:15672
     
-  mongo:
-    image: mongo
-    container_name: mongo-dev
-    tty: true
-    ports:
-      - 27018:27018
-    volumes:
-      - ./mongodb:/auth   
-    networks:
-      - pawningshopdev
-#    command: bash -c "/usr/bin/mongod --replSet rsmongo --keyFile /auth/mongo.key --bind_ip_all --port 27018"
-#    command: bash -c "chmod 600 /auth/file.key/mongo.key && chown -R mongodb:mongodb /auth && /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key/mongo.key --bind_ip_all --port 27018"
-#    command: bash -c "chmod 600 /auth/file.key/mongo.key && chown -R mongodb:mongodb /auth && tail -F anything"
-    command: bash -c "tail -F anything"
+  # setup MongoDB cluster
+  mongo-replica-setup:
+      container_name: mongo-setup
+      image: 'mongo'
+      restart: on-failure
+      networks:
+          - pawningshopdev
+      volumes:
+      - mongoDataSetup:/data/db
+      - mongoConfigSetup:/data/configdb
+      - ./.docker/mongodb/scripts/mongosetup.sh:/scripts/mongosetup.sh
+      # entrypoint: ["bash"]
+      entrypoint: ["bash", "/scripts/mongosetup.sh" ]
+      env_file:
+          - .env
+      environment:
+          MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+          MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+          MONGO_REPLICA_SET_NAME: ${MONGO_REPLICA_SET_NAME}
+      depends_on:
+          - mongo1
+          - mongo2
+          - mongo3
+
   mongo1:
-    image: mongo
-    container_name: mongo1-dev
-    ports:
-      - 27019:27019
-    volumes:
-      - ./mongodb:/auth
-    networks:
-      - pawningshopdev
-    command: bash -c "/usr/bin/mongod --replSet rsmongo --keyFile /auth/mongo.key --bind_ip_all --port 27019"
-#    command: bash -c "chmod 600 /auth/file.key/mongo.key && chown -R mongodb:mongodb /auth && /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key/mongo.key --bind_ip_all --port 27019"
-#    command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27019
+      hostname: '${MONGO_MONGO1_HOST}'
+      container_name: 'mongo1'
+      image: 'mongo'
+      restart: 'on-failure'
+      command: ["-f", "/etc/mongod.conf", "--port", "${MONGO_MONGO1_PORT}", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
+      expose: 
+          - ${MONGO_MONGO1_PORT}
+      ports: 
+          - ${MONGO_MONGO1_PORT}:${MONGO_MONGO1_PORT} 
+      networks: 
+          - pawningshopdev
+      volumes:
+          - mongoData1:/data/db
+          - mongoLog1:/var/log/mongodb
+          - mongoConfig1:/data/configdb
+          - ./.docker/mongodb/initdb.d/:/docker-entrypoint-initdb.d/
+          - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
+          - ./.docker/mongodb/file.key:/auth/file.key
+      healthcheck:
+          test: echo 'rs.status().ok' | mongo admin --port ${MONGO_MONGO1_PORT} -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep 1
+          interval: 30s
+          start_period: 60s
+      env_file:
+          - .env
+      environment:
+          MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+          MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+          MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+          MONGO_PORT: ${MONGO_MONGO1_PORT}
 
   mongo2:
-    image: mongo
-    container_name: mongo2-dev
-    ports:
-      - 27020:27020
-    volumes:
-      - ./mongodb/file.key:/auth/file.key
-    networks:
-      - pawningshopdev
-    command: bash -c "/usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key/mongo.key --bind_ip_all --port 27020"
-#    command: bash -c "chmod 600 /auth/file.key/mongo.key && chown -R mongodb:mongodb /auth && /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key/mongo.key --bind_ip_all --port 27020"
-#    command: /usr/bin/mongod --replSet rsmongo --keyFile /auth/file.key --bind_ip_all --port 27020
+      hostname: '${MONGO_MONGO2_HOST}'
+      container_name: 'mongo2'
+      image: 'mongo'
+      command: ["-f", "/etc/mongod.conf","--port", "${MONGO_MONGO2_PORT}", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
+      restart: 'on-failure'
+      expose: 
+          - ${MONGO_MONGO2_PORT}
+      ports: 
+          - ${MONGO_MONGO2_PORT}:${MONGO_MONGO2_PORT}  
+      networks: 
+          - pawningshopdev
+      volumes:
+          - mongoData2:/data/db
+          - mongoLog2:/var/log/mongodb
+          - mongoConfig2:/data/configdb
+          - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
+          - ./.docker/mongodb/file.key:/auth/file.key
+      env_file:
+          - .env
+      healthcheck:
+          test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep 1
+          interval: 30s
+          start_period: 60s
+      environment:
+          MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+          MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+          MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+          MONGO_PORT: ${MONGO_MONGO2_PORT}
+      depends_on: 
+          - mongo1
 
+  mongo3:
+      hostname: '${MONGO_MONGO3_HOST}'
+      container_name: 'mongo3'
+      image: 'mongo'
+      command: ["-f", "/etc/mongod.conf", "--port", "${MONGO_MONGO3_PORT}", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
+      restart: 'on-failure'
+      expose: 
+          - ${MONGO_MONGO3_PORT}
+      ports: 
+          - ${MONGO_MONGO3_PORT}:${MONGO_MONGO3_PORT}  
+      networks: 
+          - pawningshopdev
+      volumes:
+          - mongoData3:/data/db
+          - mongoLog3:/var/log/mongodb
+          - mongoConfig3:/data/configdb
+          - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
+          - ./.docker/mongodb/file.key:/auth/file.key
+      env_file:
+          - .env
+      healthcheck:
+          test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep 1
+          interval: 30s
+          start_period: 60s
+      environment:
+          MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+          MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+          MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+          MONGO_PORT: ${MONGO_MONGO3_PORT}
+      depends_on: 
+          - mongo1
 volumes:
   ganache_volume:
     name: ganache_volume_dev
-#  mongo_volume:
-#    name: mongo_volume_dev
-#    external: true
-
-#  mongo_authvolume:
-#    name: mongo_authvolume_dev
-#    driver_opts:
-#      type: none
-#      device: /com.docker.devenvironments.code/mongodb/auth/file.key #NOTE needs full path (~ doesn't work)
-#      o: bind
-#  mongo_datavolume:
-#    driver_opts:
-#      type: none
-#      device: /com.docker.devenvironments.code/mongodb/data #NOTE needs full path (~ doesn't work)
-#      o: bind
+  rabbitmq_volume:
+    name: rabbitmq_volume
+  redis_volume:
+    name: redis_volume
+  mongoData1:
+      name: mongoData1
+  mongoData2:
+      name: mongoData2
+  mongoData3:
+      name: mongoData3
+  mongoDataSetup:
+      name: mongoDataSetup
+  mongoLog1:
+      name: mongoLog1
+  mongoLog2:
+      name: mongoLog2
+  mongoLog3:
+      name: mongoLog3
+  mongoConfig1:
+      name: mongoConfig1
+  mongoConfig2:
+      name: mongoConfig2
+  mongoConfig3:
+      name: mongoConfig3
+  mongoConfigSetup:
+      name: mongoConfigSetup
 secrets:
   db_password:
     file: ./db_password.txt
@@ -103,3 +195,4 @@ secrets:
     file: ./db_username.txt
 networks: 
   pawningshopdev:
+    name: pawningshopdev

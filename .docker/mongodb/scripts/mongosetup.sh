@@ -2,7 +2,7 @@
 
 echo "**********************************************" ${MONGO_MONGO1_HOST}
 echo "Waiting for startup.."
-sleep 30
+sleep 10
 echo "done"
 
 echo SETUP.sh time now: `date +"%T" `
@@ -24,13 +24,12 @@ var cfg = {
         },
         {
             "_id": 2,
-            "host": "${MONGO_MONGO3_HOST}:${MONGO_MONGO2_PORT}",
+            "host": "${MONGO_MONGO3_HOST}:${MONGO_MONGO3_PORT}",
             "priority": 0,
         }
     ]
 };
 rs.initiate(cfg, { force: true });
-rs.secondaryOk();
-db.getMongo().setReadPref('primary');
+db.getMongo().setReadPref('primaryPreferred');
 rs.status();
 EOF
